@@ -1,0 +1,1153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <meta name="description" content="Rubbish Rush – Learn NZ recycling rules in a fast-paced sorting game!">
+  <meta name="theme-color" content="#0f0c29">
+  <title>Rubbish Rush 🗑️ – NZ Recycling Game</title>
+  <style>
+    /* ── Reset & Base ─────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      width: 100%; height: 100%;
+      overflow: hidden;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #0f0c29;
+      color: #f0f0f0;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+      touch-action: none;
+    }
+
+    /* ── Screens ──────────────────────────────────────────────────── */
+    .screen {
+      position: fixed; inset: 0;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      transition: opacity 0.3s;
+    }
+    .screen.hidden { display: none; }
+
+    /* ── Start Screen ─────────────────────────────────────────────── */
+    #startScreen {
+      background: linear-gradient(160deg, #0f0c29 0%, #302b63 60%, #24243e 100%);
+      text-align: center; padding: 24px;
+      gap: 14px;
+    }
+    #startScreen .logo { font-size: clamp(3rem,12vw,5.5rem); line-height:1; }
+    #startScreen h1 {
+      font-size: clamp(1.8rem,7vw,3.2rem);
+      background: linear-gradient(90deg,#f1c40f,#2ecc71,#3498db,#e74c3c);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+      font-weight: 900; letter-spacing: -1px;
+    }
+    #startScreen p {
+      font-size: clamp(0.85rem,3vw,1.1rem);
+      color: #ccc; max-width: 420px; line-height: 1.5;
+    }
+    .btn-play {
+      margin-top: 8px;
+      padding: 14px 48px;
+      font-size: clamp(1.1rem,4vw,1.4rem);
+      font-weight: 700; border: none; border-radius: 50px;
+      background: linear-gradient(135deg,#f1c40f,#e67e22);
+      color: #111; cursor: pointer;
+      box-shadow: 0 4px 20px rgba(241,196,15,0.5);
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .btn-play:hover { transform: scale(1.05); box-shadow: 0 6px 28px rgba(241,196,15,0.7); }
+    .btn-play:active { transform: scale(0.97); }
+
+    .how-to { margin-top: 4px; }
+    .how-to summary {
+      cursor: pointer; font-size: 0.9rem; color: #aaa;
+      list-style: none; padding: 4px;
+    }
+    .how-to summary:hover { color: #f1c40f; }
+    .how-to-content {
+      margin-top: 10px; text-align: left; max-width: 420px;
+      background: rgba(255,255,255,0.07); border-radius: 12px;
+      padding: 14px; font-size: 0.82rem; color: #ddd; line-height: 1.7;
+    }
+    .how-to-content .bin-tag {
+      display: inline-block; border-radius: 4px;
+      padding: 1px 7px; font-weight: 700; margin-right: 4px; font-size: 0.8rem;
+    }
+    .hs-display {
+      font-size: 0.9rem; color: #aaa; margin-top: 4px;
+    }
+    .hs-display span { color: #f1c40f; font-weight: 700; }
+
+    /* ── Game Screen ──────────────────────────────────────────────── */
+    #gameScreen {
+      flex-direction: column;
+      background: #0f0c29;
+      padding: 0;
+      justify-content: flex-start;
+      transition: background 0.5s;
+    }
+    #gameScreen.urgency1 { background: #1a0c00; }
+    #gameScreen.urgency2 { background: #1f0000; }
+    #gameScreen.urgency3 {
+      background: #1f0000;
+      animation: screenShake 0.3s infinite;
+    }
+    @keyframes screenShake {
+      0%,100% { transform: translate(0,0); }
+      20% { transform: translate(-3px,2px); }
+      40% { transform: translate(3px,-2px); }
+      60% { transform: translate(-2px,3px); }
+      80% { transform: translate(2px,-3px); }
+    }
+
+    /* ── HUD ──────────────────────────────────────────────────────── */
+    #hud {
+      width: 100%; display: flex; align-items: center;
+      justify-content: space-between;
+      padding: 8px 12px 4px;
+      background: rgba(0,0,0,0.35);
+      flex-shrink: 0;
+      z-index: 30;
+    }
+    .hud-score {
+      font-size: clamp(0.85rem,3.5vw,1.1rem);
+      font-weight: 700;
+    }
+    .hud-score span { color: #f1c40f; font-size: 1.3em; }
+    #timerWrap {
+      display: flex; flex-direction: column; align-items: center; gap: 3px;
+    }
+    #timerDisplay {
+      font-size: clamp(1.6rem,7vw,2.8rem);
+      font-weight: 900; letter-spacing: -1px;
+      color: #2ecc71;
+      transition: color 0.5s;
+      line-height: 1;
+    }
+    #timerDisplay.warn { color: #f39c12; }
+    #timerDisplay.danger { color: #e74c3c; animation: timerPulse 0.5s infinite; }
+    @keyframes timerPulse {
+      0%,100% { transform: scale(1); }
+      50% { transform: scale(1.12); }
+    }
+    #timerBar {
+      width: clamp(80px,25vw,160px); height: 6px;
+      background: rgba(255,255,255,0.15); border-radius: 3px; overflow: hidden;
+    }
+    #timerFill {
+      height: 100%; background: #2ecc71;
+      transition: width 0.1s linear, background 0.5s;
+      border-radius: 3px;
+    }
+    #timerFill.warn { background: #f39c12; }
+    #timerFill.danger { background: #e74c3c; }
+
+    /* ── Game Area ────────────────────────────────────────────────── */
+    #gameArea {
+      flex: 1; position: relative;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: 1fr 1fr;
+      gap: clamp(6px,2vw,12px);
+      padding: clamp(6px,2vw,12px);
+      min-height: 0;
+    }
+
+    /* ── Bins ─────────────────────────────────────────────────────── */
+    .bin {
+      border-radius: 14px; display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 4px; cursor: pointer;
+      transition: transform 0.15s, box-shadow 0.2s, filter 0.2s;
+      border: 3px solid transparent;
+      position: relative; overflow: hidden;
+      min-height: 0;
+    }
+    .bin::before {
+      content: ''; position: absolute; inset: 0;
+      background: rgba(255,255,255,0.07);
+      opacity: 0; transition: opacity 0.2s;
+    }
+    .bin:hover::before, .bin.drag-over::before { opacity: 1; }
+    .bin.drag-over {
+      transform: scale(1.05);
+      box-shadow: 0 0 24px 8px var(--bin-color, rgba(255,255,255,0.3));
+      border-color: rgba(255,255,255,0.6);
+    }
+    .bin.flash-correct {
+      animation: binCorrect 0.5s ease-out;
+    }
+    .bin.flash-wrong {
+      animation: binWrong 0.5s ease-out;
+    }
+    @keyframes binCorrect {
+      0%   { box-shadow: 0 0 0 0 rgba(46,204,113,0); }
+      30%  { box-shadow: 0 0 40px 20px rgba(46,204,113,0.8); }
+      100% { box-shadow: 0 0 0 0 rgba(46,204,113,0); }
+    }
+    @keyframes binWrong {
+      0%,100% { transform: translateX(0); }
+      20% { transform: translateX(-8px); }
+      40% { transform: translateX(8px); }
+      60% { transform: translateX(-5px); }
+      80% { transform: translateX(5px); }
+    }
+
+    .bin[data-color="red"]    { background: linear-gradient(160deg,#c0392b,#96281b); --bin-color: #e74c3c; }
+    .bin[data-color="yellow"] { background: linear-gradient(160deg,#d4ac0d,#b7950b); --bin-color: #f1c40f; }
+    .bin[data-color="green"]  { background: linear-gradient(160deg,#27ae60,#1e8449); --bin-color: #2ecc71; }
+    .bin[data-color="blue"]   { background: linear-gradient(160deg,#2980b9,#1a6091); --bin-color: #3498db; }
+
+    .bin-icon { font-size: clamp(2rem,7vw,3.5rem); line-height: 1; }
+    .bin-name {
+      font-size: clamp(0.65rem,2.5vw,0.95rem);
+      font-weight: 700; text-align: center;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.5); line-height: 1.2;
+    }
+    .bin-sub {
+      font-size: clamp(0.5rem,1.8vw,0.72rem);
+      opacity: 0.8; text-align: center; line-height: 1;
+    }
+
+    /* ── Item Card ────────────────────────────────────────────────── */
+    #itemZone {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 20;
+      pointer-events: none;
+    }
+    #itemCard {
+      background: linear-gradient(160deg,#2c2c54,#1e1e3a);
+      border: 2px solid rgba(255,255,255,0.2);
+      border-radius: 18px;
+      padding: clamp(10px,3vw,18px);
+      display: flex; flex-direction: column;
+      align-items: center; gap: 6px;
+      min-width: clamp(90px,26vw,140px);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+      cursor: grab;
+      pointer-events: all;
+      transition: opacity 0.2s;
+      position: relative;
+    }
+    #itemCard.selected {
+      border-color: #f1c40f;
+      box-shadow: 0 0 20px rgba(241,196,15,0.5), 0 8px 32px rgba(0,0,0,0.6);
+    }
+    #itemCard.dragging { opacity: 0.4; }
+    #itemCard.appear { animation: itemAppear 0.35s cubic-bezier(0.175,0.885,0.32,1.275); }
+    @keyframes itemAppear {
+      from { transform: scale(0.3); opacity: 0; }
+      to   { transform: scale(1);   opacity: 1; }
+    }
+    #itemEmoji { font-size: clamp(2.5rem,9vw,4rem); line-height: 1; }
+    #itemName {
+      font-size: clamp(0.65rem,2.5vw,0.9rem);
+      font-weight: 700; text-align: center; max-width: 120px;
+      line-height: 1.2;
+    }
+    #requiredBadges {
+      display: flex; gap: 4px; flex-wrap: wrap; justify-content: center;
+    }
+    .req-badge {
+      font-size: 0.7rem; background: rgba(231,76,60,0.3);
+      border: 1px solid rgba(231,76,60,0.6);
+      border-radius: 20px; padding: 1px 6px;
+      color: #ff8a80;
+    }
+    .req-badge.done {
+      background: rgba(46,204,113,0.3);
+      border-color: rgba(46,204,113,0.6);
+      color: #69f0ae;
+      text-decoration: line-through;
+    }
+
+    /* ── Drag Ghost ───────────────────────────────────────────────── */
+    #dragGhost {
+      position: fixed; pointer-events: none; z-index: 999;
+      opacity: 0.85;
+      background: linear-gradient(160deg,#2c2c54,#1e1e3a);
+      border: 2px solid rgba(255,255,255,0.35);
+      border-radius: 18px;
+      padding: 12px 14px;
+      display: none; flex-direction: column;
+      align-items: center; gap: 6px;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.8);
+      transform: rotate(-3deg) scale(1.05);
+    }
+    #dragGhost.active { display: flex; }
+    #dragGhostEmoji { font-size: 2.5rem; line-height: 1; }
+
+    /* ── Hint / Hint Bar ──────────────────────────────────────────── */
+    #hintBar {
+      width: 100%; padding: 3px 12px;
+      font-size: clamp(0.62rem,2.2vw,0.82rem);
+      color: #bbb; text-align: center;
+      background: rgba(0,0,0,0.2);
+      flex-shrink: 0; min-height: 22px;
+      line-height: 1.3;
+    }
+
+    /* ── Action Buttons ───────────────────────────────────────────── */
+    #actionsBar {
+      width: 100%; padding: clamp(5px,1.5vw,10px) clamp(5px,2vw,12px);
+      display: flex; gap: clamp(4px,1.5vw,8px);
+      justify-content: center; flex-wrap: wrap;
+      background: rgba(0,0,0,0.3);
+      flex-shrink: 0;
+    }
+    .action-btn {
+      display: flex; flex-direction: column; align-items: center;
+      gap: 2px; padding: clamp(6px,1.8vw,10px) clamp(8px,2.5vw,14px);
+      background: rgba(255,255,255,0.1);
+      border: 1.5px solid rgba(255,255,255,0.2);
+      border-radius: 12px; cursor: pointer;
+      transition: transform 0.1s, background 0.15s, border-color 0.15s;
+      flex: 1; min-width: clamp(44px,13vw,72px); max-width: 90px;
+      color: #f0f0f0;
+    }
+    .action-btn:hover { background: rgba(255,255,255,0.18); transform: translateY(-2px); }
+    .action-btn:active { transform: scale(0.94); }
+    .action-btn.flash-good {
+      background: rgba(46,204,113,0.4);
+      border-color: #2ecc71;
+      animation: actionGood 0.4s ease-out;
+    }
+    .action-btn.flash-bad {
+      background: rgba(231,76,60,0.35);
+      border-color: #e74c3c;
+      animation: actionBad 0.35s ease-out;
+    }
+    .action-btn.used {
+      background: rgba(46,204,113,0.15);
+      border-color: rgba(46,204,113,0.4);
+    }
+    @keyframes actionGood {
+      0% { transform: scale(1); }
+      40% { transform: scale(1.18); }
+      100% { transform: scale(1); }
+    }
+    @keyframes actionBad {
+      0%,100% { transform: translateX(0); }
+      25% { transform: translateX(-5px); }
+      75% { transform: translateX(5px); }
+    }
+    .action-emoji { font-size: clamp(1.2rem,4.5vw,1.7rem); line-height: 1; }
+    .action-name  { font-size: clamp(0.52rem,1.9vw,0.72rem); font-weight: 600; line-height: 1; }
+
+    /* ── Floating Time Feedback ───────────────────────────────────── */
+    .time-pop {
+      position: fixed; pointer-events: none; z-index: 500;
+      font-size: clamp(1.2rem,5vw,1.8rem);
+      font-weight: 900; text-shadow: 0 2px 8px rgba(0,0,0,0.7);
+      animation: timePop 1.2s ease-out forwards;
+    }
+    @keyframes timePop {
+      0%   { opacity: 1; transform: translateY(0) scale(1.2); }
+      100% { opacity: 0; transform: translateY(-70px) scale(0.8); }
+    }
+
+    /* ── Urgency Edge Glow ────────────────────────────────────────── */
+    #edgeGlow {
+      position: fixed; inset: 0; pointer-events: none; z-index: 100;
+      border-radius: 0;
+      box-shadow: inset 0 0 0px 0px rgba(231,76,60,0);
+      transition: box-shadow 0.5s;
+    }
+    #edgeGlow.warn { box-shadow: inset 0 0 60px 20px rgba(231,76,60,0.25); }
+    #edgeGlow.danger { box-shadow: inset 0 0 80px 40px rgba(231,76,60,0.5); }
+    #edgeGlow.panic {
+      box-shadow: inset 0 0 100px 60px rgba(231,76,60,0.75);
+      animation: edgePanic 0.4s infinite alternate;
+    }
+    @keyframes edgePanic {
+      from { box-shadow: inset 0 0 80px 40px rgba(231,76,60,0.5); }
+      to   { box-shadow: inset 0 0 120px 70px rgba(231,76,60,0.9); }
+    }
+
+    /* ── Game Over Screen ─────────────────────────────────────────── */
+    #gameOverScreen {
+      background: linear-gradient(160deg, #1a0000, #0f0c29 60%);
+      text-align: center; gap: 14px; padding: 24px;
+    }
+    #gameOverScreen .go-emoji { font-size: clamp(3rem,12vw,5rem); }
+    #gameOverScreen h2 {
+      font-size: clamp(1.6rem,7vw,2.8rem);
+      font-weight: 900; color: #e74c3c;
+    }
+    .go-scores {
+      display: flex; gap: 24px; justify-content: center; flex-wrap: wrap;
+    }
+    .go-score-box {
+      background: rgba(255,255,255,0.08);
+      border-radius: 14px; padding: 14px 22px;
+      display: flex; flex-direction: column; align-items: center; gap: 4px;
+    }
+    .go-score-label { font-size: 0.8rem; color: #aaa; text-transform: uppercase; letter-spacing: 1px; }
+    .go-score-val { font-size: clamp(1.8rem,7vw,2.8rem); font-weight: 900; color: #f1c40f; }
+    .go-new-record {
+      font-size: 1rem; color: #f1c40f;
+      animation: recordPulse 0.7s infinite alternate;
+      display: none;
+    }
+    @keyframes recordPulse {
+      from { opacity: 0.6; transform: scale(0.97); }
+      to   { opacity: 1;   transform: scale(1.04); }
+    }
+    #statsLine { font-size: 0.85rem; color: #aaa; }
+    .btn-again {
+      padding: 13px 44px;
+      font-size: clamp(1rem,4vw,1.3rem);
+      font-weight: 700; border: none; border-radius: 50px;
+      background: linear-gradient(135deg,#e74c3c,#c0392b);
+      color: #fff; cursor: pointer;
+      box-shadow: 0 4px 20px rgba(231,76,60,0.5);
+      transition: transform 0.15s;
+    }
+    .btn-again:hover { transform: scale(1.05); }
+
+    /* ── Combo Banner ─────────────────────────────────────────────── */
+    #comboBanner {
+      position: fixed; top: 20%; left: 50%; transform: translateX(-50%);
+      z-index: 400; pointer-events: none;
+      font-size: clamp(1.4rem,6vw,2.2rem); font-weight: 900;
+      color: #f1c40f; text-shadow: 0 0 20px rgba(241,196,15,0.8);
+      opacity: 0; transition: opacity 0.2s;
+      white-space: nowrap;
+    }
+    #comboBanner.show { opacity: 1; animation: comboPop 1.4s ease-out forwards; }
+    @keyframes comboPop {
+      0%   { opacity: 0; transform: translateX(-50%) scale(0.5); }
+      15%  { opacity: 1; transform: translateX(-50%) scale(1.2); }
+      70%  { opacity: 1; transform: translateX(-50%) scale(1); }
+      100% { opacity: 0; transform: translateX(-50%) scale(0.9); }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════
+     START SCREEN
+════════════════════════════════════════════════════════════ -->
+<div id="startScreen" class="screen">
+  <div class="logo">🗑️🥝</div>
+  <h1>Rubbish Rush</h1>
+  <p>Sort NZ rubbish into the right bins before the clock runs out!</p>
+
+  <button class="btn-play" id="btnPlay">▶ Play</button>
+
+  <p class="hs-display">Best Score: <span id="startHs">0</span></p>
+
+  <details class="how-to">
+    <summary>ℹ️ How to Play</summary>
+    <div class="how-to-content">
+      <p><strong>🎯 Goal:</strong> Drag (or tap) each rubbish item into the correct bin before time runs out.</p>
+      <br>
+      <p>
+        <span class="bin-tag" style="background:#27ae60">GREEN</span> Organics – food scraps &amp; garden waste<br>
+        <span class="bin-tag" style="background:#d4ac0d;color:#111">YELLOW</span> Recycling – clean &amp; dry plastics, cans, glass<br>
+        <span class="bin-tag" style="background:#c0392b">RED</span> General Waste – non-recyclables, soft plastics<br>
+        <span class="bin-tag" style="background:#2980b9">BLUE</span> Paper &amp; Card – newspapers, cardboard (flatten!)
+      </p>
+      <br>
+      <p><strong>⚡ Actions:</strong> Use the action buttons <em>before</em> sorting to earn bonus time.<br>
+      Forgetting a required action (like <em>Remove Lid</em>) costs time!</p>
+      <br>
+      <p><strong>⏱️ Tip:</strong> Correct sorts add time; wrong sorts remove it. Build combos for mega bonuses!</p>
+      <br>
+      <p><em>Based on NZ's 2023 national kerbside collection standards.</em></p>
+    </div>
+  </details>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     GAME SCREEN
+════════════════════════════════════════════════════════════ -->
+<div id="gameScreen" class="screen hidden">
+  <!-- HUD -->
+  <div id="hud">
+    <div class="hud-score">Score<br><span id="scoreDisplay">0</span></div>
+    <div id="timerWrap">
+      <div id="timerDisplay">60</div>
+      <div id="timerBar"><div id="timerFill"></div></div>
+    </div>
+    <div class="hud-score" style="text-align:right">Best<br><span id="highScoreDisplay">0</span></div>
+  </div>
+
+  <!-- Hint Bar -->
+  <div id="hintBar">Sort the item into the correct bin!</div>
+
+  <!-- Game Area: 2×2 bins + floating item card -->
+  <div id="gameArea">
+    <div class="bin" data-color="green" id="binGreen">
+      <div class="bin-icon">🌿</div>
+      <div class="bin-name">Organics</div>
+      <div class="bin-sub">Food &amp; Garden</div>
+    </div>
+    <div class="bin" data-color="yellow" id="binYellow">
+      <div class="bin-icon">♻️</div>
+      <div class="bin-name">Recycling</div>
+      <div class="bin-sub">Clean &amp; Dry</div>
+    </div>
+    <div class="bin" data-color="red" id="binRed">
+      <div class="bin-icon">🗑️</div>
+      <div class="bin-name">General Waste</div>
+      <div class="bin-sub">Rubbish</div>
+    </div>
+    <div class="bin" data-color="blue" id="binBlue">
+      <div class="bin-icon">📄</div>
+      <div class="bin-name">Paper &amp; Card</div>
+      <div class="bin-sub">Flatten boxes</div>
+    </div>
+
+    <!-- Floating item -->
+    <div id="itemZone">
+      <div id="itemCard">
+        <div id="itemEmoji">🗑️</div>
+        <div id="itemName">Loading…</div>
+        <div id="requiredBadges"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Actions Bar -->
+  <div id="actionsBar">
+    <button class="action-btn" data-action="rinse">
+      <span class="action-emoji">🚿</span>
+      <span class="action-name">Rinse</span>
+    </button>
+    <button class="action-btn" data-action="removeLid">
+      <span class="action-emoji">🔩</span>
+      <span class="action-name">Remove Lid</span>
+    </button>
+    <button class="action-btn" data-action="removeLabel">
+      <span class="action-emoji">🏷️</span>
+      <span class="action-name">Remove Label</span>
+    </button>
+    <button class="action-btn" data-action="flatten">
+      <span class="action-emoji">📐</span>
+      <span class="action-name">Flatten</span>
+    </button>
+    <button class="action-btn" data-action="cut">
+      <span class="action-emoji">✂️</span>
+      <span class="action-name">Cut Up</span>
+    </button>
+    <button class="action-btn" data-action="clean">
+      <span class="action-emoji">🧹</span>
+      <span class="action-name">Clean</span>
+    </button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     GAME OVER SCREEN
+════════════════════════════════════════════════════════════ -->
+<div id="gameOverScreen" class="screen hidden">
+  <div class="go-emoji">💀</div>
+  <h2>Time's Up!</h2>
+  <div class="go-scores">
+    <div class="go-score-box">
+      <div class="go-score-label">Score</div>
+      <div class="go-score-val" id="goScore">0</div>
+    </div>
+    <div class="go-score-box">
+      <div class="go-score-label">Best</div>
+      <div class="go-score-val" id="goBest">0</div>
+    </div>
+    <div class="go-score-box">
+      <div class="go-score-label">Sorted</div>
+      <div class="go-score-val" id="goItems">0</div>
+    </div>
+  </div>
+  <div class="go-new-record" id="goNewRecord">🏆 New Record!</div>
+  <div id="statsLine"></div>
+  <button class="btn-again" id="btnAgain">🔄 Play Again</button>
+</div>
+
+<!-- Drag ghost -->
+<div id="dragGhost">
+  <div id="dragGhostEmoji">❓</div>
+</div>
+
+<!-- Urgency edge glow overlay -->
+<div id="edgeGlow"></div>
+
+<!-- Combo Banner -->
+<div id="comboBanner"></div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     GAME SCRIPT
+════════════════════════════════════════════════════════════ -->
+<script>
+'use strict';
+
+/* ── CONFIG ──────────────────────────────────────────────────────── */
+const CFG = {
+  startTime:            60,
+  correctSortBonus:      5,   // seconds
+  wrongSortPenalty:      7,
+  missingActionPenalty:  4,   // per missing required action
+  bonusActionReward:     2,
+  wrongActionPenalty:    3,
+  correctPoints:        10,
+  wrongPoints:          -5,
+  actionPoints:          3,
+  comboMultiplier:       3,   // extra points per combo level
+  urgency1:             25,   // orange warning threshold
+  urgency2:             12,   // red danger threshold
+  urgency3:              5,   // panic threshold
+};
+
+/* ── ITEMS DATABASE ──────────────────────────────────────────────── */
+// bin: 'red' | 'yellow' | 'green' | 'blue'
+// required: action ids that MUST be done first (penalty if skipped)
+// bonus: action ids that give bonus time
+const ITEMS = [
+  /* ---- RED BIN — General Waste ---- */
+  { id:'greasy_pizza',    name:'Greasy Pizza Box',       emoji:'🍕', bin:'red',    required:[], bonus:[],           hint:'Greasy cardboard cannot be recycled – red bin!' },
+  { id:'nappy',           name:'Used Nappy',             emoji:'🧷', bin:'red',    required:[], bonus:[],           hint:'Nappies always go in the red general waste bin' },
+  { id:'plastic_bag',     name:'Plastic Bag',            emoji:'🛍️', bin:'red',    required:[], bonus:[],           hint:'Soft plastics go in the red bin – not yellow!' },
+  { id:'coffee_cup',      name:'Coffee Cup',             emoji:'☕', bin:'red',    required:[], bonus:[],           hint:'Takeaway cups have a plastic lining – not recyclable' },
+  { id:'polystyrene',     name:'Polystyrene Container',  emoji:'📦', bin:'red',    required:[], bonus:[],           hint:'Polystyrene foam is not accepted in NZ kerbside recycling' },
+  { id:'broken_glass',    name:'Broken Glass',           emoji:'🪟', bin:'red',    required:[], bonus:[],           hint:'Broken glass is dangerous – wrap &amp; red bin it!' },
+  { id:'dog_poo',         name:'Dog Poo Bag',            emoji:'💩', bin:'red',    required:[], bonus:[],           hint:'Bag it, bin it – general waste only' },
+  { id:'battery',         name:'Dead Battery',           emoji:'🔋', bin:'red',    required:[], bonus:[],           hint:'Batteries are hazardous – take to e-waste collection' },
+  { id:'chip_packet',     name:'Chip Packet',            emoji:'🍟', bin:'red',    required:[], bonus:[],           hint:'Foil &amp; plastic wrappers go in the red bin' },
+  { id:'noodles_dirty',   name:'Dirty Noodle Container', emoji:'🍜', bin:'red',    required:[], bonus:[],           hint:'Dirty food containers cannot be recycled' },
+  { id:'cling_wrap',      name:'Cling Wrap',             emoji:'🥗', bin:'red',    required:[], bonus:[],           hint:'Cling wrap is a soft plastic – red bin' },
+  { id:'disposable_cup',  name:'Disposable Cutlery',     emoji:'🥄', bin:'red',    required:[], bonus:[],           hint:'Disposable cutlery is generally not recyclable' },
+  { id:'bubble_wrap',     name:'Bubble Wrap',            emoji:'🫧', bin:'red',    required:[], bonus:[],           hint:'Bubble wrap is a soft plastic – cannot be recycled kerbside' },
+
+  /* ---- YELLOW BIN — Mixed Recycling ---- */
+  { id:'water_bottle',    name:'Water Bottle',           emoji:'💧', bin:'yellow', required:['removeLid'], bonus:['rinse'],           hint:'Remove the lid first, then pop in the yellow bin!' },
+  { id:'coke_bottle',     name:'Coke Bottle',            emoji:'🥤', bin:'yellow', required:['removeLid'], bonus:['rinse'],           hint:'Plastic PET bottles – lid off, rinse, yellow bin' },
+  { id:'milk_bottle',     name:'Milk Bottle',            emoji:'🥛', bin:'yellow', required:['removeLid'], bonus:['rinse'],           hint:'HDPE milk bottles are recyclable with lid removed' },
+  { id:'wine_bottle',     name:'Wine Bottle',            emoji:'🍷', bin:'yellow', required:[],            bonus:['rinse'],           hint:'Glass wine bottles are recyclable in the yellow bin' },
+  { id:'beer_can',        name:'Beer Can',               emoji:'🍺', bin:'yellow', required:[],            bonus:['rinse'],           hint:'Aluminium cans – rinse before recycling' },
+  { id:'tin_can',         name:'Tin Can',                emoji:'🥫', bin:'yellow', required:[],            bonus:['rinse'],           hint:'Steel cans are recyclable – give them a rinse!' },
+  { id:'pasta_jar',       name:'Pasta Sauce Jar',        emoji:'🫙', bin:'yellow', required:['removeLid'], bonus:['rinse'],           hint:'Glass jars – remove lid, rinse out, yellow bin' },
+  { id:'shampoo_bottle',  name:'Shampoo Bottle',         emoji:'🧴', bin:'yellow', required:['removeLid'], bonus:['rinse'],           hint:'Plastic bottles (type 2) – lid off, rinse, recycle!' },
+  { id:'juice_bottle',    name:'Juice Bottle',           emoji:'🧃', bin:'yellow', required:['removeLid'], bonus:['rinse'],           hint:'PET juice bottles – remove lid &amp; rinse' },
+  { id:'lp_bottle',       name:'L&amp;P Bottle',         emoji:'🍋', bin:'yellow', required:['removeLid'], bonus:['rinse'],           hint:'Kiwi classic – plastic bottle, lid off, yellow bin!' },
+  { id:'milo_tin',        name:'Milo Tin',               emoji:'🫙', bin:'yellow', required:[],            bonus:['rinse','removeLabel'], hint:'Steel tins are fully recyclable – Kiwi favourite!' },
+  { id:'paint_tin_empty', name:'Empty Paint Tin',        emoji:'🪣', bin:'yellow', required:[],            bonus:['clean'],          hint:'Completely empty, dry metal tins can go in yellow bin' },
+
+  /* ---- GREEN BIN — Organics ---- */
+  { id:'apple_core',      name:'Apple Core',             emoji:'🍎', bin:'green',  required:[], bonus:[],           hint:'All food scraps go in the green organics bin' },
+  { id:'banana_peel',     name:'Banana Peel',            emoji:'🍌', bin:'green',  required:[], bonus:[],           hint:'Fruit peels are great for the green organics bin' },
+  { id:'veg_peels',       name:'Vegetable Peels',        emoji:'🥕', bin:'green',  required:[], bonus:[],           hint:'Veggie scraps are composted from the green bin' },
+  { id:'egg_shells',      name:'Egg Shells',             emoji:'🥚', bin:'green',  required:[], bonus:[],           hint:'Egg shells are 100% compostable – green bin!' },
+  { id:'fish_bones',      name:'Fish Bones',             emoji:'🐟', bin:'green',  required:[], bonus:[],           hint:'Meat, fish &amp; bones all go in the green bin' },
+  { id:'tea_bag',         name:'Used Tea Bag',           emoji:'🍵', bin:'green',  required:[], bonus:[],           hint:'Tea bags &amp; coffee grounds are compostable' },
+  { id:'garden_clip',     name:'Garden Clippings',       emoji:'🌿', bin:'green',  required:[], bonus:['cut'],      hint:'Chop clippings smaller for easier composting' },
+  { id:'bread',           name:'Stale Bread',            emoji:'🍞', bin:'green',  required:[], bonus:[],           hint:'Old food goes in the green organics bin' },
+  { id:'coffee_grounds',  name:'Coffee Grounds',         emoji:'☕', bin:'green',  required:[], bonus:[],           hint:'Coffee grounds are excellent in the compost!' },
+  { id:'weet_bix',        name:'Half-eaten Weetbix',     emoji:'🌾', bin:'green',  required:[], bonus:[],           hint:'Soggy cereal – food waste to the green bin' },
+
+  /* ---- BLUE BIN — Paper & Cardboard ---- */
+  { id:'newspaper',       name:'Newspaper',              emoji:'📰', bin:'blue',   required:[], bonus:[],           hint:'Newspapers &amp; magazines go in the blue bin' },
+  { id:'cardboard_box',   name:'Cardboard Box',          emoji:'📦', bin:'blue',   required:[], bonus:['flatten'],  hint:'Flatten cardboard boxes to save space in the blue bin' },
+  { id:'printer_paper',   name:'Printer Paper',          emoji:'📄', bin:'blue',   required:[], bonus:[],           hint:'Office paper is fully recyclable in the blue bin' },
+  { id:'magazine',        name:'Old Magazine',           emoji:'📚', bin:'blue',   required:[], bonus:[],           hint:'Magazines can be recycled in the blue paper bin' },
+  { id:'cereal_box',      name:'Weetbix Box',            emoji:'🥣', bin:'blue',   required:[], bonus:['flatten'],  hint:'Kiwi breakfast staple! Flatten the box before binning' },
+  { id:'toilet_roll',     name:'Toilet Roll Tube',       emoji:'🧻', bin:'blue',   required:[], bonus:[],           hint:'Cardboard tubes are recyclable – blue bin!' },
+  { id:'junk_mail',       name:'Junk Mail',              emoji:'📬', bin:'blue',   required:[], bonus:[],           hint:'Paper junk mail goes in the blue bin' },
+  { id:'gift_wrap',       name:'Clean Gift Wrap',        emoji:'🎁', bin:'blue',   required:[], bonus:[],           hint:'Non-foil, uncoated gift wrap goes in the blue bin' },
+];
+
+/* ── BIN DEFINITIONS ─────────────────────────────────────────────── */
+const BINS = {
+  green:  { name:'Organics',       color:'#2ecc71' },
+  yellow: { name:'Recycling',      color:'#f1c40f' },
+  red:    { name:'General Waste',  color:'#e74c3c' },
+  blue:   { name:'Paper & Card',   color:'#3498db' },
+};
+
+/* ── ACTION DEFINITIONS ──────────────────────────────────────────── */
+const ACTIONS = {
+  rinse:       { name:'Rinse',         emoji:'🚿' },
+  removeLid:   { name:'Remove Lid',    emoji:'🔩' },
+  removeLabel: { name:'Remove Label',  emoji:'🏷️' },
+  flatten:     { name:'Flatten',       emoji:'📐' },
+  cut:         { name:'Cut Up',        emoji:'✂️' },
+  clean:       { name:'Clean',         emoji:'🧹' },
+};
+
+/* ── AUDIO ENGINE ────────────────────────────────────────────────── */
+let audioCtx = null;
+function getAudioCtx() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  return audioCtx;
+}
+function playTone(freq, duration, type='sine', gainVal=0.18, delay=0) {
+  try {
+    const ctx = getAudioCtx();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain); gain.connect(ctx.destination);
+    osc.type = type;
+    osc.frequency.setValueAtTime(freq, ctx.currentTime + delay);
+    gain.gain.setValueAtTime(gainVal, ctx.currentTime + delay);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + delay + duration);
+    osc.start(ctx.currentTime + delay);
+    osc.stop(ctx.currentTime + delay + duration + 0.01);
+  } catch(e) { /* silent fail */ }
+}
+function sfxCorrect() {
+  playTone(523, 0.12, 'triangle', 0.2);
+  playTone(659, 0.12, 'triangle', 0.2, 0.12);
+  playTone(784, 0.2,  'triangle', 0.2, 0.24);
+}
+function sfxWrong() {
+  playTone(220, 0.15, 'sawtooth', 0.15);
+  playTone(185, 0.15, 'sawtooth', 0.15, 0.15);
+  playTone(147, 0.3,  'sawtooth', 0.15, 0.30);
+}
+function sfxAction() {
+  playTone(880, 0.08, 'triangle', 0.12);
+}
+function sfxActionBad() {
+  playTone(160, 0.18, 'sawtooth', 0.14);
+}
+function sfxCombo() {
+  [523,659,784,1047].forEach((f,i) => playTone(f, 0.12, 'triangle', 0.22, i*0.1));
+}
+function sfxGameOver() {
+  [440,370,311,261].forEach((f,i) => playTone(f, 0.25, 'sawtooth', 0.18, i*0.22));
+}
+let panicBeepInterval = null;
+function startPanicBeep() {
+  stopPanicBeep();
+  panicBeepInterval = setInterval(() => playTone(880, 0.06, 'square', 0.1), 400);
+}
+function stopPanicBeep() {
+  if (panicBeepInterval) { clearInterval(panicBeepInterval); panicBeepInterval = null; }
+}
+
+/* ── GAME STATE ──────────────────────────────────────────────────── */
+let state = 'start'; // 'start' | 'playing' | 'gameover'
+let score = 0;
+let highScore = parseInt(localStorage.getItem('rrHighScore') || '0');
+let timer = CFG.startTime;
+let timerMax = CFG.startTime;
+let rafId = null;
+let lastTimestamp = null;
+let currentItem = null;
+let actionsApplied = new Set();
+let itemsSelected = false; // tap-to-select on mobile
+let combo = 0;
+let totalSorted = 0;
+let correctSorted = 0;
+
+/* ── DOM REFS ────────────────────────────────────────────────────── */
+const $startScreen    = document.getElementById('startScreen');
+const $gameScreen     = document.getElementById('gameScreen');
+const $gameOverScreen = document.getElementById('gameOverScreen');
+const $timerDisplay   = document.getElementById('timerDisplay');
+const $timerFill      = document.getElementById('timerFill');
+const $scoreDisplay   = document.getElementById('scoreDisplay');
+const $highScoreDisplay = document.getElementById('highScoreDisplay');
+const $hintBar        = document.getElementById('hintBar');
+const $itemCard       = document.getElementById('itemCard');
+const $itemEmoji      = document.getElementById('itemEmoji');
+const $itemName       = document.getElementById('itemName');
+const $reqBadges      = document.getElementById('requiredBadges');
+const $edgeGlow       = document.getElementById('edgeGlow');
+const $dragGhost      = document.getElementById('dragGhost');
+const $dragGhostEmoji = document.getElementById('dragGhostEmoji');
+const $comboBanner    = document.getElementById('comboBanner');
+const $startHs        = document.getElementById('startHs');
+const $goScore        = document.getElementById('goScore');
+const $goBest         = document.getElementById('goBest');
+const $goItems        = document.getElementById('goItems');
+const $goNewRecord    = document.getElementById('goNewRecord');
+const $statsLine      = document.getElementById('statsLine');
+
+/* ── SHUFFLE UTIL ────────────────────────────────────────────────── */
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+let itemQueue = [];
+function nextItemFromQueue() {
+  if (itemQueue.length === 0) itemQueue = shuffle(ITEMS);
+  return itemQueue.pop();
+}
+
+/* ── TIMER ───────────────────────────────────────────────────────── */
+function startTimer() {
+  lastTimestamp = null;
+  rafId = requestAnimationFrame(timerLoop);
+}
+function timerLoop(ts) {
+  if (state !== 'playing') return;
+  if (lastTimestamp === null) lastTimestamp = ts;
+  const delta = (ts - lastTimestamp) / 1000;
+  lastTimestamp = ts;
+  timer = Math.max(0, timer - delta);
+  updateTimerUI();
+  if (timer <= 0) { endGame(); return; }
+  rafId = requestAnimationFrame(timerLoop);
+}
+function adjustTimer(delta, originEl) {
+  const oldTimer = timer;
+  timer = Math.max(0, Math.min(timer + delta, timerMax + 30));
+  // Floating feedback
+  if (originEl) {
+    const rect = originEl.getBoundingClientRect();
+    showTimePop(delta, rect.left + rect.width / 2, rect.top + rect.height / 2);
+  }
+  updateTimerUI();
+}
+function updateTimerUI() {
+  const secs = Math.ceil(timer);
+  $timerDisplay.textContent = secs;
+  const pct = Math.min(100, (timer / timerMax) * 100);
+  $timerFill.style.width = pct + '%';
+
+  const gs = $gameScreen;
+  $timerDisplay.classList.remove('warn','danger');
+  $timerFill.classList.remove('warn','danger');
+  $edgeGlow.className = '';
+  gs.classList.remove('urgency1','urgency2','urgency3');
+
+  if (timer <= CFG.urgency3) {
+    $timerDisplay.classList.add('danger');
+    $timerFill.classList.add('danger');
+    $edgeGlow.classList.add('panic');
+    gs.classList.add('urgency3');
+    if (!panicBeepInterval) startPanicBeep();
+  } else if (timer <= CFG.urgency2) {
+    $timerDisplay.classList.add('danger');
+    $timerFill.classList.add('danger');
+    $edgeGlow.classList.add('danger');
+    gs.classList.add('urgency2');
+    stopPanicBeep();
+  } else if (timer <= CFG.urgency1) {
+    $timerDisplay.classList.add('warn');
+    $timerFill.classList.add('warn');
+    $edgeGlow.classList.add('warn');
+    gs.classList.add('urgency1');
+    stopPanicBeep();
+  } else {
+    stopPanicBeep();
+  }
+}
+
+/* ── SCORE ───────────────────────────────────────────────────────── */
+function addScore(pts) {
+  score = Math.max(0, score + pts);
+  $scoreDisplay.textContent = score;
+}
+
+/* ── ITEMS ───────────────────────────────────────────────────────── */
+function showNextItem() {
+  currentItem = nextItemFromQueue();
+  actionsApplied = new Set();
+  itemsSelected = false;
+  $itemCard.classList.remove('selected', 'dragging');
+
+  $itemEmoji.textContent = currentItem.emoji;
+  $itemName.textContent  = currentItem.name;
+  $hintBar.textContent   = currentItem.hint;
+
+  // Required action badges
+  $reqBadges.innerHTML = '';
+  if (currentItem.required.length > 0) {
+    currentItem.required.forEach(aid => {
+      const span = document.createElement('span');
+      span.className = 'req-badge';
+      span.dataset.action = aid;
+      span.textContent = ACTIONS[aid].emoji + ' ' + ACTIONS[aid].name;
+      $reqBadges.appendChild(span);
+    });
+  }
+
+  // Reset action buttons
+  document.querySelectorAll('.action-btn').forEach(btn => {
+    btn.classList.remove('flash-good','flash-bad','used');
+  });
+
+  // Appear animation
+  $itemCard.classList.remove('appear');
+  void $itemCard.offsetWidth; // reflow
+  $itemCard.classList.add('appear');
+}
+
+/* ── SORT ITEM ───────────────────────────────────────────────────── */
+function sortItem(binColor, binEl) {
+  if (!currentItem || state !== 'playing') return;
+  cancelDrag();
+
+  const correct = binColor === currentItem.bin;
+  totalSorted++;
+
+  // Check required actions
+  const missing = currentItem.required.filter(a => !actionsApplied.has(a));
+  const timePenalty = missing.length * CFG.missingActionPenalty;
+
+  if (correct) {
+    correctSorted++;
+    combo++;
+    const timeBonus = CFG.correctSortBonus - timePenalty;
+    adjustTimer(timeBonus, binEl);
+    addScore(CFG.correctPoints + combo * CFG.comboMultiplier);
+    flashBin(binEl, 'flash-correct');
+    sfxCorrect();
+    if (combo >= 3) showCombo(combo);
+    if (missing.length > 0) {
+      showTimePop(-timePenalty, binEl ? binEl.getBoundingClientRect().left + 20 : window.innerWidth/2,
+                                binEl ? binEl.getBoundingClientRect().top + 20 : 100);
+    }
+  } else {
+    combo = 0;
+    adjustTimer(-CFG.wrongSortPenalty, binEl);
+    addScore(CFG.wrongPoints);
+    flashBin(binEl, 'flash-wrong');
+    sfxWrong();
+    // Show correct bin briefly
+    const correctBinEl = document.querySelector(`.bin[data-color="${currentItem.bin}"]`);
+    if (correctBinEl) flashBin(correctBinEl, 'flash-correct');
+    $hintBar.textContent = '❌ Wrong! → ' + BINS[currentItem.bin].name + ' | ' + currentItem.hint;
+  }
+
+  setTimeout(() => showNextItem(), 250);
+}
+
+function flashBin(el, cls) {
+  if (!el) return;
+  el.classList.remove('flash-correct','flash-wrong');
+  void el.offsetWidth;
+  el.classList.add(cls);
+  setTimeout(() => el.classList.remove(cls), 600);
+}
+
+/* ── ACTIONS ─────────────────────────────────────────────────────── */
+function applyAction(actionId, btnEl) {
+  if (!currentItem || state !== 'playing') return;
+  if (actionsApplied.has(actionId)) return; // already applied
+
+  const isRequired = currentItem.required.includes(actionId);
+  const isBonus    = currentItem.bonus.includes(actionId);
+  const isApplicable = isRequired || isBonus;
+
+  if (isApplicable) {
+    actionsApplied.add(actionId);
+    adjustTimer(CFG.bonusActionReward, btnEl);
+    addScore(CFG.actionPoints);
+    flashBtn(btnEl, 'flash-good');
+    btnEl.classList.add('used');
+    sfxAction();
+    // Update required badge if applicable
+    const badge = $reqBadges.querySelector(`[data-action="${actionId}"]`);
+    if (badge) badge.classList.add('done');
+  } else {
+    adjustTimer(-CFG.wrongActionPenalty, btnEl);
+    flashBtn(btnEl, 'flash-bad');
+    sfxActionBad();
+  }
+}
+
+function flashBtn(el, cls) {
+  el.classList.remove('flash-good','flash-bad');
+  void el.offsetWidth;
+  el.classList.add(cls);
+  setTimeout(() => el.classList.remove(cls), 450);
+}
+
+/* ── COMBO BANNER ────────────────────────────────────────────────── */
+function showCombo(n) {
+  const msgs = {3:'🔥 Triple!', 4:'⚡ Quad!', 5:'🌟 Awesome!', 6:'💥 Unstoppable!', 7:'🚀 Legend!'};
+  const msg = msgs[n] || (n + 'x Combo! 🎉');
+  $comboBanner.textContent = msg;
+  $comboBanner.classList.remove('show');
+  void $comboBanner.offsetWidth;
+  $comboBanner.classList.add('show');
+  sfxCombo();
+  setTimeout(() => $comboBanner.classList.remove('show'), 1400);
+}
+
+/* ── TIME FEEDBACK POPUP ─────────────────────────────────────────── */
+function showTimePop(delta, x, y) {
+  const el = document.createElement('div');
+  el.className = 'time-pop';
+  el.textContent = delta > 0 ? `+${delta}s` : `${delta}s`;
+  el.style.color  = delta > 0 ? '#2ecc71' : '#e74c3c';
+  el.style.left   = x + 'px';
+  el.style.top    = y + 'px';
+  el.style.transform = 'translate(-50%,-50%)';
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 1300);
+}
+
+/* ── DRAG & DROP ─────────────────────────────────────────────────── */
+let isDragging = false;
+let dragStartX = 0, dragStartY = 0;
+let dragOffX = 0, dragOffY = 0;
+const TAP_THRESHOLD = 10; // px — movement within this = tap, not drag
+
+function initDrag() {
+  $itemCard.addEventListener('pointerdown', onPointerDown);
+  document.addEventListener('pointermove', onPointerMove);
+  document.addEventListener('pointerup',   onPointerUp);
+}
+
+function onPointerDown(e) {
+  if (state !== 'playing' || !currentItem) return;
+  e.preventDefault();
+  isDragging = true;
+  dragStartX = e.clientX;
+  dragStartY = e.clientY;
+  const rect = $itemCard.getBoundingClientRect();
+  dragOffX = e.clientX - (rect.left + rect.width / 2);
+  dragOffY = e.clientY - (rect.top  + rect.height / 2);
+  $itemCard.classList.add('dragging');
+  $dragGhostEmoji.textContent = currentItem.emoji;
+  $dragGhost.style.left = (e.clientX - 30) + 'px';
+  $dragGhost.style.top  = (e.clientY - 40) + 'px';
+  $dragGhost.classList.add('active');
+}
+
+function onPointerMove(e) {
+  if (!isDragging) return;
+  e.preventDefault();
+  $dragGhost.style.left = (e.clientX - 30) + 'px';
+  $dragGhost.style.top  = (e.clientY - 40) + 'px';
+  // Highlight hovered bin
+  document.querySelectorAll('.bin').forEach(b => b.classList.remove('drag-over'));
+  const target = document.elementFromPoint(e.clientX, e.clientY);
+  const bin = target && target.closest('.bin');
+  if (bin) bin.classList.add('drag-over');
+}
+
+function onPointerUp(e) {
+  if (!isDragging) return;
+  isDragging = false;
+  $dragGhost.classList.remove('active');
+  $itemCard.classList.remove('dragging');
+  document.querySelectorAll('.bin').forEach(b => b.classList.remove('drag-over'));
+
+  const target = document.elementFromPoint(e.clientX, e.clientY);
+  const bin = target && target.closest('.bin');
+  if (bin) {
+    sortItem(bin.dataset.color, bin);
+  } else {
+    // Distinguish tap from drag using actual start/end distance
+    const dx = Math.abs(e.clientX - dragStartX);
+    const dy = Math.abs(e.clientY - dragStartY);
+    const onCard = e.target && e.target.closest('#itemCard');
+    if (onCard && dx < TAP_THRESHOLD && dy < TAP_THRESHOLD) {
+      // Tap on card = toggle select for subsequent tap-to-sort
+      itemsSelected = !itemsSelected;
+      $itemCard.classList.toggle('selected', itemsSelected);
+    }
+  }
+}
+
+function cancelDrag() {
+  isDragging = false;
+  $dragGhost.classList.remove('active');
+  $itemCard.classList.remove('dragging','selected');
+  document.querySelectorAll('.bin').forEach(b => b.classList.remove('drag-over'));
+}
+
+/* ── GAME FLOW ───────────────────────────────────────────────────── */
+function startGame() {
+  state = 'playing';
+  score = 0;
+  timer = CFG.startTime;
+  timerMax = CFG.startTime;
+  combo = 0;
+  totalSorted = 0;
+  correctSorted = 0;
+  itemQueue = shuffle(ITEMS);
+
+  $scoreDisplay.textContent = '0';
+  $highScoreDisplay.textContent = highScore;
+  $gameScreen.classList.remove('urgency1','urgency2','urgency3');
+  $edgeGlow.className = '';
+
+  showScreen($gameScreen);
+  updateTimerUI();
+  showNextItem();
+  startTimer();
+}
+
+function endGame() {
+  state = 'gameover';
+  stopPanicBeep();
+  if (rafId) cancelAnimationFrame(rafId);
+  sfxGameOver();
+
+  const isNew = score > highScore;
+  if (isNew) {
+    highScore = score;
+    localStorage.setItem('rrHighScore', highScore);
+  }
+  $startHs.textContent = highScore;
+
+  $goScore.textContent = score;
+  $goBest.textContent  = highScore;
+  $goItems.textContent = correctSorted;
+  $goNewRecord.style.display = isNew ? 'block' : 'none';
+  const acc = totalSorted > 0 ? Math.round((correctSorted / totalSorted) * 100) : 0;
+  $statsLine.textContent = `${totalSorted} items attempted · ${acc}% accuracy`;
+
+  showScreen($gameOverScreen);
+}
+
+/* ── SCREEN MANAGER ──────────────────────────────────────────────── */
+function showScreen(el) {
+  [$startScreen, $gameScreen, $gameOverScreen].forEach(s => s.classList.add('hidden'));
+  el.classList.remove('hidden');
+}
+
+/* ── EVENT LISTENERS ─────────────────────────────────────────────── */
+document.getElementById('btnPlay').addEventListener('click', () => startGame());
+document.getElementById('btnAgain').addEventListener('click', () => startGame());
+
+// Bin tap (for tap-to-sort)
+document.querySelectorAll('.bin').forEach(bin => {
+  bin.addEventListener('pointerup', (e) => {
+    if (isDragging) return; // handled by drag system
+    if (state !== 'playing' || !currentItem) return;
+    if (itemsSelected) {
+      sortItem(bin.dataset.color, bin);
+    }
+  });
+  // Also allow direct click without prior select
+  bin.addEventListener('click', (e) => {
+    if (isDragging || !itemsSelected) return;
+    if (state !== 'playing') return;
+    sortItem(bin.dataset.color, bin);
+  });
+});
+
+// Action buttons
+document.querySelectorAll('.action-btn').forEach(btn => {
+  btn.addEventListener('pointerup', (e) => {
+    e.stopPropagation();
+    applyAction(btn.dataset.action, btn);
+  });
+});
+
+// Init drag
+initDrag();
+
+// Prevent context menu on long-press
+document.addEventListener('contextmenu', e => e.preventDefault());
+
+/* ── INITIAL RENDER ──────────────────────────────────────────────── */
+$startHs.textContent = highScore;
+showScreen($startScreen);
+</script>
+</body>
+</html>

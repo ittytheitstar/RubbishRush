@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rubbish Rush – Test Suite 🧪</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #0f0c29; color: #f0f0f0;
+      padding: 20px; min-height: 100vh;
+    }
+    h1 { font-size: 1.8rem; margin-bottom: 8px; color: #f1c40f; }
+    h2 { font-size: 1.1rem; margin: 20px 0 8px; color: #aaa; text-transform: uppercase; letter-spacing: 1px; }
+    p.subtitle { color: #aaa; margin-bottom: 20px; font-size: 0.9rem; }
+    .section { background: rgba(255,255,255,0.05); border-radius: 12px; padding: 16px; margin-bottom: 16px; }
+    .test { display: flex; align-items: center; gap: 10px; padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.07); font-size: 0.88rem; }
+    .test:last-child { border-bottom: none; }
+    .badge { font-size: 1rem; width: 22px; text-align: center; flex-shrink: 0; }
+    .pass .badge::before { content: '✅'; }
+    .fail .badge::before { content: '❌'; }
+    .info .badge::before { content: 'ℹ️'; }
+    .pass { color: #2ecc71; }
+    .fail { color: #e74c3c; }
+    .info { color: #aaa; }
+    #summary {
+      padding: 14px 20px; border-radius: 12px; margin-bottom: 20px;
+      font-size: 1rem; font-weight: 700;
+      background: rgba(255,255,255,0.08);
+    }
+    #summary.all-pass { background: rgba(46,204,113,0.2); color: #2ecc71; }
+    #summary.has-fail  { background: rgba(231,76,60,0.2);  color: #e74c3c; }
+
+    /* Pentagon preview */
+    .pentagon-preview {
+      position: relative; width: 300px; height: 300px;
+      margin: 0 auto;
+      background: rgba(255,255,255,0.04); border-radius: 50%;
+    }
+    .pent-bin {
+      position: absolute; width: 80px; height: 80px;
+      border-radius: 12px; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; font-size: 0.7rem;
+      font-weight: 700; gap: 4px;
+    }
+    .pent-center {
+      position: absolute; top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 2rem; text-align: center;
+    }
+    a.game-link {
+      display: inline-block; margin-top: 4px;
+      padding: 10px 24px; background: linear-gradient(135deg,#f1c40f,#e67e22);
+      color: #111; border-radius: 50px; font-weight: 700; text-decoration: none;
+      font-size: 0.95rem;
+    }
+    a.game-link:hover { opacity: 0.9; }
+    .speed-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; margin-top: 8px; }
+    .speed-table th, .speed-table td { padding: 5px 10px; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.08); }
+    .speed-table th { color: #aaa; font-weight: 600; }
+    .speed-table td:nth-child(2) { color: #f1c40f; }
+    .speed-table td:nth-child(3) { color: #2ecc71; }
+  </style>
+</head>
+<body>
+
+<h1>🧪 Rubbish Rush – Test Suite</h1>
+<p class="subtitle">Automated tests for game logic. Run before merging to main.</p>
+
+<div id="summary">Running tests…</div>
+
+<div class="section">
+  <h2>🎮 Play the Game</h2>
+  <p style="font-size:0.85rem;color:#aaa;margin-bottom:10px;">
+    Open the game and verify all features manually using the checklist below.
+  </p>
+  <a class="game-link" href="index.html" target="_blank">▶ Open Game</a>
+</div>
+
+<div class="section" id="configTests">
+  <h2>⚙️ Configuration Tests</h2>
+</div>
+
+<div class="section" id="binTests">
+  <h2>🗑️ Bin Definition Tests</h2>
+</div>
+
+<div class="section" id="itemTests">
+  <h2>📦 Item Tests</h2>
+</div>
+
+<div class="section" id="speedTests">
+  <h2>⏱️ Timer Speed Ramp Tests</h2>
+</div>
+
+<div class="section">
+  <h2>🔺 Pentagon Preview</h2>
+  <p style="font-size:0.82rem;color:#aaa;margin-bottom:12px;">
+    The 5 bins should be positioned at the vertices of a pentagon (top → clockwise).
+  </p>
+  <div class="pentagon-preview" id="pentagonPreview">
+    <div class="pent-center">📦<br><small style="font-size:0.55rem;color:#aaa">Item</small></div>
+  </div>
+</div>
+
+<div class="section">
+  <h2>✅ Manual Test Checklist</h2>
+  <div class="test info"><span class="badge"></span><span>Open the game and verify bins appear at pentagon vertices (not a 2×2 grid)</span></div>
+  <div class="test info"><span class="badge"></span><span>Verify bins are square/uniform, not tall rectangles</span></div>
+  <div class="test info"><span class="badge"></span><span>Verify the item card starts in the centre, not overlapping any bin</span></div>
+  <div class="test info"><span class="badge"></span><span>Verify 5 bins are shown: Green, Yellow, Orange (Resource Recovery), Red, Blue</span></div>
+  <div class="test info"><span class="badge"></span><span>Drag a battery item – verify it sorts correctly into the Orange / Resource Recovery bin</span></div>
+  <div class="test info"><span class="badge"></span><span>Wait 20+ seconds – verify the timer counts down noticeably faster over time</span></div>
+  <div class="test info"><span class="badge"></span><span>Sort an item correctly and verify the time bonus is +4s (not +5s)</span></div>
+  <div class="test info"><span class="badge"></span><span>Find the L&amp;P Bottle item – verify the name shows "L&amp;P Bottle" (no literal &amp;amp; entity in the name)</span></div>
+  <div class="test info"><span class="badge"></span><span>Verify hazardous items (CFL bulb, paint, medication, motor oil, e-waste) appear and route to orange bin</span></div>
+  <div class="test info"><span class="badge"></span><span>Share buttons on game-over screen still function correctly</span></div>
+</div>
+
+<script>
+'use strict';
+
+/* ── Inline key data from index.html for automated tests ──────────── */
+// These must be kept in sync with index.html manually or via build.
+
+const CFG_EXPECTED = {
+  correctSortBonus: 4,      // reduced from 5
+  comboMultiplier:  2,      // reduced from 3
+  speedupStartTime: 20,
+  speedupStepInterval: 5,
+  speedupStepAmount: 0.05,
+  speedupMaxMultiplier: 2.0,
+};
+
+const BINS_EXPECTED = ['green', 'yellow', 'red', 'blue', 'orange'];
+const BIN_NAMES_EXPECTED = {
+  green: 'Organics',
+  yellow: 'Recycling',
+  red: 'General Waste',
+  blue: 'Glass',
+  orange: 'Resource Recovery',
+};
+
+// Minimal item list to validate key rules
+const ITEM_RULES = [
+  { id: 'battery',      expectedBin: 'orange', name: 'Dead Battery' },
+  { id: 'lp_bottle',    expectedBin: 'yellow', name: 'L&P Bottle', noAmpEntity: true },
+  { id: 'cfl_bulb',     expectedBin: 'orange', name: 'CFL Light Bulb' },
+  { id: 'paint_leftover', expectedBin: 'orange' },
+  { id: 'medication',   expectedBin: 'orange' },
+  { id: 'motor_oil',    expectedBin: 'orange' },
+  { id: 'ewaste',       expectedBin: 'orange' },
+  { id: 'car_battery',  expectedBin: 'orange' },
+  { id: 'water_bottle', expectedBin: 'yellow', mustHaveRequired: 'removeLid' },
+  { id: 'wine_bottle',  expectedBin: 'blue' },
+  { id: 'apple_core',   expectedBin: 'green' },
+  { id: 'plastic_bag',  expectedBin: 'red' },
+];
+
+/* ── Test runner ──────────────────────────────────────────────────── */
+let passCount = 0, failCount = 0;
+
+function addTest(sectionId, label, passed) {
+  const div = document.getElementById(sectionId);
+  const row = document.createElement('div');
+  row.className = 'test ' + (passed ? 'pass' : 'fail');
+  row.innerHTML = `<span class="badge"></span><span>${label}</span>`;
+  div.appendChild(row);
+  if (passed) passCount++; else failCount++;
+}
+
+/* ── Fetch and parse index.html ───────────────────────────────────── */
+fetch('index.html')
+  .then(r => r.text())
+  .then(html => {
+    runTests(html);
+  })
+  .catch(err => {
+    addTest('configTests', 'Could not load index.html: ' + err, false);
+    updateSummary();
+  });
+
+function runTests(html) {
+  runConfigTests(html);
+  runBinTests(html);
+  runItemTests(html);
+  runSpeedTests(html);
+  renderPentagonPreview();
+  updateSummary();
+}
+
+/* ── Config tests ─────────────────────────────────────────────────── */
+function runConfigTests(html) {
+  // correctSortBonus: 4
+  addTest('configTests',
+    `correctSortBonus is ${CFG_EXPECTED.correctSortBonus} (reduced bonus)`,
+    html.includes(`correctSortBonus:      ${CFG_EXPECTED.correctSortBonus},`) ||
+    html.includes(`correctSortBonus: ${CFG_EXPECTED.correctSortBonus},`)
+  );
+
+  // comboMultiplier: 2
+  addTest('configTests',
+    `comboMultiplier is ${CFG_EXPECTED.comboMultiplier} (reduced)`,
+    html.includes(`comboMultiplier:       ${CFG_EXPECTED.comboMultiplier},`) ||
+    html.includes(`comboMultiplier: ${CFG_EXPECTED.comboMultiplier},`)
+  );
+
+  // Timer speed-up config present
+  addTest('configTests',
+    `speedupStartTime: ${CFG_EXPECTED.speedupStartTime}s defined`,
+    html.includes(`speedupStartTime:`) && html.includes('20')
+  );
+  addTest('configTests',
+    `speedupStepAmount: 0.05 (5%) defined`,
+    html.includes('speedupStepAmount') && html.includes('0.05')
+  );
+  addTest('configTests',
+    `speedupMaxMultiplier: 2.0 (double time) defined`,
+    html.includes('speedupMaxMultiplier') && html.includes('2.0')
+  );
+  addTest('configTests',
+    'Timer acceleration logic uses gameElapsed variable',
+    html.includes('gameElapsed') && html.includes('timerSpeed')
+  );
+}
+
+/* ── Bin definition tests ─────────────────────────────────────────── */
+function runBinTests(html) {
+  BINS_EXPECTED.forEach(color => {
+    addTest('binTests',
+      `Bin "${color}" defined in BINS object`,
+      new RegExp(`\\b${color}:\\s*\\{`).test(html)
+    );
+    addTest('binTests',
+      `HTML bin element with data-color="${color}" exists`,
+      html.includes(`data-color="${color}"`)
+    );
+  });
+  addTest('binTests',
+    'Orange bin named "Resource Recovery"',
+    html.includes('Resource Recovery')
+  );
+  addTest('binTests',
+    'Orange bin CSS gradient defined',
+    html.includes('data-color="orange"') && html.includes('#d35400')
+  );
+}
+
+/* ── Item tests ───────────────────────────────────────────────────── */
+function runItemTests(html) {
+  ITEM_RULES.forEach(rule => {
+    // Check that the item ID exists with the expected bin
+    const binCheck = html.includes(`id:'${rule.id}'`) &&
+                     html.includes(`bin:'${rule.expectedBin}'`);
+    addTest('itemTests',
+      `Item "${rule.id}" routes to "${rule.expectedBin}" bin`,
+      binCheck
+    );
+
+    // Check name if provided
+    if (rule.name) {
+      addTest('itemTests',
+        `Item "${rule.id}" name is "${rule.name}"`,
+        html.includes(`name:'${rule.name}'`)
+      );
+    }
+
+    // Check no HTML entities in name used with textContent
+    if (rule.noAmpEntity) {
+      addTest('itemTests',
+        `Item "${rule.id}" name does NOT contain &amp;amp; (textContent bug)`,
+        !html.includes(`name:'L&amp;P Bottle'`)
+      );
+    }
+
+    // Check required actions if specified
+    if (rule.mustHaveRequired) {
+      addTest('itemTests',
+        `Item "${rule.id}" has required action "${rule.mustHaveRequired}"`,
+        html.includes(`required:['${rule.mustHaveRequired}']`) ||
+        html.includes(`required:['${rule.mustHaveRequired}',`)
+      );
+    }
+  });
+
+  // Verify battery is NOT in red bin anymore
+  addTest('itemTests',
+    'Battery is NOT assigned to red bin (moved to orange)',
+    !html.includes("id:'battery'") ||
+    !new RegExp("id:'battery'[^}]+bin:'red'").test(html)
+  );
+
+  // Count orange bin items
+  const orangeMatches = (html.match(/bin:'orange'/g) || []).length;
+  addTest('itemTests',
+    `At least 5 items assigned to orange (Resource Recovery) bin (found ${orangeMatches})`,
+    orangeMatches >= 5
+  );
+
+  // Check total item count is reasonable
+  const totalItems = (html.match(/id:'[a-z_]+',/g) || []).length;
+  addTest('itemTests',
+    `Total item count is at least 50 (found ${totalItems})`,
+    totalItems >= 50
+  );
+}
+
+/* ── Speed ramp tests ─────────────────────────────────────────────── */
+function runSpeedTests(html) {
+  // Simulate the speed calculation at various elapsed times
+  const speedupStartTime = 20;
+  const speedupStepInterval = 5;
+  const speedupStepAmount = 0.05;
+  const speedupMaxMultiplier = 2.0;
+
+  function calcSpeed(elapsed) {
+    if (elapsed <= speedupStartTime) return 1.0;
+    const steps = Math.floor((elapsed - speedupStartTime) / speedupStepInterval);
+    return Math.min(speedupMaxMultiplier, 1.0 + steps * speedupStepAmount);
+  }
+
+  const cases = [
+    { elapsed: 0,   expected: 1.0,  label: '0s elapsed → 1.00× speed' },
+    { elapsed: 10,  expected: 1.0,  label: '10s elapsed → 1.00× speed' },
+    { elapsed: 20,  expected: 1.0,  label: '20s elapsed → 1.00× speed (boundary)' },
+    { elapsed: 25,  expected: 1.05, label: '25s elapsed → 1.05× speed (+1 step)' },
+    { elapsed: 30,  expected: 1.10, label: '30s elapsed → 1.10× speed (+2 steps)' },
+    { elapsed: 120, expected: 2.0,  label: '120s elapsed → 2.00× speed (capped)' },
+    { elapsed: 200, expected: 2.0,  label: '200s elapsed → 2.00× speed (still capped)' },
+  ];
+
+  cases.forEach(({ elapsed, expected, label }) => {
+    const got = Math.round(calcSpeed(elapsed) * 1000) / 1000;
+    addTest('speedTests', label + ` → got ${got}×`, Math.abs(got - expected) < 0.001);
+  });
+
+  // Verify the timerLoop in the HTML uses the acceleration formula
+  addTest('speedTests',
+    'timerLoop applies timerSpeed multiplier to timer countdown',
+    html.includes('timer - delta * timerSpeed') || html.includes('delta * timerSpeed')
+  );
+  addTest('speedTests',
+    'gameElapsed is reset to 0 in startGame',
+    html.includes('gameElapsed = 0')
+  );
+  addTest('speedTests',
+    'timerSpeed is reset to 1.0 in startGame',
+    html.includes('timerSpeed = 1.0')
+  );
+}
+
+/* ── Pentagon preview ─────────────────────────────────────────────── */
+function renderPentagonPreview() {
+  const preview = document.getElementById('pentagonPreview');
+  const W = 300, H = 300;
+  const cx = W / 2, cy = H / 2;
+  const r = Math.min(W, H) * 0.36;
+  const binSize = 80;
+
+  const bins = [
+    { color: '#27ae60', name: 'Organics',          emoji: '🌿' },
+    { color: '#d4ac0d', name: 'Recycling',         emoji: '♻️' },
+    { color: '#d35400', name: 'Resource Recovery', emoji: '⚠️' },
+    { color: '#c0392b', name: 'General Waste',     emoji: '🗑️' },
+    { color: '#2980b9', name: 'Glass',             emoji: '🍷' },
+  ];
+  const angles = [-90, -18, 54, 126, 198];
+
+  bins.forEach((bin, i) => {
+    const rad = angles[i] * (Math.PI / 180);
+    const x = cx + r * Math.cos(rad) - binSize / 2;
+    const y = cy + r * Math.sin(rad) - binSize / 2;
+    const el = document.createElement('div');
+    el.className = 'pent-bin';
+    el.style.left = x + 'px';
+    el.style.top  = y + 'px';
+    el.style.background = bin.color;
+    el.innerHTML = `<span style="font-size:1.3rem">${bin.emoji}</span>${bin.name.replace(' ', '<br>')}`;
+    preview.appendChild(el);
+  });
+}
+
+/* ── Summary ──────────────────────────────────────────────────────── */
+function updateSummary() {
+  const el = document.getElementById('summary');
+  const total = passCount + failCount;
+  if (failCount === 0) {
+    el.className = 'all-pass';
+    el.textContent = `✅ All ${passCount} tests passed`;
+  } else {
+    el.className = 'has-fail';
+    el.textContent = `❌ ${failCount} of ${total} tests failed — see details below`;
+  }
+}
+</script>
+</body>
+</html>

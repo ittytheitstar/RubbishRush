@@ -149,11 +149,7 @@
     /* ── Game Area ────────────────────────────────────────────────── */
     #gameArea {
       flex: 1; position: relative;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      grid-template-rows: 1fr 1fr;
-      gap: clamp(6px,2vw,12px);
-      padding: clamp(6px,2vw,12px);
+      width: 100%;
       min-height: 0;
     }
 
@@ -164,8 +160,10 @@
       gap: 4px; cursor: pointer;
       transition: transform 0.15s, box-shadow 0.2s, filter 0.2s;
       border: 3px solid transparent;
-      position: relative; overflow: hidden;
-      min-height: 0;
+      position: absolute; overflow: hidden;
+      /* Size must match CFG.binSizeMin/binSizeVw/binSizeMax in JS */
+      width: clamp(88px, 20vw, 128px);
+      height: clamp(88px, 20vw, 128px);
     }
     .bin::before {
       content: ''; position: absolute; inset: 0;
@@ -201,6 +199,7 @@
     .bin[data-color="yellow"] { background: linear-gradient(160deg,#d4ac0d,#b7950b); --bin-color: #f1c40f; }
     .bin[data-color="green"]  { background: linear-gradient(160deg,#27ae60,#1e8449); --bin-color: #2ecc71; }
     .bin[data-color="blue"]   { background: linear-gradient(160deg,#2980b9,#1a6091); --bin-color: #3498db; }
+    .bin[data-color="orange"] { background: linear-gradient(160deg,#d35400,#a84300); --bin-color: #e67e22; }
 
     .bin-icon { font-size: clamp(2rem,7vw,3.5rem); line-height: 1; }
     .bin-name {
@@ -216,8 +215,8 @@
     /* ── Wheelie Bin Visual ───────────────────────────────────────── */
     .bin-visual {
       position: relative;
-      width: clamp(34px,9vw,54px);
-      height: clamp(44px,12vw,68px);
+      width: clamp(28px,7vw,42px);
+      height: clamp(28px,7vw,42px);
       flex-shrink: 0;
     }
     .bv-handle {
@@ -538,6 +537,7 @@
       <p>
         <span class="bin-tag" style="background:#27ae60">GREEN</span> Organics – food scraps &amp; garden waste<br>
         <span class="bin-tag" style="background:#d4ac0d;color:#111">YELLOW</span> Recycling – clean plastics (1,2,5), cans, paper &amp; cardboard<br>
+        <span class="bin-tag" style="background:#d35400">ORANGE</span> Resource Recovery – hazardous items (batteries, chemicals, e-waste)<br>
         <span class="bin-tag" style="background:#c0392b">RED</span> General Waste – non-recyclables, soft plastics, aerosols<br>
         <span class="bin-tag" style="background:#2980b9">BLUE</span> Glass – clean clear glass bottles &amp; jars (no lids!)
       </p>
@@ -569,7 +569,7 @@
   <!-- Hint Bar -->
   <div id="hintBar">Sort the item into the correct bin!</div>
 
-  <!-- Game Area: 2×2 bins + floating item card -->
+  <!-- Game Area: 5 bins in pentagon + floating item card -->
   <div id="gameArea">
     <div class="bin" data-color="green" id="binGreen">
       <div class="bin-visual">
@@ -590,6 +590,16 @@
       </div>
       <div class="bin-name">Recycling</div>
       <div class="bin-sub">Plastic, Cans &amp; Paper</div>
+    </div>
+    <div class="bin" data-color="orange" id="binOrange">
+      <div class="bin-visual">
+        <div class="bv-handle"></div>
+        <div class="bv-lid"></div>
+        <div class="bv-body"><div class="bv-rib"></div></div>
+        <div class="bv-wheels"><div class="bv-wheel"></div><div class="bv-wheel"></div></div>
+      </div>
+      <div class="bin-name">Resource Recovery</div>
+      <div class="bin-sub">Hazardous Items</div>
     </div>
     <div class="bin" data-color="red" id="binRed">
       <div class="bin-visual">
@@ -715,7 +725,7 @@
 /* ── CONFIG ──────────────────────────────────────────────────────── */
 const CFG = {
   startTime:            60,
-  correctSortBonus:      5,   // seconds
+  correctSortBonus:      4,   // seconds (reduced from 5)
   wrongSortPenalty:      7,
   missingActionPenalty:  4,   // per missing required action
   bonusActionReward:     2,
@@ -723,10 +733,19 @@ const CFG = {
   correctPoints:        10,
   wrongPoints:          -5,
   actionPoints:          3,
-  comboMultiplier:       3,   // extra points per combo level
+  comboMultiplier:       2,   // extra points per combo level (reduced from 3)
   urgency1:             25,   // orange warning threshold
   urgency2:             12,   // red danger threshold
   urgency3:              5,   // panic threshold
+  // Timer acceleration: real-time for first 20s, then +5% every 5s up to 2× speed
+  speedupStartTime:     20,   // seconds of real elapsed time before acceleration begins
+  speedupStepInterval:   5,   // seconds between each speed increase
+  speedupStepAmount:  0.05,   // 5% per step
+  speedupMaxMultiplier:  2.0, // cap at 2× (double time)
+  // Bin layout (must match CSS clamp values in .bin { width/height })
+  binSizeMax:          128,   // px – max bin dimension (CSS clamp max)
+  binSizeMin:           88,   // px – min bin dimension (CSS clamp min)
+  binSizeVw:          0.20,   // fraction of viewport width for mid-range clamp
 };
 
 /* ── ITEMS DATABASE ──────────────────────────────────────────────── */
@@ -742,7 +761,7 @@ const ITEMS = [
   { id:'polystyrene',     name:'Polystyrene Container',  emoji:'🥡', bin:'red',    required:[], bonus:[],           hint:'Polystyrene foam is not accepted in NZ kerbside recycling' },
   { id:'broken_glass',    name:'Broken Glass',           emoji:'🪟', bin:'red',    required:[], bonus:[],           hint:'Broken glass is dangerous – wrap &amp; red bin it! (Not the blue glass bin)' },
   { id:'dog_poo',         name:'Dog Poo Bag',            emoji:'💩', bin:'red',    required:[], bonus:[],           hint:'Bag it, bin it – general waste only' },
-  { id:'battery',         name:'Dead Battery',           emoji:'🔋', bin:'red',    required:[], bonus:[],           hint:'Batteries are hazardous – take to a resource recovery park' },
+  { id:'battery',         name:'Dead Battery',           emoji:'🔋', bin:'orange', required:[], bonus:[],           hint:'Batteries are hazardous – take to a Resource Recovery centre!' },
   { id:'chip_packet',     name:'Chip Packet',            emoji:'🍟', bin:'red',    required:[], bonus:[],           hint:'Foil &amp; plastic wrappers go in the red bin' },
   { id:'noodles_dirty',   name:'Dirty Noodle Container', emoji:'🍜', bin:'red',    required:[], bonus:[],           hint:'Dirty food containers cannot be recycled' },
   { id:'cling_wrap',      name:'Cling Wrap',             emoji:'🥗', bin:'red',    required:[], bonus:[],           hint:'Cling wrap is a soft plastic – red bin' },
@@ -760,7 +779,7 @@ const ITEMS = [
   { id:'beer_can',        name:'Beer Can',               emoji:'🍺', bin:'yellow', required:[],            bonus:['rinse'],              hint:'Aluminium cans – rinse before recycling in the yellow bin' },
   { id:'tin_can',         name:'Tin Can',                emoji:'🥫', bin:'yellow', required:[],            bonus:['rinse'],              hint:'Steel cans are recyclable – give them a rinse!' },
   { id:'shampoo_bottle',  name:'Shampoo Bottle',         emoji:'🧴', bin:'yellow', required:['removeLid'], bonus:['rinse'],              hint:'Plastic bottles (grade 2) – lid off, rinse, yellow recycling!' },
-  { id:'lp_bottle',       name:'L&amp;P Bottle',         emoji:'🍋', bin:'yellow', required:['removeLid'], bonus:['rinse'],              hint:'Kiwi classic – plastic bottle, lid off, yellow bin!' },
+  { id:'lp_bottle',       name:'L&P Bottle',             emoji:'🍋', bin:'yellow', required:['removeLid'], bonus:['rinse'],              hint:'Kiwi classic – plastic bottle, lid off, yellow bin!' },
   { id:'milo_tin',        name:'Milo Tin',               emoji:'🫙', bin:'yellow', required:[],            bonus:['rinse','removeLabel'], hint:'Steel tins are fully recyclable – Kiwi favourite!' },
   { id:'paint_tin_empty', name:'Empty Paint Tin',        emoji:'🪣', bin:'yellow', required:[],            bonus:['clean'],              hint:'Completely empty, dry metal tins can go in yellow bin' },
   { id:'newspaper',       name:'Newspaper',              emoji:'📰', bin:'yellow', required:[], bonus:[],           hint:'Paper &amp; newspapers go in the yellow recycling bin' },
@@ -794,14 +813,25 @@ const ITEMS = [
   { id:'champagne_bottle', name:'Champagne Bottle',      emoji:'🍾', bin:'blue',   required:[],            bonus:['rinse'], hint:'Glass champagne bottles go in the blue glass recycling bin!' },
   { id:'honey_jar',        name:'Honey Jar',             emoji:'🍯', bin:'blue',   required:['removeLid'], bonus:['rinse'], hint:'Glass honey jars – remove lid, rinse, blue glass bin!' },
   { id:'glass_beer_bottle',name:'Glass Beer Bottle',     emoji:'🍶', bin:'blue',   required:[],            bonus:['rinse'], hint:'Glass bottles belong in the blue glass recycling bin – not cans!' },
+
+  /* ---- ORANGE BIN — Resource Recovery (Hazardous) ---- */
+  { id:'cfl_bulb',        name:'CFL Light Bulb',         emoji:'💡', bin:'orange', required:[], bonus:[],           hint:'Fluorescent &amp; CFL bulbs contain mercury – Resource Recovery only!' },
+  { id:'paint_leftover',  name:'Leftover Paint',         emoji:'🎨', bin:'orange', required:[], bonus:[],           hint:'Partially-used paint is hazardous – take to Resource Recovery!' },
+  { id:'medication',      name:'Old Medication',         emoji:'💊', bin:'orange', required:[], bonus:[],           hint:'Old pills &amp; medication go to a pharmacy or Resource Recovery centre' },
+  { id:'motor_oil',       name:'Used Motor Oil',         emoji:'🛢️', bin:'orange', required:[], bonus:[],           hint:'Used oil is hazardous – Resource Recovery centre only!' },
+  { id:'ewaste',          name:'Old Electronics',        emoji:'📱', bin:'orange', required:[], bonus:[],           hint:'E-waste contains hazardous materials – Resource Recovery!' },
+  { id:'spray_chemical',  name:'Chemical Spray Bottle',  emoji:'🧪', bin:'orange', required:[], bonus:[],           hint:'Household chemicals are hazardous – Resource Recovery centre!' },
+  { id:'smoke_detector',  name:'Old Smoke Detector',     emoji:'🔔', bin:'orange', required:[], bonus:[],           hint:'Smoke detectors contain radioactive material – Resource Recovery!' },
+  { id:'car_battery',     name:'Car Battery',            emoji:'🚗', bin:'orange', required:[], bonus:[],           hint:'Car batteries are highly hazardous – Resource Recovery centre only!' },
 ];
 
 /* ── BIN DEFINITIONS ─────────────────────────────────────────────── */
 const BINS = {
-  green:  { name:'Organics',       color:'#2ecc71' },
-  yellow: { name:'Recycling',      color:'#f1c40f' },
-  red:    { name:'General Waste',  color:'#e74c3c' },
-  blue:   { name:'Glass',          color:'#3498db' },
+  green:  { name:'Organics',          color:'#2ecc71' },
+  yellow: { name:'Recycling',         color:'#f1c40f' },
+  red:    { name:'General Waste',     color:'#e74c3c' },
+  blue:   { name:'Glass',             color:'#3498db' },
+  orange: { name:'Resource Recovery', color:'#e67e22' },
 };
 
 /* ── ACTION DEFINITIONS ──────────────────────────────────────────── */
@@ -879,6 +909,8 @@ let itemsSelected = false; // tap-to-select on mobile
 let combo = 0;
 let totalSorted = 0;
 let correctSorted = 0;
+let gameElapsed = 0;     // real seconds elapsed since game started (for speed ramp)
+let timerSpeed = 1.0;    // current timer countdown multiplier
 
 /* ── DOM REFS ────────────────────────────────────────────────────── */
 const $startScreen    = document.getElementById('startScreen');
@@ -929,7 +961,15 @@ function timerLoop(ts) {
   if (lastTimestamp === null) lastTimestamp = ts;
   const delta = (ts - lastTimestamp) / 1000;
   lastTimestamp = ts;
-  timer = Math.max(0, timer - delta);
+
+  // Gradually increase timer speed after the first 20 real seconds
+  gameElapsed += delta;
+  if (gameElapsed > CFG.speedupStartTime) {
+    const steps = Math.floor((gameElapsed - CFG.speedupStartTime) / CFG.speedupStepInterval);
+    timerSpeed = Math.min(CFG.speedupMaxMultiplier, 1.0 + steps * CFG.speedupStepAmount);
+  }
+
+  timer = Math.max(0, timer - delta * timerSpeed);
   updateTimerUI();
   if (timer <= 0) { endGame(); return; }
   rafId = requestAnimationFrame(timerLoop);
@@ -1196,6 +1236,44 @@ function cancelDrag() {
   document.querySelectorAll('.bin').forEach(b => b.classList.remove('drag-over'));
 }
 
+/* ── PENTAGON BIN LAYOUT ─────────────────────────────────────────── */
+// Positions the 5 bins at the vertices of a regular pentagon centered in #gameArea.
+// Pentagon starts at top (-90°) and proceeds clockwise in 72° steps.
+function positionBins() {
+  // Defer until the browser has laid out the game area
+  requestAnimationFrame(() => {
+    const area = document.getElementById('gameArea');
+    const W = area.clientWidth;
+    const H = area.clientHeight;
+    if (!W || !H) {
+      // Not ready yet – retry on the next frame
+      requestAnimationFrame(positionBins);
+      return;
+    }
+    const centerX = W / 2;
+    const centerY = H / 2;
+
+    const bins = document.querySelectorAll('.bin');
+    // Compute bin size using the same formula as the CSS clamp(binSizeMin, binSizeVw*vw, binSizeMax)
+    const binW = Math.min(CFG.binSizeMax, Math.max(CFG.binSizeMin, window.innerWidth * CFG.binSizeVw));
+    const binH = binW; // square
+
+    // Radius: 38% of the shorter dimension so bins fit comfortably
+    const r = Math.min(W, H) * 0.38;
+
+    // Pentagon angles (degrees), clockwise from top
+    const angles = [-90, -18, 54, 126, 198];
+
+    bins.forEach((bin, i) => {
+      const rad = angles[i] * (Math.PI / 180);
+      const x = centerX + r * Math.cos(rad) - binW / 2;
+      const y = centerY + r * Math.sin(rad) - binH / 2;
+      bin.style.left = Math.max(0, Math.min(x, W - binW)) + 'px';
+      bin.style.top  = Math.max(0, Math.min(y, H - binH)) + 'px';
+    });
+  });
+}
+
 /* ── GAME FLOW ───────────────────────────────────────────────────── */
 function startGame() {
   state = 'playing';
@@ -1205,6 +1283,8 @@ function startGame() {
   combo = 0;
   totalSorted = 0;
   correctSorted = 0;
+  gameElapsed = 0;
+  timerSpeed = 1.0;
   itemQueue = shuffle(ITEMS);
 
   $scoreDisplay.textContent = '0';
@@ -1213,6 +1293,7 @@ function startGame() {
   $edgeGlow.className = '';
 
   showScreen($gameScreen);
+  positionBins();
   updateTimerUI();
   showNextItem();
   startTimer();
@@ -1278,6 +1359,11 @@ document.querySelectorAll('.action-btn').forEach(btn => {
 
 // Init drag
 initDrag();
+
+// Reposition bins when window is resized
+window.addEventListener('resize', () => {
+  if (state === 'playing') positionBins();
+});
 
 // Prevent context menu on long-press
 document.addEventListener('contextmenu', e => e.preventDefault());

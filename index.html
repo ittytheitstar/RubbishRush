@@ -29,6 +29,7 @@
       transition: opacity 0.3s;
     }
     .screen.hidden { display: none; }
+    .hidden { display: none !important; }
 
     /* ── Start Screen ─────────────────────────────────────────────── */
     #startScreen {
@@ -461,6 +462,42 @@
     }
     .btn-again:hover { transform: scale(1.05); }
 
+    /* ── Share Buttons ────────────────────────────────────────────── */
+    .share-row {
+      display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;
+      margin-top: 4px;
+    }
+    .share-label {
+      font-size: 0.8rem; color: #aaa; text-transform: uppercase; letter-spacing: 1px;
+      width: 100%; text-align: center;
+    }
+    .btn-share {
+      padding: 10px 20px;
+      font-size: clamp(0.85rem,3vw,1rem);
+      font-weight: 700; border: none; border-radius: 50px;
+      cursor: pointer; display: flex; align-items: center; gap: 6px;
+      transition: transform 0.15s, box-shadow 0.15s;
+      text-decoration: none;
+    }
+    .btn-share:hover { transform: scale(1.06); }
+    .btn-share:active { transform: scale(0.96); }
+    .btn-share-x {
+      background: #000; color: #fff;
+      box-shadow: 0 3px 14px rgba(0,0,0,0.4);
+    }
+    .btn-share-fb {
+      background: #1877f2; color: #fff;
+      box-shadow: 0 3px 14px rgba(24,119,242,0.4);
+    }
+    .btn-share-copy {
+      background: rgba(255,255,255,0.12); color: #f0f0f0;
+      box-shadow: 0 3px 14px rgba(255,255,255,0.08);
+    }
+    .btn-share-native {
+      background: linear-gradient(135deg,#2ecc71,#27ae60); color: #fff;
+      box-shadow: 0 3px 14px rgba(46,204,113,0.4);
+    }
+
     /* ── Combo Banner ─────────────────────────────────────────────── */
     #comboBanner {
       position: fixed; top: 20%; left: 50%; transform: translateX(-50%);
@@ -637,6 +674,25 @@
   <div class="go-new-record" id="goNewRecord">🏆 New Record!</div>
   <div id="statsLine"></div>
   <button class="btn-again" id="btnAgain">🔄 Play Again</button>
+  <div class="share-row">
+    <div class="share-label">Share your score</div>
+    <button class="btn-share btn-share-x" id="btnShareX" title="Share on X (Twitter)">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L2.122 2.25h6.955l4.248 5.622L18.244 2.25zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77z"/></svg>
+      Share on X
+    </button>
+    <button class="btn-share btn-share-fb" id="btnShareFb" title="Share on Facebook">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.41c0-3.025 1.792-4.697 4.533-4.697 1.312 0 2.686.236 2.686.236v2.97h-1.513c-1.491 0-1.956.93-1.956 1.883v2.271h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z"/></svg>
+      Share on Facebook
+    </button>
+    <button class="btn-share btn-share-native hidden" id="btnShareNative" title="Share">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+      Share
+    </button>
+    <button class="btn-share btn-share-copy" id="btnShareCopy" title="Copy score to clipboard">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+      Copy
+    </button>
+  </div>
 </div>
 
 <!-- Drag ghost -->
@@ -1225,6 +1281,53 @@ initDrag();
 
 // Prevent context menu on long-press
 document.addEventListener('contextmenu', e => e.preventDefault());
+
+/* ── SHARE ────────────────────────────────────────────────────────── */
+function buildShareText() {
+  const newRecord = score >= highScore && score > 0;
+  const emoji = newRecord ? '🏆' : '🗑️';
+  return `${emoji} I scored ${score} points in Rubbish Rush – the NZ recycling game! My best is ${highScore}. Can you beat it? #RubbishRush`;
+}
+
+// Show native share button only if the Web Share API is available
+if (navigator.share) {
+  document.getElementById('btnShareNative').classList.remove('hidden');
+}
+
+document.getElementById('btnShareX').addEventListener('click', () => {
+  const text = encodeURIComponent(buildShareText());
+  window.open(`https://twitter.com/intent/tweet?text=${text}`, '_blank', 'noopener,noreferrer');
+});
+
+document.getElementById('btnShareFb').addEventListener('click', () => {
+  const text = encodeURIComponent(buildShareText());
+  window.open(`https://www.facebook.com/sharer/sharer.php?quote=${text}&u=${encodeURIComponent(location.href)}`, '_blank', 'noopener,noreferrer');
+});
+
+document.getElementById('btnShareNative').addEventListener('click', () => {
+  navigator.share({ text: buildShareText() }).catch(() => {});
+});
+
+document.getElementById('btnShareCopy').addEventListener('click', () => {
+  const text = buildShareText();
+  const btn = document.getElementById('btnShareCopy');
+  const copiedHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg> Copied!';
+  function showCopied() {
+    const original = btn.innerHTML;
+    btn.innerHTML = copiedHTML;
+    setTimeout(() => { btn.innerHTML = original; }, 2000);
+  }
+  navigator.clipboard.writeText(text).then(showCopied).catch(() => {
+    // Legacy fallback for browsers without the Clipboard API (deprecated but widely supported)
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select();
+    document.execCommand('copy'); // eslint-disable-line no-restricted-globals
+    document.body.removeChild(ta);
+    showCopied();
+  });
+});
 
 /* ── INITIAL RENDER ──────────────────────────────────────────────── */
 $startHs.textContent = highScore;

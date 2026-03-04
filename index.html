@@ -212,6 +212,57 @@
       opacity: 0.8; text-align: center; line-height: 1;
     }
 
+    /* ── Wheelie Bin Visual ───────────────────────────────────────── */
+    .bin-visual {
+      position: relative;
+      width: clamp(34px,9vw,54px);
+      height: clamp(44px,12vw,68px);
+      flex-shrink: 0;
+    }
+    .bv-handle {
+      position: absolute;
+      top: 0; left: 50%;
+      transform: translateX(-50%);
+      width: 30%; height: 22%;
+      border: 2.5px solid rgba(255,255,255,0.8);
+      border-bottom: none;
+      border-radius: 40% 40% 0 0;
+    }
+    .bv-lid {
+      position: absolute;
+      top: 18%; left: -5%;
+      width: 110%; height: 16%;
+      background: rgba(255,255,255,0.5);
+      border-radius: 4px 4px 2px 2px;
+    }
+    .bv-body {
+      position: absolute;
+      top: 33%; left: 2%;
+      width: 96%; height: 52%;
+      background: rgba(255,255,255,0.2);
+      border-radius: 2px 2px 8px 8px;
+      overflow: hidden;
+    }
+    .bv-rib {
+      position: absolute;
+      top: 8%; left: 35%;
+      width: 2px; height: 75%;
+      background: rgba(255,255,255,0.15);
+    }
+    .bv-wheels {
+      position: absolute;
+      bottom: 0; width: 100%;
+      display: flex;
+      justify-content: space-between;
+      padding: 0 10%;
+    }
+    .bv-wheel {
+      width: 16%; aspect-ratio: 1;
+      background: rgba(0,0,0,0.4);
+      border-radius: 50%;
+      border: 1.5px solid rgba(255,255,255,0.4);
+    }
+
     /* ── Item Card ────────────────────────────────────────────────── */
     #itemZone {
       position: absolute;
@@ -449,9 +500,9 @@
       <br>
       <p>
         <span class="bin-tag" style="background:#27ae60">GREEN</span> Organics – food scraps &amp; garden waste<br>
-        <span class="bin-tag" style="background:#d4ac0d;color:#111">YELLOW</span> Recycling – clean &amp; dry plastics, cans, glass<br>
-        <span class="bin-tag" style="background:#c0392b">RED</span> General Waste – non-recyclables, soft plastics<br>
-        <span class="bin-tag" style="background:#2980b9">BLUE</span> Paper &amp; Card – newspapers, cardboard (flatten!)
+        <span class="bin-tag" style="background:#d4ac0d;color:#111">YELLOW</span> Recycling – clean plastics (1,2,5), cans, paper &amp; cardboard<br>
+        <span class="bin-tag" style="background:#c0392b">RED</span> General Waste – non-recyclables, soft plastics, aerosols<br>
+        <span class="bin-tag" style="background:#2980b9">BLUE</span> Glass – clean clear glass bottles &amp; jars (no lids!)
       </p>
       <br>
       <p><strong>⚡ Actions:</strong> Use the action buttons <em>before</em> sorting to earn bonus time.<br>
@@ -484,24 +535,44 @@
   <!-- Game Area: 2×2 bins + floating item card -->
   <div id="gameArea">
     <div class="bin" data-color="green" id="binGreen">
-      <div class="bin-icon">🌿</div>
+      <div class="bin-visual">
+        <div class="bv-handle"></div>
+        <div class="bv-lid"></div>
+        <div class="bv-body"><div class="bv-rib"></div></div>
+        <div class="bv-wheels"><div class="bv-wheel"></div><div class="bv-wheel"></div></div>
+      </div>
       <div class="bin-name">Organics</div>
       <div class="bin-sub">Food &amp; Garden</div>
     </div>
     <div class="bin" data-color="yellow" id="binYellow">
-      <div class="bin-icon">♻️</div>
+      <div class="bin-visual">
+        <div class="bv-handle"></div>
+        <div class="bv-lid"></div>
+        <div class="bv-body"><div class="bv-rib"></div></div>
+        <div class="bv-wheels"><div class="bv-wheel"></div><div class="bv-wheel"></div></div>
+      </div>
       <div class="bin-name">Recycling</div>
-      <div class="bin-sub">Clean &amp; Dry</div>
+      <div class="bin-sub">Plastic, Cans &amp; Paper</div>
     </div>
     <div class="bin" data-color="red" id="binRed">
-      <div class="bin-icon">🗑️</div>
+      <div class="bin-visual">
+        <div class="bv-handle"></div>
+        <div class="bv-lid"></div>
+        <div class="bv-body"><div class="bv-rib"></div></div>
+        <div class="bv-wheels"><div class="bv-wheel"></div><div class="bv-wheel"></div></div>
+      </div>
       <div class="bin-name">General Waste</div>
       <div class="bin-sub">Rubbish</div>
     </div>
     <div class="bin" data-color="blue" id="binBlue">
-      <div class="bin-icon">📄</div>
-      <div class="bin-name">Paper &amp; Card</div>
-      <div class="bin-sub">Flatten boxes</div>
+      <div class="bin-visual">
+        <div class="bv-handle"></div>
+        <div class="bv-lid"></div>
+        <div class="bv-body"><div class="bv-rib"></div></div>
+        <div class="bv-wheels"><div class="bv-wheel"></div><div class="bv-wheel"></div></div>
+      </div>
+      <div class="bin-name">Glass</div>
+      <div class="bin-sub">Bottles &amp; Jars</div>
     </div>
 
     <!-- Floating item -->
@@ -611,52 +682,62 @@ const ITEMS = [
   { id:'greasy_pizza',    name:'Greasy Pizza Box',       emoji:'🍕', bin:'red',    required:[], bonus:[],           hint:'Greasy cardboard cannot be recycled – red bin!' },
   { id:'nappy',           name:'Used Nappy',             emoji:'🧷', bin:'red',    required:[], bonus:[],           hint:'Nappies always go in the red general waste bin' },
   { id:'plastic_bag',     name:'Plastic Bag',            emoji:'🛍️', bin:'red',    required:[], bonus:[],           hint:'Soft plastics go in the red bin – not yellow!' },
-  { id:'coffee_cup',      name:'Coffee Cup',             emoji:'☕', bin:'red',    required:[], bonus:[],           hint:'Takeaway cups have a plastic lining – not recyclable' },
-  { id:'polystyrene',     name:'Polystyrene Container',  emoji:'📦', bin:'red',    required:[], bonus:[],           hint:'Polystyrene foam is not accepted in NZ kerbside recycling' },
-  { id:'broken_glass',    name:'Broken Glass',           emoji:'🪟', bin:'red',    required:[], bonus:[],           hint:'Broken glass is dangerous – wrap &amp; red bin it!' },
+  { id:'coffee_cup',      name:'Takeaway Coffee Cup',    emoji:'☕', bin:'red',    required:[], bonus:[],           hint:'Takeaway cups have a plastic lining – not recyclable, red bin!' },
+  { id:'polystyrene',     name:'Polystyrene Container',  emoji:'🥡', bin:'red',    required:[], bonus:[],           hint:'Polystyrene foam is not accepted in NZ kerbside recycling' },
+  { id:'broken_glass',    name:'Broken Glass',           emoji:'🪟', bin:'red',    required:[], bonus:[],           hint:'Broken glass is dangerous – wrap &amp; red bin it! (Not the blue glass bin)' },
   { id:'dog_poo',         name:'Dog Poo Bag',            emoji:'💩', bin:'red',    required:[], bonus:[],           hint:'Bag it, bin it – general waste only' },
-  { id:'battery',         name:'Dead Battery',           emoji:'🔋', bin:'red',    required:[], bonus:[],           hint:'Batteries are hazardous – take to e-waste collection' },
+  { id:'battery',         name:'Dead Battery',           emoji:'🔋', bin:'red',    required:[], bonus:[],           hint:'Batteries are hazardous – take to a resource recovery park' },
   { id:'chip_packet',     name:'Chip Packet',            emoji:'🍟', bin:'red',    required:[], bonus:[],           hint:'Foil &amp; plastic wrappers go in the red bin' },
   { id:'noodles_dirty',   name:'Dirty Noodle Container', emoji:'🍜', bin:'red',    required:[], bonus:[],           hint:'Dirty food containers cannot be recycled' },
   { id:'cling_wrap',      name:'Cling Wrap',             emoji:'🥗', bin:'red',    required:[], bonus:[],           hint:'Cling wrap is a soft plastic – red bin' },
   { id:'disposable_cup',  name:'Disposable Cutlery',     emoji:'🥄', bin:'red',    required:[], bonus:[],           hint:'Disposable cutlery is generally not recyclable' },
   { id:'bubble_wrap',     name:'Bubble Wrap',            emoji:'🫧', bin:'red',    required:[], bonus:[],           hint:'Bubble wrap is a soft plastic – cannot be recycled kerbside' },
+  { id:'juice_bottle',    name:'Juice Carton',           emoji:'🧃', bin:'red',    required:[], bonus:[],           hint:'Juice cartons (tetra pak) cannot be recycled kerbside – red rubbish bin!' },
+  { id:'aerosol_can',     name:'Aerosol Can',            emoji:'💨', bin:'red',    required:[], bonus:[],           hint:'Aerosol cans are NOT accepted in the yellow recycling bin – red bin!' },
+  { id:'broken_crockery', name:'Broken Crockery',        emoji:'🍽️', bin:'red',    required:[], bonus:[],           hint:'Broken ceramics &amp; crockery cannot be recycled – wrap safely &amp; red bin' },
+  { id:'drinking_glass',  name:'Broken Drinking Glass',  emoji:'🥃', bin:'red',    required:[], bonus:[],           hint:'Drinking glasses go in the red bin – NOT the blue glass recycling bin!' },
 
-  /* ---- YELLOW BIN — Mixed Recycling ---- */
-  { id:'water_bottle',    name:'Water Bottle',           emoji:'💧', bin:'yellow', required:['removeLid'], bonus:['rinse'],           hint:'Remove the lid first, then pop in the yellow bin!' },
-  { id:'coke_bottle',     name:'Coke Bottle',            emoji:'🥤', bin:'yellow', required:['removeLid'], bonus:['rinse'],           hint:'Plastic PET bottles – lid off, rinse, yellow bin' },
-  { id:'milk_bottle',     name:'Milk Bottle',            emoji:'🥛', bin:'yellow', required:['removeLid'], bonus:['rinse'],           hint:'HDPE milk bottles are recyclable with lid removed' },
-  { id:'wine_bottle',     name:'Wine Bottle',            emoji:'🍷', bin:'yellow', required:[],            bonus:['rinse'],           hint:'Glass wine bottles are recyclable in the yellow bin' },
-  { id:'beer_can',        name:'Beer Can',               emoji:'🍺', bin:'yellow', required:[],            bonus:['rinse'],           hint:'Aluminium cans – rinse before recycling' },
-  { id:'tin_can',         name:'Tin Can',                emoji:'🥫', bin:'yellow', required:[],            bonus:['rinse'],           hint:'Steel cans are recyclable – give them a rinse!' },
-  { id:'pasta_jar',       name:'Pasta Sauce Jar',        emoji:'🫙', bin:'yellow', required:['removeLid'], bonus:['rinse'],           hint:'Glass jars – remove lid, rinse out, yellow bin' },
-  { id:'shampoo_bottle',  name:'Shampoo Bottle',         emoji:'🧴', bin:'yellow', required:['removeLid'], bonus:['rinse'],           hint:'Plastic bottles (type 2) – lid off, rinse, recycle!' },
-  { id:'juice_bottle',    name:'Juice Bottle',           emoji:'🧃', bin:'yellow', required:['removeLid'], bonus:['rinse'],           hint:'PET juice bottles – remove lid &amp; rinse' },
-  { id:'lp_bottle',       name:'L&amp;P Bottle',         emoji:'🍋', bin:'yellow', required:['removeLid'], bonus:['rinse'],           hint:'Kiwi classic – plastic bottle, lid off, yellow bin!' },
+  /* ---- YELLOW BIN — Mixed Recycling (plastics, cans, paper & cardboard) ---- */
+  { id:'water_bottle',    name:'Water Bottle',           emoji:'💧', bin:'yellow', required:['removeLid'], bonus:['rinse'],              hint:'Remove the lid first, then pop in the yellow bin!' },
+  { id:'coke_bottle',     name:'Coke Bottle',            emoji:'🥤', bin:'yellow', required:['removeLid'], bonus:['rinse'],              hint:'Plastic PET bottles – lid off, rinse, yellow bin' },
+  { id:'milk_bottle',     name:'Milk Bottle',            emoji:'🥛', bin:'yellow', required:['removeLid'], bonus:['rinse'],              hint:'HDPE milk bottles are recyclable – lid off, rinse, yellow bin' },
+  { id:'beer_can',        name:'Beer Can',               emoji:'🍺', bin:'yellow', required:[],            bonus:['rinse'],              hint:'Aluminium cans – rinse before recycling in the yellow bin' },
+  { id:'tin_can',         name:'Tin Can',                emoji:'🥫', bin:'yellow', required:[],            bonus:['rinse'],              hint:'Steel cans are recyclable – give them a rinse!' },
+  { id:'shampoo_bottle',  name:'Shampoo Bottle',         emoji:'🧴', bin:'yellow', required:['removeLid'], bonus:['rinse'],              hint:'Plastic bottles (grade 2) – lid off, rinse, yellow recycling!' },
+  { id:'lp_bottle',       name:'L&amp;P Bottle',         emoji:'🍋', bin:'yellow', required:['removeLid'], bonus:['rinse'],              hint:'Kiwi classic – plastic bottle, lid off, yellow bin!' },
   { id:'milo_tin',        name:'Milo Tin',               emoji:'🫙', bin:'yellow', required:[],            bonus:['rinse','removeLabel'], hint:'Steel tins are fully recyclable – Kiwi favourite!' },
-  { id:'paint_tin_empty', name:'Empty Paint Tin',        emoji:'🪣', bin:'yellow', required:[],            bonus:['clean'],          hint:'Completely empty, dry metal tins can go in yellow bin' },
+  { id:'paint_tin_empty', name:'Empty Paint Tin',        emoji:'🪣', bin:'yellow', required:[],            bonus:['clean'],              hint:'Completely empty, dry metal tins can go in yellow bin' },
+  { id:'newspaper',       name:'Newspaper',              emoji:'📰', bin:'yellow', required:[], bonus:[],           hint:'Paper &amp; newspapers go in the yellow recycling bin' },
+  { id:'cardboard_box',   name:'Large Cardboard Box',    emoji:'📦', bin:'yellow', required:['cut'], bonus:['flatten'],  hint:'Large cardboard must be cut down &amp; flattened before recycling!' },
+  { id:'printer_paper',   name:'Printer Paper',          emoji:'📄', bin:'yellow', required:[], bonus:[],           hint:'Clean paper is recyclable – yellow bin!' },
+  { id:'magazine',        name:'Old Magazine',           emoji:'📚', bin:'yellow', required:[], bonus:[],           hint:'Magazines &amp; glossy paper go in the yellow recycling bin' },
+  { id:'cereal_box',      name:'Weetbix Box',            emoji:'🥣', bin:'yellow', required:[], bonus:['flatten'],  hint:'Flatten the cardboard box and put in the yellow recycling!' },
+  { id:'toilet_roll',     name:'Toilet Roll Tube',       emoji:'🧻', bin:'yellow', required:[], bonus:[],           hint:'Cardboard tubes are recyclable – yellow bin!' },
+  { id:'junk_mail',       name:'Junk Mail',              emoji:'📬', bin:'yellow', required:[], bonus:[],           hint:'Paper junk mail goes in the yellow recycling bin' },
+  { id:'gift_wrap',       name:'Clean Gift Wrap',        emoji:'🎁', bin:'yellow', required:[], bonus:[],           hint:'Non-foil gift wrap is paper – yellow recycling bin!' },
+  { id:'egg_carton',      name:'Egg Carton',             emoji:'🥚', bin:'yellow', required:[], bonus:['flatten'],  hint:'Clean &amp; dry egg cartons are cardboard – flatten &amp; yellow bin!' },
+  { id:'book',            name:'Old Paperback Book',     emoji:'📖', bin:'yellow', required:[], bonus:[],           hint:'Books &amp; paper go in the yellow recycling bin' },
 
   /* ---- GREEN BIN — Organics ---- */
   { id:'apple_core',      name:'Apple Core',             emoji:'🍎', bin:'green',  required:[], bonus:[],           hint:'All food scraps go in the green organics bin' },
   { id:'banana_peel',     name:'Banana Peel',            emoji:'🍌', bin:'green',  required:[], bonus:[],           hint:'Fruit peels are great for the green organics bin' },
   { id:'veg_peels',       name:'Vegetable Peels',        emoji:'🥕', bin:'green',  required:[], bonus:[],           hint:'Veggie scraps are composted from the green bin' },
-  { id:'egg_shells',      name:'Egg Shells',             emoji:'🥚', bin:'green',  required:[], bonus:[],           hint:'Egg shells are 100% compostable – green bin!' },
+  { id:'egg_shells',      name:'Egg Shells',             emoji:'🪺', bin:'green',  required:[], bonus:[],           hint:'Egg shells are 100% compostable – green bin!' },
   { id:'fish_bones',      name:'Fish Bones',             emoji:'🐟', bin:'green',  required:[], bonus:[],           hint:'Meat, fish &amp; bones all go in the green bin' },
   { id:'tea_bag',         name:'Used Tea Bag',           emoji:'🍵', bin:'green',  required:[], bonus:[],           hint:'Tea bags &amp; coffee grounds are compostable' },
   { id:'garden_clip',     name:'Garden Clippings',       emoji:'🌿', bin:'green',  required:[], bonus:['cut'],      hint:'Chop clippings smaller for easier composting' },
   { id:'bread',           name:'Stale Bread',            emoji:'🍞', bin:'green',  required:[], bonus:[],           hint:'Old food goes in the green organics bin' },
-  { id:'coffee_grounds',  name:'Coffee Grounds',         emoji:'☕', bin:'green',  required:[], bonus:[],           hint:'Coffee grounds are excellent in the compost!' },
+  { id:'coffee_grounds',  name:'Coffee Grounds',         emoji:'🫘', bin:'green',  required:[], bonus:[],           hint:'Coffee grounds are excellent in the compost!' },
   { id:'weet_bix',        name:'Half-eaten Weetbix',     emoji:'🌾', bin:'green',  required:[], bonus:[],           hint:'Soggy cereal – food waste to the green bin' },
+  { id:'avocado',         name:'Avocado',                emoji:'🥑', bin:'green',  required:[], bonus:[],           hint:'Avocado skin and pit are organic – green bin!' },
+  { id:'meat_scraps',     name:'Meat Scraps',            emoji:'🥩', bin:'green',  required:[], bonus:[],           hint:'Meat, bones &amp; leftover food go in the green organics bin' },
 
-  /* ---- BLUE BIN — Paper & Cardboard ---- */
-  { id:'newspaper',       name:'Newspaper',              emoji:'📰', bin:'blue',   required:[], bonus:[],           hint:'Newspapers &amp; magazines go in the blue bin' },
-  { id:'cardboard_box',   name:'Cardboard Box',          emoji:'📦', bin:'blue',   required:[], bonus:['flatten'],  hint:'Flatten cardboard boxes to save space in the blue bin' },
-  { id:'printer_paper',   name:'Printer Paper',          emoji:'📄', bin:'blue',   required:[], bonus:[],           hint:'Office paper is fully recyclable in the blue bin' },
-  { id:'magazine',        name:'Old Magazine',           emoji:'📚', bin:'blue',   required:[], bonus:[],           hint:'Magazines can be recycled in the blue paper bin' },
-  { id:'cereal_box',      name:'Weetbix Box',            emoji:'🥣', bin:'blue',   required:[], bonus:['flatten'],  hint:'Kiwi breakfast staple! Flatten the box before binning' },
-  { id:'toilet_roll',     name:'Toilet Roll Tube',       emoji:'🧻', bin:'blue',   required:[], bonus:[],           hint:'Cardboard tubes are recyclable – blue bin!' },
-  { id:'junk_mail',       name:'Junk Mail',              emoji:'📬', bin:'blue',   required:[], bonus:[],           hint:'Paper junk mail goes in the blue bin' },
-  { id:'gift_wrap',       name:'Clean Gift Wrap',        emoji:'🎁', bin:'blue',   required:[], bonus:[],           hint:'Non-foil, uncoated gift wrap goes in the blue bin' },
+  /* ---- BLUE BIN — Glass Bottles & Jars ---- */
+  { id:'wine_bottle',      name:'Wine Bottle',           emoji:'🍷', bin:'blue',   required:[],            bonus:['rinse'], hint:'Glass wine bottles – rinse and recycle in the blue glass bin!' },
+  { id:'pasta_jar',        name:'Pasta Sauce Jar',       emoji:'🫙', bin:'blue',   required:['removeLid'], bonus:['rinse'], hint:'Glass jars – remove lid, rinse out, blue glass bin!' },
+  { id:'champagne_bottle', name:'Champagne Bottle',      emoji:'🍾', bin:'blue',   required:[],            bonus:['rinse'], hint:'Glass champagne bottles go in the blue glass recycling bin!' },
+  { id:'honey_jar',        name:'Honey Jar',             emoji:'🍯', bin:'blue',   required:['removeLid'], bonus:['rinse'], hint:'Glass honey jars – remove lid, rinse, blue glass bin!' },
+  { id:'glass_beer_bottle',name:'Glass Beer Bottle',     emoji:'🍶', bin:'blue',   required:[],            bonus:['rinse'], hint:'Glass bottles belong in the blue glass recycling bin – not cans!' },
 ];
 
 /* ── BIN DEFINITIONS ─────────────────────────────────────────────── */
@@ -664,7 +745,7 @@ const BINS = {
   green:  { name:'Organics',       color:'#2ecc71' },
   yellow: { name:'Recycling',      color:'#f1c40f' },
   red:    { name:'General Waste',  color:'#e74c3c' },
-  blue:   { name:'Paper & Card',   color:'#3498db' },
+  blue:   { name:'Glass',          color:'#3498db' },
 };
 
 /* ── ACTION DEFINITIONS ──────────────────────────────────────────── */

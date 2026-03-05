@@ -81,6 +81,10 @@
       font-size: 0.9rem; color: #aaa; margin-top: 4px;
     }
     .hs-display span { color: #f1c40f; font-weight: 700; }
+    #startReady {
+      display: flex; flex-direction: column; align-items: center; gap: 14px;
+      width: 100%;
+    }
 
     /* ── Game Screen ──────────────────────────────────────────────── */
     #gameScreen {
@@ -566,6 +570,9 @@
     #trainingToggle { position: absolute; opacity: 0; width: 0; height: 0; }
     #trainingToggle:checked ~ .toggle-track { background: #2ecc71; }
     #trainingToggle:checked ~ .toggle-track .toggle-thumb { transform: translateX(22px); }
+    #goTrainingToggle { position: absolute; opacity: 0; width: 0; height: 0; }
+    #goTrainingToggle:checked ~ .toggle-track { background: #2ecc71; }
+    #goTrainingToggle:checked ~ .toggle-track .toggle-thumb { transform: translateX(22px); }
     .training-desc {
       font-size: clamp(0.7rem,2.3vw,0.8rem); color: #888; text-align: center;
     }
@@ -586,6 +593,63 @@
       70%  { opacity: 1; transform: translateX(-50%) scale(1); }
       100% { opacity: 0; transform: translateX(-50%) scale(0.9); }
     }
+
+    /* ── Loading Hints (Start Screen) ────────────────────────────── */
+    #loadingDisplay {
+      display: flex; flex-direction: column; align-items: center; gap: 12px;
+      width: 100%; max-width: 420px;
+    }
+    #loadingSpinner {
+      display: flex; align-items: center; gap: 10px;
+      font-size: 0.9rem; color: #aaa;
+    }
+    .spinner-ring {
+      width: 20px; height: 20px;
+      border: 2.5px solid rgba(255,255,255,0.15);
+      border-top-color: #f1c40f;
+      border-radius: 50%;
+      animation: spin 0.9s linear infinite;
+      flex-shrink: 0;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    #loadingHintBox {
+      background: rgba(255,255,255,0.07);
+      border-radius: 14px;
+      border-left: 4px solid #f1c40f;
+      padding: 14px 18px;
+      text-align: left;
+      width: 100%;
+    }
+    #loadingHintLabel {
+      font-size: 0.7rem; color: #f1c40f; text-transform: uppercase;
+      letter-spacing: 1px; font-weight: 700; margin-bottom: 6px;
+    }
+    #loadingHintText {
+      font-size: clamp(0.82rem,2.8vw,0.95rem);
+      color: #ddd; line-height: 1.5;
+      transition: opacity 0.4s;
+    }
+    #loadingHintText.fade-out { opacity: 0; }
+    #loadingProgress {
+      font-size: 0.75rem; color: #777; margin-top: 2px;
+    }
+
+    /* ── End Screen Extra Buttons ────────────────────────────────── */
+    .btn-home {
+      padding: 11px 34px;
+      font-size: clamp(0.9rem,3.5vw,1.1rem);
+      font-weight: 700; border: 2px solid rgba(255,255,255,0.25);
+      border-radius: 50px;
+      background: rgba(255,255,255,0.1);
+      color: #f0f0f0; cursor: pointer;
+      transition: transform 0.15s, background 0.15s, border-color 0.15s;
+    }
+    .btn-home:hover { background: rgba(255,255,255,0.2); border-color: rgba(255,255,255,0.5); transform: scale(1.04); }
+    .btn-home:active { transform: scale(0.96); }
+    .go-actions-row {
+      display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;
+      align-items: center;
+    }
   </style>
 </head>
 <body>
@@ -598,40 +662,56 @@
   <h1>Rubbish Rush</h1>
   <p>Sort NZ rubbish into the right bins before the clock runs out!</p>
 
-  <button class="btn-play" id="btnPlay">▶ Play</button>
-
-  <p class="hs-display">Best Score: <span id="startHs">0</span></p>
-
-  <div class="training-row">
-    <label class="toggle-label">
-      <input type="checkbox" id="trainingToggle">
-      <span class="toggle-track"><span class="toggle-thumb"></span></span>
-      Training Mode
-    </label>
-    <p class="training-desc">Hints &amp; actions shown · Half points &amp; penalties</p>
+  <!-- Loading hints (shown while images preload) -->
+  <div id="loadingDisplay">
+    <div id="loadingSpinner">
+      <div class="spinner-ring"></div>
+      <span>Loading assets…</span>
+    </div>
+    <div id="loadingHintBox">
+      <div id="loadingHintLabel">♻️ Did You Know?</div>
+      <div id="loadingHintText"></div>
+    </div>
+    <div id="loadingProgress"></div>
   </div>
 
-  <details class="how-to">
-    <summary>ℹ️ How to Play</summary>
-    <div class="how-to-content">
-      <p><strong>🎯 Goal:</strong> Drag (or tap) each rubbish item into the correct bin before time runs out.</p>
-      <br>
-      <p>
-        <span class="bin-tag" style="background:#27ae60">GREEN</span> Organics – food scraps &amp; garden waste<br>
-        <span class="bin-tag" style="background:#d4ac0d;color:#111">YELLOW</span> Recycling – clean plastics (1,2,5), cans, paper &amp; cardboard<br>
-        <span class="bin-tag" style="background:#d35400">ORANGE</span> Resource Recovery – hazardous items (batteries, chemicals, e-waste)<br>
-        <span class="bin-tag" style="background:#c0392b">RED</span> General Waste – non-recyclables, soft plastics, aerosols<br>
-        <span class="bin-tag" style="background:#2980b9">BLUE</span> Glass – clean clear glass bottles &amp; jars (no lids!)
-      </p>
-      <br>
-      <p><strong>⚡ Actions:</strong> Use the action buttons <em>before</em> sorting to earn bonus time.<br>
-      Forgetting a required action (like <em>Remove Lid</em>) costs time!</p>
-      <br>
-      <p><strong>⏱️ Tip:</strong> Correct sorts add time; wrong sorts remove it. Build combos for mega bonuses!</p>
-      <br>
-      <p><em>Based on NZ's 2023 national kerbside collection standards.</em></p>
+  <!-- Play button & options (hidden until images are ready) -->
+  <div id="startReady" class="hidden">
+    <button class="btn-play" id="btnPlay">▶ Play</button>
+
+    <p class="hs-display">Best Score: <span id="startHs">0</span></p>
+
+    <div class="training-row">
+      <label class="toggle-label">
+        <input type="checkbox" id="trainingToggle">
+        <span class="toggle-track"><span class="toggle-thumb"></span></span>
+        Training Mode
+      </label>
+      <p class="training-desc">Hints &amp; actions shown · Half points &amp; penalties</p>
     </div>
-  </details>
+
+    <details class="how-to">
+      <summary>ℹ️ How to Play</summary>
+      <div class="how-to-content">
+        <p><strong>🎯 Goal:</strong> Drag (or tap) each rubbish item into the correct bin before time runs out.</p>
+        <br>
+        <p>
+          <span class="bin-tag" style="background:#27ae60">GREEN</span> Organics – food scraps &amp; garden waste<br>
+          <span class="bin-tag" style="background:#d4ac0d;color:#111">YELLOW</span> Recycling – clean plastics (1,2,5), cans, paper &amp; cardboard<br>
+          <span class="bin-tag" style="background:#d35400">ORANGE</span> Resource Recovery – hazardous items (batteries, chemicals, e-waste)<br>
+          <span class="bin-tag" style="background:#c0392b">RED</span> General Waste – non-recyclables, soft plastics, aerosols<br>
+          <span class="bin-tag" style="background:#2980b9">BLUE</span> Glass – clean clear glass bottles &amp; jars (no lids!)
+        </p>
+        <br>
+        <p><strong>⚡ Actions:</strong> Use the action buttons <em>before</em> sorting to earn bonus time.<br>
+        Forgetting a required action (like <em>Remove Lid</em>) costs time!</p>
+        <br>
+        <p><strong>⏱️ Tip:</strong> Correct sorts add time; wrong sorts remove it. Build combos for mega bonuses!</p>
+        <br>
+        <p><em>Based on NZ's 2023 national kerbside collection standards.</em></p>
+      </div>
+    </details>
+  </div>
 </div>
 
 <!-- ═══════════════════════════════════════════════════════════
@@ -770,7 +850,21 @@
   </div>
   <div class="go-new-record" id="goNewRecord">🏆 New Record!</div>
   <div id="statsLine"></div>
-  <button class="btn-again" id="btnAgain">🔄 Play Again</button>
+
+  <!-- Training mode toggle on end screen -->
+  <div class="training-row">
+    <label class="toggle-label">
+      <input type="checkbox" id="goTrainingToggle">
+      <span class="toggle-track"><span class="toggle-thumb"></span></span>
+      Training Mode
+    </label>
+    <p class="training-desc">Toggle before restarting</p>
+  </div>
+
+  <div class="go-actions-row">
+    <button class="btn-home" id="btnHome">🏠 Home</button>
+    <button class="btn-again" id="btnAgain">🔄 Play Again</button>
+  </div>
   <div class="share-row">
     <div class="share-label">Share your score</div>
     <button class="btn-share btn-share-x" id="btnShareX" title="Share on X (Twitter)">
@@ -1035,7 +1129,12 @@ const $goItems        = document.getElementById('goItems');
 const $goNewRecord    = document.getElementById('goNewRecord');
 const $statsLine      = document.getElementById('statsLine');
 const $actionsBar     = document.getElementById('actionsBar');
-const $trainingToggle = document.getElementById('trainingToggle');
+const $trainingToggle    = document.getElementById('trainingToggle');
+const $goTrainingToggle  = document.getElementById('goTrainingToggle');
+const $loadingDisplay    = document.getElementById('loadingDisplay');
+const $startReady        = document.getElementById('startReady');
+const $loadingHintText   = document.getElementById('loadingHintText');
+const $loadingProgress   = document.getElementById('loadingProgress');
 
 /* ── SHUFFLE UTIL ────────────────────────────────────────────────── */
 function shuffle(arr) {
@@ -1052,21 +1151,114 @@ function nextItemFromQueue() {
   return itemQueue.pop();
 }
 
+/* ── LOADING HINTS ───────────────────────────────────────────────── */
+// 40 hints derived from the NZ kerbside collection brochure
+const LOADING_HINTS = [
+  '🟢 All food waste – including meat, fish, bones and bread – goes in the GREEN organics bin.',
+  '🟡 Only plastics labelled 1, 2 or 5 are accepted in the YELLOW recycling bin. Check the number in the triangle!',
+  '🔵 Glass bottles and jars go in the BLUE glass recycling bin – NOT the yellow recycling bin.',
+  '🔴 Aerosol cans are NOT recyclable kerbside – put them in the RED rubbish bin.',
+  '🔴 Soft plastics (bags, cling wrap, bubble wrap) cannot be recycled kerbside – RED bin.',
+  '🟠 ALL batteries – including car batteries – must go to a Resource Recovery centre.',
+  '🟡 Always rinse and clean containers before putting them in the yellow recycling bin.',
+  '🟡 Recycling must be LOOSE – never bag it in the yellow bin.',
+  '🟡 Remove lids and caps from bottles before recycling. Lids go in the RED rubbish bin.',
+  '🔵 Remove lids from glass jars and bottles. Rinse them before placing in the blue glass bin.',
+  '🔴 Drinking glasses, mirrors and windscreen glass are NOT accepted in the blue glass bin.',
+  '🔴 Broken glass is dangerous – wrap it safely before putting it in the RED bin.',
+  '🟡 Flatten cardboard boxes before recycling to save space in the bin.',
+  '🟡 Clean, dry egg cartons are cardboard – flatten them and pop in the yellow recycling bin.',
+  '🔴 Juice cartons and tetra paks cannot be recycled kerbside – they go in the RED bin.',
+  '🟢 Garden waste and clippings belong in the GREEN organics bin – the composting system handles weeds and seeds!',
+  "🟢 Don't stomp or compact waste in the green organics bin – place materials loosely so it empties fully.",
+  '🔴 Ashes must cool for 7 days before going in the RED bin – or cool them in a metal bucket away from buildings.',
+  '🔴 Extra rubbish left next to or on top of your bin will NOT be collected.',
+  '🟠 Old paint is hazardous – never put it in any household bin. Take it to a Resource Recovery centre.',
+  '🟠 E-waste (phones, electronics, appliances) contains hazardous materials – Resource Recovery only!',
+  '🟠 CFL and fluorescent light bulbs contain mercury – take them to a Resource Recovery centre.',
+  '🟠 Old medications go to a pharmacy or Resource Recovery centre – never in household bins.',
+  '🟠 Used motor oil can be dropped off at any transfer station.',
+  '🔵 Glass jars can be sterilised and reused for preserves! A great way to reduce waste.',
+  '🟡 Steel and aluminium cans are fully recyclable – give them a rinse first!',
+  '🟡 Paper and cardboard (newspapers, magazines, toilet rolls) all go in the yellow recycling bin.',
+  '🟢 Coffee grounds and tea bags are great for composting – green organics bin!',
+  '🔴 Biodegradable plastic bags do NOT go in the recycling bin – RED bin only.',
+  '🔴 Polystyrene foam is not accepted in NZ kerbside recycling – RED bin.',
+  '🔴 Disposable nappies and sanitary items always go in the RED rubbish bin.',
+  '🔴 Takeaway coffee cups have a plastic lining – they cannot be recycled. RED bin.',
+  '⚠️ Contaminated recycling goes to landfill. Rinse containers well before recycling!',
+  '📅 The GREEN organics bin is collected WEEKLY. Yellow recycling and red rubbish alternate fortnightly.',
+  '⚖️ Maximum bin weight is 80kg – bins heavier than this will be stickered and left behind!',
+  '🕕 Put your bins out before 6am on collection day, close to the kerb.',
+  '📏 Keep at least 0.5 metres between bins at the kerb so workers can stand between them.',
+  '🔴 Bamboo, cabbage tree leaves, flax and palm leaves do NOT go in the green organics bin – RED bin.',
+  '🟢 Meat scraps and fish bones are fine in the green organics bin – the industrial composting handles them.',
+  '♻️ Putting rubbish in the yellow recycling bin will contaminate all the recyclables – they will all end up in landfill!',
+];
+
+/* ── LOADING HINT ROTATOR ────────────────────────────────────────── */
+const HINT_FADE_MS = 400; // must match the CSS `transition: opacity 0.4s` on #loadingHintText
+let _hintIdx = 0;
+let _hintTimer = null;
+let _activeHints = [];
+
+function _showLoadingHint(idx) {
+  $loadingHintText.classList.add('fade-out');
+  setTimeout(() => {
+    $loadingHintText.textContent = _activeHints[idx % _activeHints.length];
+    $loadingHintText.classList.remove('fade-out');
+  }, HINT_FADE_MS + 20);
+}
+
+function startLoadingHints() {
+  // Shuffle fresh each call so repeated visits see a different order
+  _activeHints = shuffle(LOADING_HINTS);
+  _hintIdx = 0;
+  _showLoadingHint(_hintIdx);
+  _hintTimer = setInterval(() => {
+    _hintIdx = (_hintIdx + 1) % _activeHints.length;
+    _showLoadingHint(_hintIdx);
+  }, 4000);
+}
+
+function stopLoadingHints() {
+  if (_hintTimer) { clearInterval(_hintTimer); _hintTimer = null; }
+}
+
 /* ── IMAGE MANIFEST ──────────────────────────────────────────────── */
-// Dynamically discovers available photo assets for each item.
+// Dynamically discovers and preloads available photo assets for each item.
 // Tries assets/{id}.jpg, assets/{id}_1.jpg … assets/{id}_5.jpg.
-// Call randomItemImage(id) to get a random path, or null if none loaded.
+// Fires onImagesReady() once all probes are settled so the game can start.
 const IMAGE_MANIFEST = {};
+let _imgTasksTotal = ITEMS.length;
+let _imgTasksDone  = 0;
+
+function _onAllImagesSettled() {
+  stopLoadingHints();
+  $loadingDisplay.classList.add('hidden');
+  $startReady.classList.remove('hidden');
+}
+
 (function probeImages() {
   const MAX_VARIANTS = 5;
   ITEMS.forEach(item => {
     const paths = [`assets/${item.id}.jpg`];
     for (let i = 1; i <= MAX_VARIANTS; i++) paths.push(`assets/${item.id}_${i}.jpg`);
     const loaded = [];
+    // img objects are kept alive until settled so the browser caches them
+    const imgs = [];
     let pending = paths.length;
-    function done() { if (!--pending) IMAGE_MANIFEST[item.id] = loaded; }
+    function done() {
+      if (!--pending) {
+        IMAGE_MANIFEST[item.id] = loaded;
+        _imgTasksDone++;
+        $loadingProgress.textContent = `${_imgTasksDone} / ${_imgTasksTotal} items checked`;
+        if (_imgTasksDone >= _imgTasksTotal) _onAllImagesSettled();
+      }
+    }
     paths.forEach(path => {
       const img = new Image();
+      imgs.push(img); // keep reference so GC doesn't collect before load settles
       img.onload = () => { loaded.push(path); done(); };
       img.onerror = done;
       img.src = path;
@@ -1442,7 +1634,11 @@ function positionBins() {
 
 /* ── GAME FLOW ───────────────────────────────────────────────────── */
 function startGame() {
+  // Read training mode from whichever toggle is currently on the visible screen
   trainingMode = $trainingToggle.checked;
+  // Sync the other toggle so they always agree
+  $goTrainingToggle.checked = trainingMode;
+
   state = 'playing';
   score = 0;
   const startTime = trainingMode ? CFG.trainingStartTime : CFG.startTime;
@@ -1490,6 +1686,9 @@ function endGame() {
   const acc = totalSorted > 0 ? Math.round((correctSorted / totalSorted) * 100) : 0;
   $statsLine.textContent = `${totalSorted} items attempted · ${acc}% accuracy${trainingMode ? ' · Training Mode' : ''}`;
 
+  // Sync end-screen training toggle to match the mode that was just played
+  $goTrainingToggle.checked = trainingMode;
+
   showScreen($gameOverScreen);
 }
 
@@ -1501,7 +1700,22 @@ function showScreen(el) {
 
 /* ── EVENT LISTENERS ─────────────────────────────────────────────── */
 document.getElementById('btnPlay').addEventListener('click', () => startGame());
-document.getElementById('btnAgain').addEventListener('click', () => startGame());
+document.getElementById('btnAgain').addEventListener('click', () => {
+  // Read training mode from the end-screen toggle and sync to start-screen
+  trainingMode = $goTrainingToggle.checked;
+  $trainingToggle.checked = trainingMode;
+  startGame();
+});
+document.getElementById('btnHome').addEventListener('click', () => {
+  // Sync start-screen toggle from end-screen toggle before going home
+  $trainingToggle.checked = $goTrainingToggle.checked;
+  state = 'start';
+  showScreen($startScreen);
+});
+
+// Keep both training toggles in sync
+$trainingToggle.addEventListener('change', () => { $goTrainingToggle.checked = $trainingToggle.checked; });
+$goTrainingToggle.addEventListener('change', () => { $trainingToggle.checked = $goTrainingToggle.checked; });
 
 // Bin tap (for tap-to-sort)
 document.querySelectorAll('.bin').forEach(bin => {
@@ -1589,6 +1803,7 @@ document.getElementById('btnShareCopy').addEventListener('click', () => {
 /* ── INITIAL RENDER ──────────────────────────────────────────────── */
 $startHs.textContent = highScore;
 showScreen($startScreen);
+startLoadingHints();
 </script>
 </body>
 </html>

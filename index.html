@@ -942,6 +942,7 @@ const CFG = {
   speedupStartTime:     20,   // seconds of real elapsed time before acceleration begins
   speedupStepInterval:   5,   // seconds between each speed increase
   speedupStepAmount:  0.05,   // 5% per step (no maximum cap)
+  comboMilestoneInterval: 5, // combo streak interval that triggers a bonus (every Nth streak)
   trainingMultiplier:    0.5, // training mode: halve points & penalties
   // Bin layout (must match CSS clamp values in .bin { width/height })
   binSizeMax:          148,   // px – max bin dimension (CSS clamp max)
@@ -1377,14 +1378,15 @@ function showNextItem() {
   // Show photo asset if available, otherwise fall back to emoji
   const imgSrc = randomItemImage(currentItem.id);
   if (imgSrc) {
-    $itemImage.onload = null;
     $itemImage.style.opacity = '0';
-    const _onLoad = () => { $itemImage.style.opacity = '1'; $itemImage.onload = null; };
-    $itemImage.onload = _onLoad;
+    $itemImage.onload = () => { $itemImage.style.opacity = '1'; };
     $itemImage.src = imgSrc;
     $itemImage.alt = currentItem.name;
-    // If already decoded from cache, show immediately
-    if ($itemImage.complete && $itemImage.naturalWidth > 0) { $itemImage.style.opacity = '1'; }
+    // If already decoded from cache, show immediately without waiting for onload
+    if ($itemImage.complete && $itemImage.naturalWidth > 0) {
+      $itemImage.onload = null;
+      $itemImage.style.opacity = '1';
+    }
     $itemImgWrapper.style.display = 'inline-flex';
     $itemEmoji.style.display = 'none';
   } else {
@@ -1457,8 +1459,8 @@ function sortItem(binColor, binEl) {
     addScore(trainingMode ? Math.round(rawPts * CFG.trainingMultiplier) : rawPts);
     flashBin(binEl, 'flash-correct');
     sfxCorrect();
-    // Every 5× combo milestone: special bonus
-    if (combo > 0 && combo % 5 === 0) {
+    // Every Nth combo milestone: special bonus
+    if (combo > 0 && combo % CFG.comboMilestoneInterval === 0) {
       comboBonus++;
       $comboBonusHud.classList.remove('hidden');
       $comboBonusVal.textContent = comboBonus;
@@ -1638,8 +1640,8 @@ function onPointerUp(e) {
 
   if (bin) {
     sortItem(bin.dataset.color, bin);
-  } else if (actionBtn && (dx >= TAP_THRESHOLD || dy >= TAP_THRESHOLD)) {
-    // Drag onto action button – apply that action
+  } else if (actionBtn) {
+    // Drag onto action button – apply that action (any drag distance works)
     applyAction(actionBtn.dataset.action, actionBtn);
   } else {
     // Distinguish tap from drag using actual start/end distance

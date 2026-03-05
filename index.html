@@ -497,6 +497,31 @@
       box-shadow: 0 3px 14px rgba(46,204,113,0.4);
     }
 
+    /* ── Training Mode Toggle ────────────────────────────────────── */
+    .training-row {
+      display: flex; flex-direction: column; align-items: center; gap: 5px;
+    }
+    .toggle-label {
+      display: flex; align-items: center; gap: 10px; cursor: pointer;
+      font-size: clamp(0.85rem,3vw,1rem); color: #ddd; user-select: none;
+    }
+    .toggle-track {
+      position: relative; width: 48px; height: 26px;
+      background: rgba(255,255,255,0.15); border-radius: 13px;
+      transition: background 0.25s; flex-shrink: 0;
+    }
+    .toggle-thumb {
+      position: absolute; top: 3px; left: 3px;
+      width: 20px; height: 20px; background: #fff; border-radius: 50%;
+      transition: transform 0.25s; box-shadow: 0 1px 4px rgba(0,0,0,0.4);
+    }
+    #trainingToggle { position: absolute; opacity: 0; width: 0; height: 0; }
+    #trainingToggle:checked ~ .toggle-track { background: #2ecc71; }
+    #trainingToggle:checked ~ .toggle-track .toggle-thumb { transform: translateX(22px); }
+    .training-desc {
+      font-size: clamp(0.7rem,2.3vw,0.8rem); color: #888; text-align: center;
+    }
+
     /* ── Combo Banner ─────────────────────────────────────────────── */
     #comboBanner {
       position: fixed; top: 20%; left: 50%; transform: translateX(-50%);
@@ -528,6 +553,15 @@
   <button class="btn-play" id="btnPlay">▶ Play</button>
 
   <p class="hs-display">Best Score: <span id="startHs">0</span></p>
+
+  <div class="training-row">
+    <label class="toggle-label">
+      <input type="checkbox" id="trainingToggle">
+      <span class="toggle-track"><span class="toggle-thumb"></span></span>
+      Training Mode
+    </label>
+    <p class="training-desc">Hints &amp; actions shown · Half points &amp; penalties</p>
+  </div>
 
   <details class="how-to">
     <summary>ℹ️ How to Play</summary>
@@ -742,6 +776,7 @@ const CFG = {
   speedupStepInterval:   5,   // seconds between each speed increase
   speedupStepAmount:  0.05,   // 5% per step
   speedupMaxMultiplier:  2.0, // cap at 2× (double time)
+  trainingMultiplier:    0.5, // training mode: halve points & penalties
   // Bin layout (must match CSS clamp values in .bin { width/height })
   binSizeMax:          128,   // px – max bin dimension (CSS clamp max)
   binSizeMin:           88,   // px – min bin dimension (CSS clamp min)
@@ -759,17 +794,17 @@ const ITEMS = [
   { id:'plastic_bag',     name:'Plastic Bag',            emoji:'🛍️', bin:'red',    required:[], bonus:[],           hint:'Soft plastics go in the red bin – not yellow!' },
   { id:'coffee_cup',      name:'Takeaway Coffee Cup',    emoji:'☕', bin:'red',    required:[], bonus:[],           hint:'Takeaway cups have a plastic lining – not recyclable, red bin!' },
   { id:'polystyrene',     name:'Polystyrene Container',  emoji:'🥡', bin:'red',    required:[], bonus:[],           hint:'Polystyrene foam is not accepted in NZ kerbside recycling' },
-  { id:'broken_glass',    name:'Broken Glass',           emoji:'🪟', bin:'red',    required:[], bonus:[],           hint:'Broken glass is dangerous – wrap &amp; red bin it! (Not the blue glass bin)' },
+  { id:'broken_glass',    name:'Broken Glass',           emoji:'🪟', bin:'red',    required:[], bonus:[],           hint:'Broken glass is dangerous – wrap & red bin it! (Not the blue glass bin)' },
   { id:'dog_poo',         name:'Dog Poo Bag',            emoji:'💩', bin:'red',    required:[], bonus:[],           hint:'Bag it, bin it – general waste only' },
   { id:'battery',         name:'Dead Battery',           emoji:'🔋', bin:'orange', required:[], bonus:[],           hint:'Batteries are hazardous – take to a Resource Recovery centre!' },
-  { id:'chip_packet',     name:'Chip Packet',            emoji:'🍟', bin:'red',    required:[], bonus:[],           hint:'Foil &amp; plastic wrappers go in the red bin' },
+  { id:'chip_packet',     name:'Chip Packet',            emoji:'🍟', bin:'red',    required:[], bonus:[],           hint:'Foil & plastic wrappers go in the red bin' },
   { id:'noodles_dirty',   name:'Dirty Noodle Container', emoji:'🍜', bin:'red',    required:[], bonus:[],           hint:'Dirty food containers cannot be recycled' },
   { id:'cling_wrap',      name:'Cling Wrap',             emoji:'🥗', bin:'red',    required:[], bonus:[],           hint:'Cling wrap is a soft plastic – red bin' },
   { id:'disposable_cup',  name:'Disposable Cutlery',     emoji:'🥄', bin:'red',    required:[], bonus:[],           hint:'Disposable cutlery is generally not recyclable' },
   { id:'bubble_wrap',     name:'Bubble Wrap',            emoji:'🫧', bin:'red',    required:[], bonus:[],           hint:'Bubble wrap is a soft plastic – cannot be recycled kerbside' },
   { id:'juice_bottle',    name:'Juice Carton',           emoji:'🧃', bin:'red',    required:[], bonus:[],           hint:'Juice cartons (tetra pak) cannot be recycled kerbside – red rubbish bin!' },
   { id:'aerosol_can',     name:'Aerosol Can',            emoji:'💨', bin:'red',    required:[], bonus:[],           hint:'Aerosol cans are NOT accepted in the yellow recycling bin – red bin!' },
-  { id:'broken_crockery', name:'Broken Crockery',        emoji:'🍽️', bin:'red',    required:[], bonus:[],           hint:'Broken ceramics &amp; crockery cannot be recycled – wrap safely &amp; red bin' },
+  { id:'broken_crockery', name:'Broken Crockery',        emoji:'🍽️', bin:'red',    required:[], bonus:[],           hint:'Broken ceramics & crockery cannot be recycled – wrap safely & red bin' },
   { id:'drinking_glass',  name:'Broken Drinking Glass',  emoji:'🥃', bin:'red',    required:[], bonus:[],           hint:'Drinking glasses go in the red bin – NOT the blue glass recycling bin!' },
 
   /* ---- YELLOW BIN — Mixed Recycling (plastics, cans, paper & cardboard) ---- */
@@ -782,30 +817,30 @@ const ITEMS = [
   { id:'lp_bottle',       name:'L&P Bottle',             emoji:'🍋', bin:'yellow', required:['removeLid'], bonus:['rinse'],              hint:'Kiwi classic – plastic bottle, lid off, yellow bin!' },
   { id:'milo_tin',        name:'Milo Tin',               emoji:'🫙', bin:'yellow', required:[],            bonus:['rinse','removeLabel'], hint:'Steel tins are fully recyclable – Kiwi favourite!' },
   { id:'paint_tin_empty', name:'Empty Paint Tin',        emoji:'🪣', bin:'yellow', required:[],            bonus:['clean'],              hint:'Completely empty, dry metal tins can go in yellow bin' },
-  { id:'newspaper',       name:'Newspaper',              emoji:'📰', bin:'yellow', required:[], bonus:[],           hint:'Paper &amp; newspapers go in the yellow recycling bin' },
-  { id:'cardboard_box',   name:'Large Cardboard Box',    emoji:'📦', bin:'yellow', required:['cut'], bonus:['flatten'],  hint:'Large cardboard must be cut down &amp; flattened before recycling!' },
+  { id:'newspaper',       name:'Newspaper',              emoji:'📰', bin:'yellow', required:[], bonus:[],           hint:'Paper & newspapers go in the yellow recycling bin' },
+  { id:'cardboard_box',   name:'Large Cardboard Box',    emoji:'📦', bin:'yellow', required:['cut'], bonus:['flatten'],  hint:'Large cardboard must be cut down & flattened before recycling!' },
   { id:'printer_paper',   name:'Printer Paper',          emoji:'📄', bin:'yellow', required:[], bonus:[],           hint:'Clean paper is recyclable – yellow bin!' },
-  { id:'magazine',        name:'Old Magazine',           emoji:'📚', bin:'yellow', required:[], bonus:[],           hint:'Magazines &amp; glossy paper go in the yellow recycling bin' },
+  { id:'magazine',        name:'Old Magazine',           emoji:'📚', bin:'yellow', required:[], bonus:[],           hint:'Magazines & glossy paper go in the yellow recycling bin' },
   { id:'cereal_box',      name:'Weetbix Box',            emoji:'🥣', bin:'yellow', required:[], bonus:['flatten'],  hint:'Flatten the cardboard box and put in the yellow recycling!' },
   { id:'toilet_roll',     name:'Toilet Roll Tube',       emoji:'🧻', bin:'yellow', required:[], bonus:[],           hint:'Cardboard tubes are recyclable – yellow bin!' },
   { id:'junk_mail',       name:'Junk Mail',              emoji:'📬', bin:'yellow', required:[], bonus:[],           hint:'Paper junk mail goes in the yellow recycling bin' },
   { id:'gift_wrap',       name:'Clean Gift Wrap',        emoji:'🎁', bin:'yellow', required:[], bonus:[],           hint:'Non-foil gift wrap is paper – yellow recycling bin!' },
-  { id:'egg_carton',      name:'Egg Carton',             emoji:'🥚', bin:'yellow', required:[], bonus:['flatten'],  hint:'Clean &amp; dry egg cartons are cardboard – flatten &amp; yellow bin!' },
-  { id:'book',            name:'Old Paperback Book',     emoji:'📖', bin:'yellow', required:[], bonus:[],           hint:'Books &amp; paper go in the yellow recycling bin' },
+  { id:'egg_carton',      name:'Egg Carton',             emoji:'🥚', bin:'yellow', required:[], bonus:['flatten'],  hint:'Clean & dry egg cartons are cardboard – flatten & yellow bin!' },
+  { id:'book',            name:'Old Paperback Book',     emoji:'📖', bin:'yellow', required:[], bonus:[],           hint:'Books & paper go in the yellow recycling bin' },
 
   /* ---- GREEN BIN — Organics ---- */
   { id:'apple_core',      name:'Apple Core',             emoji:'🍎', bin:'green',  required:[], bonus:[],           hint:'All food scraps go in the green organics bin' },
   { id:'banana_peel',     name:'Banana Peel',            emoji:'🍌', bin:'green',  required:[], bonus:[],           hint:'Fruit peels are great for the green organics bin' },
   { id:'veg_peels',       name:'Vegetable Peels',        emoji:'🥕', bin:'green',  required:[], bonus:[],           hint:'Veggie scraps are composted from the green bin' },
   { id:'egg_shells',      name:'Egg Shells',             emoji:'🪺', bin:'green',  required:[], bonus:[],           hint:'Egg shells are 100% compostable – green bin!' },
-  { id:'fish_bones',      name:'Fish Bones',             emoji:'🐟', bin:'green',  required:[], bonus:[],           hint:'Meat, fish &amp; bones all go in the green bin' },
-  { id:'tea_bag',         name:'Used Tea Bag',           emoji:'🍵', bin:'green',  required:[], bonus:[],           hint:'Tea bags &amp; coffee grounds are compostable' },
+  { id:'fish_bones',      name:'Fish Bones',             emoji:'🐟', bin:'green',  required:[], bonus:[],           hint:'Meat, fish & bones all go in the green bin' },
+  { id:'tea_bag',         name:'Used Tea Bag',           emoji:'🍵', bin:'green',  required:[], bonus:[],           hint:'Tea bags & coffee grounds are compostable' },
   { id:'garden_clip',     name:'Garden Clippings',       emoji:'🌿', bin:'green',  required:[], bonus:['cut'],      hint:'Chop clippings smaller for easier composting' },
   { id:'bread',           name:'Stale Bread',            emoji:'🍞', bin:'green',  required:[], bonus:[],           hint:'Old food goes in the green organics bin' },
   { id:'coffee_grounds',  name:'Coffee Grounds',         emoji:'🫘', bin:'green',  required:[], bonus:[],           hint:'Coffee grounds are excellent in the compost!' },
   { id:'weet_bix',        name:'Half-eaten Weetbix',     emoji:'🌾', bin:'green',  required:[], bonus:[],           hint:'Soggy cereal – food waste to the green bin' },
   { id:'avocado',         name:'Avocado',                emoji:'🥑', bin:'green',  required:[], bonus:[],           hint:'Avocado skin and pit are organic – green bin!' },
-  { id:'meat_scraps',     name:'Meat Scraps',            emoji:'🥩', bin:'green',  required:[], bonus:[],           hint:'Meat, bones &amp; leftover food go in the green organics bin' },
+  { id:'meat_scraps',     name:'Meat Scraps',            emoji:'🥩', bin:'green',  required:[], bonus:[],           hint:'Meat, bones & leftover food go in the green organics bin' },
 
   /* ---- BLUE BIN — Glass Bottles & Jars ---- */
   { id:'wine_bottle',      name:'Wine Bottle',           emoji:'🍷', bin:'blue',   required:[],            bonus:['rinse'], hint:'Glass wine bottles – rinse and recycle in the blue glass bin!' },
@@ -815,9 +850,9 @@ const ITEMS = [
   { id:'glass_beer_bottle',name:'Glass Beer Bottle',     emoji:'🍶', bin:'blue',   required:[],            bonus:['rinse'], hint:'Glass bottles belong in the blue glass recycling bin – not cans!' },
 
   /* ---- ORANGE BIN — Resource Recovery (Hazardous) ---- */
-  { id:'cfl_bulb',        name:'CFL Light Bulb',         emoji:'💡', bin:'orange', required:[], bonus:[],           hint:'Fluorescent &amp; CFL bulbs contain mercury – Resource Recovery only!' },
+  { id:'cfl_bulb',        name:'CFL Light Bulb',         emoji:'💡', bin:'orange', required:[], bonus:[],           hint:'Fluorescent & CFL bulbs contain mercury – Resource Recovery only!' },
   { id:'paint_leftover',  name:'Leftover Paint',         emoji:'🎨', bin:'orange', required:[], bonus:[],           hint:'Partially-used paint is hazardous – take to Resource Recovery!' },
-  { id:'medication',      name:'Old Medication',         emoji:'💊', bin:'orange', required:[], bonus:[],           hint:'Old pills &amp; medication go to a pharmacy or Resource Recovery centre' },
+  { id:'medication',      name:'Old Medication',         emoji:'💊', bin:'orange', required:[], bonus:[],           hint:'Old pills & medication go to a pharmacy or Resource Recovery centre' },
   { id:'motor_oil',       name:'Used Motor Oil',         emoji:'🛢️', bin:'orange', required:[], bonus:[],           hint:'Used oil is hazardous – Resource Recovery centre only!' },
   { id:'ewaste',          name:'Old Electronics',        emoji:'📱', bin:'orange', required:[], bonus:[],           hint:'E-waste contains hazardous materials – Resource Recovery!' },
   { id:'spray_chemical',  name:'Chemical Spray Bottle',  emoji:'🧪', bin:'orange', required:[], bonus:[],           hint:'Household chemicals are hazardous – Resource Recovery centre!' },
@@ -897,6 +932,7 @@ function stopPanicBeep() {
 
 /* ── GAME STATE ──────────────────────────────────────────────────── */
 let state = 'start'; // 'start' | 'playing' | 'gameover'
+let trainingMode = false;
 let score = 0;
 let highScore = parseInt(localStorage.getItem('rrHighScore') || '0');
 let timer = CFG.startTime;
@@ -935,6 +971,8 @@ const $goBest         = document.getElementById('goBest');
 const $goItems        = document.getElementById('goItems');
 const $goNewRecord    = document.getElementById('goNewRecord');
 const $statsLine      = document.getElementById('statsLine');
+const $actionsBar     = document.getElementById('actionsBar');
+const $trainingToggle = document.getElementById('trainingToggle');
 
 /* ── SHUFFLE UTIL ────────────────────────────────────────────────── */
 function shuffle(arr) {
@@ -1034,11 +1072,18 @@ function showNextItem() {
 
   $itemEmoji.textContent = currentItem.emoji;
   $itemName.textContent  = currentItem.name;
-  $hintBar.textContent   = currentItem.hint;
 
-  // Required action badges
+  // Hint bar – only in training mode
+  if (trainingMode) {
+    $hintBar.textContent = currentItem.hint;
+    $hintBar.classList.remove('hidden');
+  } else {
+    $hintBar.classList.add('hidden');
+  }
+
+  // Required action badges – only in training mode
   $reqBadges.innerHTML = '';
-  if (currentItem.required.length > 0) {
+  if (trainingMode && currentItem.required.length > 0) {
     currentItem.required.forEach(aid => {
       const span = document.createElement('span');
       span.className = 'req-badge';
@@ -1067,16 +1112,18 @@ function sortItem(binColor, binEl) {
   const correct = binColor === currentItem.bin;
   totalSorted++;
 
-  // Check required actions
-  const missing = currentItem.required.filter(a => !actionsApplied.has(a));
-  const timePenalty = missing.length * CFG.missingActionPenalty;
+  // Required actions only apply in training mode (actions bar is hidden in normal mode)
+  const missing = trainingMode ? currentItem.required.filter(a => !actionsApplied.has(a)) : [];
+  const penaltyPerMissing = trainingMode ? CFG.missingActionPenalty * CFG.trainingMultiplier : CFG.missingActionPenalty;
+  const timePenalty = missing.length * penaltyPerMissing;
 
   if (correct) {
     correctSorted++;
     combo++;
     const timeBonus = CFG.correctSortBonus - timePenalty;
     adjustTimer(timeBonus, binEl);
-    addScore(CFG.correctPoints + combo * CFG.comboMultiplier);
+    const rawPts = CFG.correctPoints + combo * CFG.comboMultiplier;
+    addScore(trainingMode ? Math.round(rawPts * CFG.trainingMultiplier) : rawPts);
     flashBin(binEl, 'flash-correct');
     sfxCorrect();
     if (combo >= 3) showCombo(combo);
@@ -1086,14 +1133,18 @@ function sortItem(binColor, binEl) {
     }
   } else {
     combo = 0;
-    adjustTimer(-CFG.wrongSortPenalty, binEl);
-    addScore(CFG.wrongPoints);
+    const wrongPenalty = trainingMode ? CFG.wrongSortPenalty * CFG.trainingMultiplier : CFG.wrongSortPenalty;
+    adjustTimer(-wrongPenalty, binEl);
+    const wrongPts = trainingMode ? Math.round(CFG.wrongPoints * CFG.trainingMultiplier) : CFG.wrongPoints;
+    addScore(wrongPts);
     flashBin(binEl, 'flash-wrong');
     sfxWrong();
     // Show correct bin briefly
     const correctBinEl = document.querySelector(`.bin[data-color="${currentItem.bin}"]`);
     if (correctBinEl) flashBin(correctBinEl, 'flash-correct');
-    $hintBar.textContent = '❌ Wrong! → ' + BINS[currentItem.bin].name + ' | ' + currentItem.hint;
+    if (trainingMode) {
+      $hintBar.textContent = '❌ Wrong! → ' + BINS[currentItem.bin].name + ' | ' + currentItem.hint;
+    }
   }
 
   setTimeout(() => showNextItem(), 250);
@@ -1119,7 +1170,7 @@ function applyAction(actionId, btnEl) {
   if (isApplicable) {
     actionsApplied.add(actionId);
     adjustTimer(CFG.bonusActionReward, btnEl);
-    addScore(CFG.actionPoints);
+    addScore(trainingMode ? Math.round(CFG.actionPoints * CFG.trainingMultiplier) : CFG.actionPoints);
     flashBtn(btnEl, 'flash-good');
     btnEl.classList.add('used');
     sfxAction();
@@ -1127,7 +1178,8 @@ function applyAction(actionId, btnEl) {
     const badge = $reqBadges.querySelector(`[data-action="${actionId}"]`);
     if (badge) badge.classList.add('done');
   } else {
-    adjustTimer(-CFG.wrongActionPenalty, btnEl);
+    const wrongActionPenalty = trainingMode ? CFG.wrongActionPenalty * CFG.trainingMultiplier : CFG.wrongActionPenalty;
+    adjustTimer(-wrongActionPenalty, btnEl);
     flashBtn(btnEl, 'flash-bad');
     sfxActionBad();
   }
@@ -1276,6 +1328,7 @@ function positionBins() {
 
 /* ── GAME FLOW ───────────────────────────────────────────────────── */
 function startGame() {
+  trainingMode = $trainingToggle.checked;
   state = 'playing';
   score = 0;
   timer = CFG.startTime;
@@ -1291,6 +1344,9 @@ function startGame() {
   $highScoreDisplay.textContent = highScore;
   $gameScreen.classList.remove('urgency1','urgency2','urgency3');
   $edgeGlow.className = '';
+
+  // Show/hide action buttons and hint bar based on mode
+  $actionsBar.classList.toggle('hidden', !trainingMode);
 
   showScreen($gameScreen);
   positionBins();
@@ -1317,7 +1373,7 @@ function endGame() {
   $goItems.textContent = correctSorted;
   $goNewRecord.style.display = isNew ? 'block' : 'none';
   const acc = totalSorted > 0 ? Math.round((correctSorted / totalSorted) * 100) : 0;
-  $statsLine.textContent = `${totalSorted} items attempted · ${acc}% accuracy`;
+  $statsLine.textContent = `${totalSorted} items attempted · ${acc}% accuracy${trainingMode ? ' · Training Mode' : ''}`;
 
   showScreen($gameOverScreen);
 }

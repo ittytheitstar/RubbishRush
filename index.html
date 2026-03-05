@@ -335,13 +335,21 @@
 
     /* ── Hint / Hint Bar ──────────────────────────────────────────── */
     #hintBar {
-      width: 100%; padding: 3px 12px;
-      font-size: clamp(0.62rem,2.2vw,0.82rem);
-      color: #bbb; text-align: center;
-      background: rgba(0,0,0,0.2);
-      flex-shrink: 0; min-height: 22px;
-      line-height: 1.3;
+      width: 100%; padding: 7px 16px;
+      font-size: clamp(0.88rem,3vw,1.1rem);
+      color: #fff; text-align: center;
+      background: rgba(0,0,0,0.45);
+      flex-shrink: 0; min-height: 36px;
+      line-height: 1.4;
+      font-weight: 600;
+      border-left: 5px solid transparent;
+      transition: background 0.35s, border-color 0.35s;
     }
+    #hintBar[data-bin="green"]  { background: rgba(46,204,113,0.28);  border-left-color: #2ecc71; }
+    #hintBar[data-bin="yellow"] { background: rgba(241,196,15,0.28);  border-left-color: #f1c40f; }
+    #hintBar[data-bin="red"]    { background: rgba(231,76,60,0.28);   border-left-color: #e74c3c; }
+    #hintBar[data-bin="blue"]   { background: rgba(52,152,219,0.28);  border-left-color: #3498db; }
+    #hintBar[data-bin="orange"] { background: rgba(230,126,34,0.28);  border-left-color: #e67e22; }
 
     /* ── Action Buttons ───────────────────────────────────────────── */
     #actionsBar {
@@ -759,6 +767,7 @@
 /* ── CONFIG ──────────────────────────────────────────────────────── */
 const CFG = {
   startTime:            60,
+  trainingStartTime:    45,   // training mode starts with less time
   correctSortBonus:      4,   // seconds (reduced from 5)
   wrongSortPenalty:      7,
   missingActionPenalty:  4,   // per missing required action
@@ -1075,7 +1084,9 @@ function showNextItem() {
 
   // Hint bar – only in training mode
   if (trainingMode) {
-    $hintBar.textContent = currentItem.hint;
+    const bin = BINS[currentItem.bin];
+    $hintBar.textContent = `🗑️ ${bin.name} bin: ${currentItem.hint}`;
+    $hintBar.dataset.bin = currentItem.bin;
     $hintBar.classList.remove('hidden');
   } else {
     $hintBar.classList.add('hidden');
@@ -1112,7 +1123,7 @@ function sortItem(binColor, binEl) {
   const correct = binColor === currentItem.bin;
   totalSorted++;
 
-  // Required actions only apply in training mode (actions bar is hidden in normal mode)
+  // Required-action penalties only apply in training mode (badges are hidden in normal mode)
   const missing = trainingMode ? currentItem.required.filter(a => !actionsApplied.has(a)) : [];
   const penaltyPerMissing = trainingMode ? CFG.missingActionPenalty * CFG.trainingMultiplier : CFG.missingActionPenalty;
   const timePenalty = missing.length * penaltyPerMissing;
@@ -1331,8 +1342,9 @@ function startGame() {
   trainingMode = $trainingToggle.checked;
   state = 'playing';
   score = 0;
-  timer = CFG.startTime;
-  timerMax = CFG.startTime;
+  const startTime = trainingMode ? CFG.trainingStartTime : CFG.startTime;
+  timer = startTime;
+  timerMax = startTime;
   combo = 0;
   totalSorted = 0;
   correctSorted = 0;
@@ -1346,7 +1358,7 @@ function startGame() {
   $edgeGlow.className = '';
 
   // Show/hide action buttons and hint bar based on mode
-  $actionsBar.classList.toggle('hidden', !trainingMode);
+  $actionsBar.classList.remove('hidden');
 
   showScreen($gameScreen);
   positionBins();

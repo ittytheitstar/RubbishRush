@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <defs>
+    <filter id="sh"><feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.18"/></filter>
+    <filter id="bl"><feGaussianBlur stdDeviation="3"/></filter>
+    
+  </defs>
+  <!-- background -->
+  <rect width="200" height="200" rx="20" fill="#FAFAFA"/>
+  <rect x="55" y="65" width="90" height="95" rx="6" fill="#E0E0E0" stroke="#333333" stroke-width="2.5" /><rect x="55" y="65" width="90" height="14" rx="6" fill="#BDBDBD" stroke="#333333" stroke-width="2.5" /><ellipse cx="100" cy="79" rx="45" ry="10" fill="#42A5F5" stroke="#90CAF9" stroke-width="1.5"/><path d="M145,85 Q148,100 146,115 Q144,130 148,145" fill="none" stroke="#42A5F5" stroke-width="8" stroke-linecap="round"/><path d="M65,65 Q100,42 135,65" fill="none" stroke="#9E9E9E" stroke-width="4" stroke-linecap="round"/><rect x="58" y="148" width="88" height="12" rx="4" fill="#42A5F5" stroke="none" stroke-width="0" /><rect x="10" y="168" width="180" height="22" rx="6" fill="#fff" fill-opacity="0.85"/><text x="100" y="179" font-family="Arial,sans-serif" font-size="11" font-weight="normal" fill="#444" text-anchor="middle" dominant-baseline="middle" >Leftover Paint</text>
+</svg>

@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <defs>
+    <filter id="sh"><feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.18"/></filter>
+    <filter id="bl"><feGaussianBlur stdDeviation="3"/></filter>
+    
+  </defs>
+  <!-- background -->
+  <rect width="200" height="200" rx="20" fill="#FAFAFA"/>
+  <path d="M45,95 C45,65 155,65 155,95 L152,155 Q152,162 100,162 Q48,162 48,155 Z" fill="#D7A86E" stroke="#333333" stroke-width="2.5"/><path d="M45,95 C45,65 155,65 155,95" fill="#8D6E63" stroke="#333333" stroke-width="2"/><line x1="82" y1="95" x2="80" y2="162" stroke="#BF9060" stroke-width="2"/><line x1="118" y1="95" x2="120" y2="162" stroke="#BF9060" stroke-width="2"/><circle cx="65" cy="120" r="5" fill="#7CB342" fill-opacity="0.55"/><circle cx="130" cy="135" r="4" fill="#7CB342" fill-opacity="0.55"/><circle cx="95" cy="145" r="3" fill="#7CB342" fill-opacity="0.55"/><rect x="10" y="168" width="180" height="22" rx="6" fill="#fff" fill-opacity="0.85"/><text x="100" y="179" font-family="Arial,sans-serif" font-size="11" font-weight="normal" fill="#444" text-anchor="middle" dominant-baseline="middle" >Stale Bread</text>
+</svg>

@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <defs>
+    <filter id="sh"><feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.18"/></filter>
+    <filter id="bl"><feGaussianBlur stdDeviation="3"/></filter>
+    
+  </defs>
+  <!-- background -->
+  <rect width="200" height="200" rx="20" fill="#FAFAFA"/>
+  <path d="M55,80 C48,68 60,55 72,60 C80,53 90,58 88,68 C98,58 112,62 108,74 C120,65 135,70 130,84 C140,80 148,92 140,100 C148,105 145,120 135,118 C138,132 125,140 115,132 C112,145 96,148 90,138 C82,148 65,142 65,130 C52,130 45,115 55,105 C44,95 48,82 55,80 Z" fill="#EF5350" stroke="#333333" stroke-width="2.5"/><path d="M70,75 C75,68 85,72 82,80" fill="none" stroke="#FFCDD2" stroke-width="2"/><path d="M110,72 C115,66 124,70 120,79" fill="none" stroke="#FFCDD2" stroke-width="2"/><path d="M80,100 Q100,95 120,100" fill="none" stroke="#FFCDD2" stroke-width="3" stroke-linecap="round"/><rect x="10" y="168" width="180" height="22" rx="6" fill="#fff" fill-opacity="0.85"/><text x="100" y="179" font-family="Arial,sans-serif" font-size="11" font-weight="normal" fill="#444" text-anchor="middle" dominant-baseline="middle" >Meat Scraps</text>
+</svg>

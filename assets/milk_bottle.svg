@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <defs>
+    <filter id="sh"><feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.18"/></filter>
+    <filter id="bl"><feGaussianBlur stdDeviation="3"/></filter>
+    
+  </defs>
+  <!-- background -->
+  <rect width="200" height="200" rx="20" fill="#FAFAFA"/>
+  <path d="M83,65 L80,155 Q80,163 100,163 Q120,163 120,155 L117,65 Z" fill="#FAFAFA" stroke="#333333" stroke-width="2.5"/><rect x="87" y="53" width="26" height="16" rx="5" fill="#E0E0E0" stroke="#333333" stroke-width="1.5"/><rect x="90" y="46" width="20" height="10" rx="4" fill="#BDBDBD" stroke="#333333" stroke-width="1.5"/><rect x="82" y="92" width="36" height="30" rx="4" fill="#E3F2FD" stroke="#333333" stroke-width="2.5" /><text x="100" y="107" font-family="Arial,sans-serif" font-size="9" fill="#1565C0" text-anchor="middle">MILK</text><rect x="10" y="168" width="180" height="22" rx="6" fill="#fff" fill-opacity="0.85"/><text x="100" y="179" font-family="Arial,sans-serif" font-size="11" font-weight="normal" fill="#444" text-anchor="middle" dominant-baseline="middle" >Milk Bottle (remove lid)</text>
+</svg>

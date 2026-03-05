@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <defs>
+    <filter id="sh"><feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.18"/></filter>
+    <filter id="bl"><feGaussianBlur stdDeviation="3"/></filter>
+    
+  </defs>
+  <!-- background -->
+  <rect width="200" height="200" rx="20" fill="#FAFAFA"/>
+  <path d="M82,75 L78,155 Q78,163 100,163 Q122,163 122,155 L118,75 Z" fill="#F3E5F5" stroke="#333333" stroke-width="2.5"/><rect x="85" y="58" width="30" height="22" rx="5" fill="#CE93D8" stroke="#333333" stroke-width="1.5"/><rect x="91" y="50" width="18" height="12" rx="4" fill="#BA68C8" stroke="#333333" stroke-width="1.5"/><rect x="97" y="40" width="6" height="14" rx="2" fill="#AB47BC" stroke="#333333" stroke-width="1.5"/><rect x="82" y="36" width="22" height="8" rx="4" fill="#9C27B0" stroke="#333333" stroke-width="1.5"/><rect x="83" y="95" width="34" height="35" rx="4" fill="#E1BEE7" stroke="#333333" stroke-width="2.5" /><text x="100" y="113" font-family="Arial,sans-serif" font-size="8" fill="#6A1B9A" text-anchor="middle">SHAMPOO</text><rect x="10" y="168" width="180" height="22" rx="6" fill="#fff" fill-opacity="0.85"/><text x="100" y="179" font-family="Arial,sans-serif" font-size="11" font-weight="normal" fill="#444" text-anchor="middle" dominant-baseline="middle" >Shampoo Bottle (remove lid)</text>
+</svg>

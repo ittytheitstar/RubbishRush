@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <defs>
+    <filter id="sh"><feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.18"/></filter>
+    <filter id="bl"><feGaussianBlur stdDeviation="3"/></filter>
+    
+  </defs>
+  <!-- background -->
+  <rect width="200" height="200" rx="20" fill="#FAFAFA"/>
+  <path d="M88,115 L83,158 Q83,165 100,165 Q117,165 117,158 L112,115 Z" fill="#E65100" stroke="#333333" stroke-width="2.5"/><path d="M88,115 L82,85 Q82,70 100,65 Q118,70 118,85 L112,115 Z" fill="#FF6D00" stroke="#333333" stroke-width="2.5"/><path d="M90,65 L90,52 Q90,44 100,42 Q110,44 110,52 L110,65" fill="#E65100" stroke="#333333" stroke-width="1.5"/><rect x="86" y="38" width="28" height="14" rx="3" fill="#E53935" stroke="#333333" stroke-width="2.5" /><path d="M84,38 L88,32 L94,38 L100,32 L106,38 L112,32 L116,38" fill="none" stroke="#E53935" stroke-width="2"/><rect x="84" y="92" width="32" height="38" rx="3" fill="#FFA726" stroke="none" stroke-width="0" /><text x="100" y="110" font-family="Arial,sans-serif" font-size="8" font-weight="bold" fill="#4E342E" text-anchor="middle">BEER</text><rect x="10" y="168" width="180" height="22" rx="6" fill="#fff" fill-opacity="0.85"/><text x="100" y="179" font-family="Arial,sans-serif" font-size="11" font-weight="normal" fill="#444" text-anchor="middle" dominant-baseline="middle" >Glass Beer Bottle</text>
+</svg>

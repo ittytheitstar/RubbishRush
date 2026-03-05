@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <defs>
+    <filter id="sh"><feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.18"/></filter>
+    <filter id="bl"><feGaussianBlur stdDeviation="3"/></filter>
+    
+  </defs>
+  <!-- background -->
+  <rect width="200" height="200" rx="20" fill="#FAFAFA"/>
+  <path d="M100,40 C72,40 55,65 55,95 C55,130 70,158 100,162 C130,158 145,130 145,95 C145,65 128,40 100,40 Z" fill="#8BC34A" stroke="#333333" stroke-width="2.5"/><path d="M100,48 C76,48 62,70 62,96 C62,126 74,153 100,157 C126,153 138,126 138,96 C138,70 124,48 100,48 Z" fill="#DCEDC8" stroke="#A5D6A7" stroke-width="1.5"/><circle cx="100" cy="105" r="28" fill="#D7A86E" stroke="#333333" stroke-width="2.5" /><circle cx="100" cy="105" r="20" fill="#C49060" stroke="#A1887F" stroke-width="1.5" /><rect x="10" y="168" width="180" height="22" rx="6" fill="#fff" fill-opacity="0.85"/><text x="100" y="179" font-family="Arial,sans-serif" font-size="11" font-weight="normal" fill="#444" text-anchor="middle" dominant-baseline="middle" >Avocado</text>
+</svg>

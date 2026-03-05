@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <defs>
+    <filter id="sh"><feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.18"/></filter>
+    <filter id="bl"><feGaussianBlur stdDeviation="3"/></filter>
+    
+  </defs>
+  <!-- background -->
+  <rect width="200" height="200" rx="20" fill="#FAFAFA"/>
+  <path d="M80,65 Q78,55 100,52 Q122,55 120,65 L128,145 Q128,155 100,155 Q72,155 72,145 Z" fill="#8D6E63" stroke="#333333" stroke-width="2.5"/><path d="M87,65 Q100,60 113,65" fill="none" stroke="#5D4037" stroke-width="2"/><text x="100" y="112" font-family="Arial" font-size="34" text-anchor="middle" dominant-baseline="middle">💩</text><rect x="10" y="168" width="180" height="22" rx="6" fill="#fff" fill-opacity="0.85"/><text x="100" y="179" font-family="Arial,sans-serif" font-size="11" font-weight="normal" fill="#444" text-anchor="middle" dominant-baseline="middle" >Dog Poo Bag</text>
+</svg>

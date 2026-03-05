@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <defs>
+    <filter id="sh"><feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.18"/></filter>
+    <filter id="bl"><feGaussianBlur stdDeviation="3"/></filter>
+    
+  </defs>
+  <!-- background -->
+  <rect width="200" height="200" rx="20" fill="#FAFAFA"/>
+  <path d="M60,55 C55,65 58,80 65,78 C72,76 72,85 68,95 C64,105 68,115 75,112 C82,109 84,118 80,130" fill="none" stroke="#FF8F00" stroke-width="8" stroke-linecap="round"/><path d="M100,50 C95,62 98,75 106,73 C114,71 115,82 110,94 C105,106 108,118 116,115" fill="none" stroke="#8D6E63" stroke-width="7" stroke-linecap="round"/><path d="M135,58 C130,70 133,83 141,81 C149,79 150,92 144,104 C138,116 142,128 150,125" fill="none" stroke="#F57F17" stroke-width="7" stroke-linecap="round"/><rect x="10" y="168" width="180" height="22" rx="6" fill="#fff" fill-opacity="0.85"/><text x="100" y="179" font-family="Arial,sans-serif" font-size="11" font-weight="normal" fill="#444" text-anchor="middle" dominant-baseline="middle" >Vegetable Peels</text>
+</svg>

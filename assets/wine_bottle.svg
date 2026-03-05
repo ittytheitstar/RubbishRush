@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <defs>
+    <filter id="sh"><feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.18"/></filter>
+    <filter id="bl"><feGaussianBlur stdDeviation="3"/></filter>
+    
+  </defs>
+  <!-- background -->
+  <rect width="200" height="200" rx="20" fill="#FAFAFA"/>
+  <path d="M88,120 L83,158 Q83,165 100,165 Q117,165 117,158 L112,120 Z" fill="#2E7D32" stroke="#333333" stroke-width="2.5"/><path d="M88,120 L82,85 Q82,70 100,65 Q118,70 118,85 L112,120 Z" fill="#388E3C" stroke="#333333" stroke-width="2.5"/><path d="M88,65 L88,48 Q88,40 100,38 Q112,40 112,48 L112,65" fill="#2E7D32" stroke="#333333" stroke-width="1.5"/><rect x="88" y="56" width="24" height="8" rx="2" fill="#1B5E20" stroke="none"/><rect x="84" y="95" width="32" height="38" rx="3" fill="#1B5E20" stroke="none" stroke-width="0" /><text x="100" y="114" font-family="serif" font-size="9" fill="#C8E6C9" text-anchor="middle">WINE</text><rect x="10" y="168" width="180" height="22" rx="6" fill="#fff" fill-opacity="0.85"/><text x="100" y="179" font-family="Arial,sans-serif" font-size="11" font-weight="normal" fill="#444" text-anchor="middle" dominant-baseline="middle" >Wine Bottle</text>
+</svg>

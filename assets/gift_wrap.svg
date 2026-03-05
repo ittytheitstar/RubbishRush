@@ -1,10 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
-  <defs>
-    <filter id="sh"><feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.18"/></filter>
-    <filter id="bl"><feGaussianBlur stdDeviation="3"/></filter>
-    
-  </defs>
-  <!-- background -->
-  <rect width="200" height="200" rx="20" fill="#FAFAFA"/>
-  <rect x="35" y="60" width="130" height="100" rx="8" fill="#E91E63" stroke="#333333" stroke-width="2.5" /><rect x="95" y="60" width="10" height="100" fill="#FDD835" fill-opacity="0.85"/><rect x="35" y="105" width="130" height="10" fill="#FDD835" fill-opacity="0.85"/><ellipse cx="86" cy="62" rx="18" ry="10" fill="#FDD835" stroke="#333333" stroke-width="2" transform="rotate(-20,86,62)"/><ellipse cx="114" cy="62" rx="18" ry="10" fill="#FDD835" stroke="#333333" stroke-width="2" transform="rotate(20,114,62)"/><circle cx="100" cy="62" r="8" fill="#FDD835" stroke="#333333" stroke-width="1.5" /><rect x="10" y="168" width="180" height="22" rx="6" fill="#fff" fill-opacity="0.85"/><text x="100" y="179" font-family="Arial,sans-serif" font-size="11" font-weight="normal" fill="#444" text-anchor="middle" dominant-baseline="middle" >Clean Gift Wrap</text>
+  <rect width="200" height="200" rx="20" fill="#FFFFFF" stroke="#E0E0E0" stroke-width="1"/>
+  <g transform="translate(20,20) scale(4.444)">
+    <path fill="#FDD888" d="M33 31c0 2.2-1.8 4-4 4H7c-2.2 0-4-1.8-4-4V14c0-2.2 1.8-4 4-4h22c2.2 0 4 1.8 4 4v17z"/><path fill="#FDD888" d="M36 11c0 2.2-1.8 4-4 4H4c-2.2 0-4-1.8-4-4s1.8-4 4-4h28c2.2 0 4 1.8 4 4z"/><path fill="#FCAB40" d="M3 15h30v2H3z"/><path fill="#DA2F47" d="M19 3h-2c-1.657 0-3 1.343-3 3v29h8V6c0-1.656-1.343-3-3-3z"/><path fill="#DA2F47" d="M16 7c1.1 0 1.263-.516.361-1.147L9.639 1.147c-.902-.631-2.085-.366-2.631.589L4.992 5.264C4.446 6.219 4.9 7 6 7h10zm4 0c-1.1 0-1.263-.516-.361-1.147l6.723-4.706c.901-.631 2.085-.366 2.631.589l2.016 3.527C31.554 6.219 31.1 7 30 7H20z"/>
+  </g>
 </svg>

@@ -1,10 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
-  <defs>
-    <filter id="sh"><feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.18"/></filter>
-    <filter id="bl"><feGaussianBlur stdDeviation="3"/></filter>
-    
-  </defs>
-  <!-- background -->
-  <rect width="200" height="200" rx="20" fill="#FAFAFA"/>
-  <path d="M75,55 Q65,50 65,65 L55,140 Q54,155 100,157 Q146,155 145,140 L135,65 Q135,50 125,55 Z" fill="#E3F2FD" fill-opacity="0.75" stroke="#333333" stroke-width="2.5"/><path d="M82,55 Q100,48 118,55" fill="none" stroke="#333333" stroke-width="2.5"/><line x1="85" y1="55" x2="82" y2="45" stroke="#333333" stroke-width="2"/><line x1="115" y1="55" x2="118" y2="45" stroke="#333333" stroke-width="2"/><ellipse cx="100" cy="110" rx="30" ry="20" fill="#BBDEFB" fill-opacity="0.4"/><rect x="10" y="168" width="180" height="22" rx="6" fill="#fff" fill-opacity="0.85"/><text x="100" y="179" font-family="Arial,sans-serif" font-size="11" font-weight="normal" fill="#444" text-anchor="middle" dominant-baseline="middle" >Plastic Bag</text>
+  <rect width="200" height="200" rx="20" fill="#FFFFFF" stroke="#E0E0E0" stroke-width="1"/>
+  <g transform="translate(20,20) scale(4.444)">
+    <path fill="#F4900C" d="M11 0C6.582 0 3 3.582 3 8v8h2V8c0-3.313 2.687-6 6-6 3.314 0 6 2.687 6 6v8h2V8c0-4.418-3.582-8-8-8z"/><path fill="#DD2E44" d="M1 8l2 2 2-2 2 2 2-2 2 2 2-2 2 2 2-2 2 2 2-2v23H1z"/><path fill="#FFCC4D" d="M25 5c-4.418 0-8 3.582-8 8v8h2v-8c0-3.314 2.688-6 6-6 3.315 0 6 2.686 6 6v8h2v-8c0-4.418-3.582-8-8-8z"/><path fill="#744EAA" d="M15 13l2 2 2-2 2 2 2-2 2 2 2-2 2 2 2-2 2 2 2-2v23H15z"/>
+  </g>
 </svg>

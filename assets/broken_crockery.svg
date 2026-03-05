@@ -1,10 +1,28 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
-  <defs>
-    <filter id="sh"><feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.18"/></filter>
-    <filter id="bl"><feGaussianBlur stdDeviation="3"/></filter>
-    
-  </defs>
-  <!-- background -->
-  <rect width="200" height="200" rx="20" fill="#FAFAFA"/>
-  <circle cx="100" cy="100" r="68" fill="#ECEFF1" stroke="#333333" stroke-width="2.5" /><circle cx="100" cy="100" r="52" fill="#F5F5F5" stroke="#CCC" stroke-width="1.5" /><path d="M100,32 L92,78 L104,100 L96,168" fill="none" stroke="#B71C1C" stroke-width="3" stroke-linecap="round"/><line x1="104" y1="100" x2="125" y2="85" stroke="#B71C1C" stroke-width="2" stroke-linecap="round"/><rect x="10" y="168" width="180" height="22" rx="6" fill="#fff" fill-opacity="0.85"/><text x="100" y="179" font-family="Arial,sans-serif" font-size="11" font-weight="normal" fill="#444" text-anchor="middle" dominant-baseline="middle" >Broken Crockery</text>
-</svg>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+        <defs>
+          <filter id="shadow" x="-15%" y="-15%" width="130%" height="140%">
+            <feGaussianBlur in="SourceAlpha" stdDeviation="3.5"/>
+            <feOffset dx="0" dy="3" result="offsetblur"/>
+            <feFlood flood-color="#00000030"/>
+            <feComposite in2="offsetblur" operator="in"/>
+            <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+          <filter id="blur"><feGaussianBlur stdDeviation="2.8"/></filter>
+          <radialGradient id="plateGrad" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#FAFAFA"/><stop offset="80%" stop-color="#F5F5F5"/><stop offset="100%" stop-color="#E0E0E0"/></radialGradient>
+        </defs>
+        <rect width="200" height="200" rx="20" fill="#FFFFFF" stroke="#E0E0E0" stroke-width="1"/>
+
+<!-- plate shadow/base -->
+<ellipse cx="100" cy="108" rx="72" ry="72" fill="url(#plateGrad)" stroke="#BDBDBD" stroke-width="2" filter="url(#shadow)"/>
+<!-- inner ring detail -->
+<ellipse cx="100" cy="108" rx="54" ry="54" fill="none" stroke="#E0E0E0" stroke-width="2"/>
+<ellipse cx="100" cy="108" rx="38" ry="38" fill="none" stroke="#EEEEEE" stroke-width="1.5"/>
+<!-- crack -->
+<path d="M100,38 L94,80 L108,100 L100,178" fill="none" stroke="#B71C1C" stroke-width="3" stroke-linecap="round"/>
+<line x1="108" y1="100" x2="132" y2="88" stroke="#B71C1C" stroke-width="2" stroke-linecap="round"/>
+<line x1="94" y1="80" x2="72" y2="90" stroke="#B71C1C" stroke-width="1.8" stroke-linecap="round"/>
+<!-- specular -->
+<ellipse cx="76" cy="68" rx="8" ry="12" fill="white" opacity="0.25" transform="rotate(-30 76 68)"/>
+<text x="100" y="196" font-family="Arial" font-size="9" fill="#757575" text-anchor="middle">BROKEN CROCKERY</text>
+
+      </svg>

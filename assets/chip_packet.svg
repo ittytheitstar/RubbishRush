@@ -1,10 +1,30 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
-  <defs>
-    <filter id="sh"><feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.18"/></filter>
-    <filter id="bl"><feGaussianBlur stdDeviation="3"/></filter>
-    
-  </defs>
-  <!-- background -->
-  <rect width="200" height="200" rx="20" fill="#FAFAFA"/>
-  <path d="M68,45 L72,155 Q72,162 100,162 Q128,162 128,155 L132,45 Q132,38 100,38 Q68,38 68,45 Z" fill="#E53935" stroke="#333333" stroke-width="2.5"/><path d="M73,75 L127,75 L130,110 L70,110 Z" fill="#FFD600" fill-opacity="0.6"/><path d="M73,75 C73,75 80,68 100,70 C120,68 127,75 127,75" fill="none" stroke="#FFD600" stroke-width="2"/><text x="100" y="92" font-family="Arial,sans-serif" font-size="11" font-weight="bold" fill="#FFD600" text-anchor="middle" filter="url(#bl)">CHIPS</text><text x="100" y="92" font-family="Arial,sans-serif" font-size="11" font-weight="bold" fill="#FFD600" text-anchor="middle">CHIPS</text><rect x="10" y="168" width="180" height="22" rx="6" fill="#fff" fill-opacity="0.85"/><text x="100" y="179" font-family="Arial,sans-serif" font-size="11" font-weight="normal" fill="#444" text-anchor="middle" dominant-baseline="middle" >Chip Packet</text>
-</svg>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+        <defs>
+          <filter id="shadow" x="-15%" y="-15%" width="130%" height="140%">
+            <feGaussianBlur in="SourceAlpha" stdDeviation="3.5"/>
+            <feOffset dx="0" dy="3" result="offsetblur"/>
+            <feFlood flood-color="#00000030"/>
+            <feComposite in2="offsetblur" operator="in"/>
+            <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+          <filter id="blur"><feGaussianBlur stdDeviation="2.8"/></filter>
+          <linearGradient id="cpGrad" x1="0%" y1="0%" x2="100%" y2="0"><stop offset="0%" stop-color="#B71C1C"/><stop offset="40%" stop-color="#E53935"/><stop offset="60%" stop-color="#E53935"/><stop offset="100%" stop-color="#B71C1C"/></linearGradient><linearGradient id="cpFoil" x1="0%" y1="0%" x2="100%" y2="0"><stop offset="0%" stop-color="#9E9E9E"/><stop offset="30%" stop-color="#E0E0E0"/><stop offset="70%" stop-color="#E0E0E0"/><stop offset="100%" stop-color="#9E9E9E"/></linearGradient>
+        </defs>
+        <rect width="200" height="200" rx="20" fill="#FFFFFF" stroke="#E0E0E0" stroke-width="1"/>
+
+<!-- bag shape – wider in middle, pinched at top and bottom -->
+<path d="M 78,40 C 70,40 62,44 60,52 L 52,150 C 50,162 68,168 100,168 C 132,168 150,162 148,150 L 140,52 C 138,44 130,40 122,40 Z"
+      fill="url(#cpGrad)" stroke="#7B1111" stroke-width="1.8" filter="url(#shadow)"/>
+<!-- foil top seal -->
+<ellipse cx="100" cy="40" rx="22" ry="7" fill="url(#cpFoil)" stroke="#757575" stroke-width="1.5"/>
+<!-- label area -->
+<ellipse cx="100" cy="105" rx="42" ry="32" fill="#C62828" opacity="0.5"/>
+<!-- brand text -->
+<text x="100" y="98" font-family="Arial" font-size="13" font-weight="bold" fill="#FFD600" text-anchor="middle">CHIPS</text>
+<text x="100" y="113" font-family="Arial" font-size="8" fill="#FFEE58" text-anchor="middle">ORIGINAL FLAVOUR</text>
+<!-- foil bottom seal -->
+<ellipse cx="100" cy="168" rx="48" ry="8" fill="url(#cpFoil)" stroke="#757575" stroke-width="1.5"/>
+<!-- highlight -->
+<path d="M70,52 C68,52 64,58 62,68 L58,140 C58,145 62,147 65,146 C63,143 62,138 63,132 L67,62 C68,54 72,50 74,50 Z" fill="white" opacity="0.2"/>
+
+      </svg>

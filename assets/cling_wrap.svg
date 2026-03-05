@@ -1,10 +1,33 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
-  <defs>
-    <filter id="sh"><feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.18"/></filter>
-    <filter id="bl"><feGaussianBlur stdDeviation="3"/></filter>
-    
-  </defs>
-  <!-- background -->
-  <rect width="200" height="200" rx="20" fill="#FAFAFA"/>
-  <rect x="55" y="70" width="90" height="60" rx="8" fill="#E3F2FD" fill-opacity="0.6" stroke="#333333" stroke-width="2.5"/><rect x="55" y="70" width="90" height="12" rx="8" fill="#90CAF9" fill-opacity="0.6" stroke="#333333" stroke-width="1.5"/><line x1="55" y1="82" x2="145" y2="82" stroke="#90CAF9" stroke-width="1"/><line x1="60" y1="90" x2="140" y2="90" stroke="#BBDEFB" stroke-width="1.5" stroke-dasharray="6,4"/><line x1="60" y1="100" x2="140" y2="100" stroke="#BBDEFB" stroke-width="1.5" stroke-dasharray="6,4"/><line x1="60" y1="110" x2="140" y2="110" stroke="#BBDEFB" stroke-width="1.5" stroke-dasharray="6,4"/><path d="M62,130 Q100,118 138,130 Q100,142 62,130 Z" fill="#E3F2FD" fill-opacity="0.7" stroke="#333333" stroke-width="1.5"/><rect x="10" y="168" width="180" height="22" rx="6" fill="#fff" fill-opacity="0.85"/><text x="100" y="179" font-family="Arial,sans-serif" font-size="11" font-weight="normal" fill="#444" text-anchor="middle" dominant-baseline="middle" >Cling Wrap</text>
-</svg>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+        <defs>
+          <filter id="shadow" x="-15%" y="-15%" width="130%" height="140%">
+            <feGaussianBlur in="SourceAlpha" stdDeviation="3.5"/>
+            <feOffset dx="0" dy="3" result="offsetblur"/>
+            <feFlood flood-color="#00000030"/>
+            <feComposite in2="offsetblur" operator="in"/>
+            <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+          <filter id="blur"><feGaussianBlur stdDeviation="2.8"/></filter>
+          <linearGradient id="cwGrad" x1="0%" y1="0%" x2="100%" y2="0"><stop offset="0%" stop-color="#90CAF9"/><stop offset="18%" stop-color="#90CAF9"/><stop offset="45%" stop-color="#E3F2FD"/><stop offset="55%" stop-color="#E3F2FD"/><stop offset="82%" stop-color="#90CAF9"/><stop offset="100%" stop-color="#90CAF9"/></linearGradient><linearGradient id="cwEdge" x1="0%" y1="0%" x2="0%" y2="100"><stop offset="0%" stop-color="#64B5F6"/><stop offset="100%" stop-color="#1565C0"/></linearGradient>
+        </defs>
+        <rect width="200" height="200" rx="20" fill="#FFFFFF" stroke="#E0E0E0" stroke-width="1"/>
+
+<!-- roll body -->
+<rect x="44" y="72" width="112" height="58" fill="url(#cwGrad)" stroke="#1565C0" stroke-width="1.8" filter="url(#shadow)"/>
+<!-- left end ellipse -->
+<ellipse cx="44" cy="101" rx="12" ry="29" fill="url(#cwEdge)" stroke="#1565C0" stroke-width="1.5"/>
+<!-- right end ellipse -->
+<ellipse cx="156" cy="101" rx="12" ry="29" fill="url(#cwEdge)" stroke="#1565C0" stroke-width="1.5"/>
+<!-- wrap lines showing transparency -->
+<line x1="44" y1="88" x2="156" y2="88" stroke="#BBDEFB" stroke-width="1.2" opacity="0.7"/>
+<line x1="44" y1="101" x2="156" y2="101" stroke="#BBDEFB" stroke-width="1.2" opacity="0.7"/>
+<line x1="44" y1="114" x2="156" y2="114" stroke="#BBDEFB" stroke-width="1.2" opacity="0.7"/>
+<!-- label strip -->
+<rect x="72" y="82" width="56" height="38" rx="3" fill="#E3F2FD" stroke="#BBDEFB" stroke-width="1"/>
+<text x="100" y="96" font-family="Arial" font-size="8" fill="#1565C0" text-anchor="middle" font-weight="bold">CLING</text>
+<text x="100" y="108" font-family="Arial" font-size="8" fill="#1565C0" text-anchor="middle" font-weight="bold">WRAP</text>
+<!-- free tail of wrap -->
+<path d="M156,130 Q175,135 178,148" fill="none" stroke="#90CAF9" stroke-width="4" stroke-linecap="round" opacity="0.6"/>
+<text x="100" y="180" font-family="Arial" font-size="9" fill="#1565C0" text-anchor="middle">CLING WRAP</text>
+
+      </svg>

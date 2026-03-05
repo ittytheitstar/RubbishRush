@@ -1,10 +1,28 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
-  <defs>
-    <filter id="sh"><feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.18"/></filter>
-    <filter id="bl"><feGaussianBlur stdDeviation="3"/></filter>
-    
-  </defs>
-  <!-- background -->
-  <rect width="200" height="200" rx="20" fill="#FAFAFA"/>
-  <line x1="78" y1="45" x2="78" y2="155" stroke="#CFD8DC" stroke-width="7" stroke-linecap="round"/><line x1="70" y1="45" x2="70" y2="75" stroke="#CFD8DC" stroke-width="5" stroke-linecap="round"/><line x1="86" y1="45" x2="86" y2="75" stroke="#CFD8DC" stroke-width="5" stroke-linecap="round"/><line x1="122" y1="80" x2="122" y2="155" stroke="#B0BEC5" stroke-width="5" stroke-linecap="round"/><ellipse cx="122" cy="65" rx="12" ry="18" fill="#B0BEC5" stroke="#333333" stroke-width="2"/><rect x="10" y="168" width="180" height="22" rx="6" fill="#fff" fill-opacity="0.85"/><text x="100" y="179" font-family="Arial,sans-serif" font-size="11" font-weight="normal" fill="#444" text-anchor="middle" dominant-baseline="middle" >Disposable Cutlery</text>
-</svg>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+        <defs>
+          <filter id="shadow" x="-15%" y="-15%" width="130%" height="140%">
+            <feGaussianBlur in="SourceAlpha" stdDeviation="3.5"/>
+            <feOffset dx="0" dy="3" result="offsetblur"/>
+            <feFlood flood-color="#00000030"/>
+            <feComposite in2="offsetblur" operator="in"/>
+            <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+          <filter id="blur"><feGaussianBlur stdDeviation="2.8"/></filter>
+
+        </defs>
+        <rect width="200" height="200" rx="20" fill="#FFFFFF" stroke="#E0E0E0" stroke-width="1"/>
+
+<!-- FORK left -->
+<rect x="52" y="42" width="9" height="118" rx="4" fill="#CFD8DC" stroke="#78909C" stroke-width="1.5" filter="url(#shadow)"/>
+<rect x="44" y="42" width="7" height="42" rx="3" fill="#CFD8DC" stroke="#78909C" stroke-width="1.2"/>
+<rect x="60" y="42" width="7" height="42" rx="3" fill="#CFD8DC" stroke="#78909C" stroke-width="1.2"/>
+<!-- KNIFE centre -->
+<rect x="96" y="42" width="8" height="118" rx="3" fill="#B0BEC5" stroke="#78909C" stroke-width="1.5"/>
+<path d="M96,42 L104,42 L106,75 L96,80 Z" fill="#90A4AE" stroke="#78909C" stroke-width="1"/>
+<!-- SPOON right -->
+<rect x="139" y="75" width="9" height="85" rx="4" fill="#CFD8DC" stroke="#78909C" stroke-width="1.5"/>
+<ellipse cx="143" cy="62" rx="13" ry="18" fill="#CFD8DC" stroke="#78909C" stroke-width="1.5"/>
+<ellipse cx="143" cy="60" rx="9" ry="13" fill="#ECEFF1" stroke="none"/>
+<text x="100" y="185" font-family="Arial" font-size="9" fill="#78909C" text-anchor="middle">DISPOSABLE CUTLERY</text>
+
+      </svg>

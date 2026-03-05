@@ -1,10 +1,24 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
-  <defs>
-    <filter id="sh"><feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.18"/></filter>
-    <filter id="bl"><feGaussianBlur stdDeviation="3"/></filter>
-    
-  </defs>
-  <!-- background -->
-  <rect width="200" height="200" rx="20" fill="#FAFAFA"/>
-  <path d="M83,65 L80,155 Q80,163 100,163 Q120,163 120,155 L117,65 Z" fill="#FAFAFA" stroke="#333333" stroke-width="2.5"/><rect x="87" y="53" width="26" height="16" rx="5" fill="#E0E0E0" stroke="#333333" stroke-width="1.5"/><rect x="90" y="46" width="20" height="10" rx="4" fill="#BDBDBD" stroke="#333333" stroke-width="1.5"/><rect x="82" y="92" width="36" height="30" rx="4" fill="#E3F2FD" stroke="#333333" stroke-width="2.5" /><text x="100" y="107" font-family="Arial,sans-serif" font-size="9" fill="#1565C0" text-anchor="middle">MILK</text><rect x="10" y="168" width="180" height="22" rx="6" fill="#fff" fill-opacity="0.85"/><text x="100" y="179" font-family="Arial,sans-serif" font-size="11" font-weight="normal" fill="#444" text-anchor="middle" dominant-baseline="middle" >Milk Bottle (remove lid)</text>
-</svg>
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+    <defs>
+      <filter id="shadow" x="-15%" y="-15%" width="130%" height="140%">
+        <feGaussianBlur in="SourceAlpha" stdDeviation="3.5"/>
+        <feOffset dx="0" dy="3" result="offsetblur"/>
+        <feFlood flood-color="#00000030"/>
+        <feComposite in2="offsetblur" operator="in"/>
+        <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+      </filter>
+      <filter id="blur"><feGaussianBlur stdDeviation="2.8"/></filter>
+      <linearGradient id="bGrad" x1="0%" y1="0%" x2="100%" y2="0"><stop offset="0%" stop-color="#DCDCDC"/><stop offset="15%" stop-color="#DCDCDC"/><stop offset="40%" stop-color="#F8F8F8"/><stop offset="60%" stop-color="#F8F8F8"/><stop offset="85%" stop-color="#DCDCDC"/><stop offset="100%" stop-color="#DCDCDC"/></linearGradient><linearGradient id="capGrad" x1="0%" y1="0%" x2="0%" y2="100"><stop offset="0%" stop-color="#BDBDBD"/><stop offset="100%" stop-color="#DCDCDC"/></linearGradient>
+    </defs>
+    <rect width="200" height="200" rx="20" fill="#FFFFFF" stroke="#E0E0E0" stroke-width="1"/>
+
+<path d="M 66,168 C 66,168 66,128 66,118 C 66,98 87,94 87,82 L 87,50 L 113,50 L 113,82 C 113,94 134,98 134,118 C 134,128 134,168 134,168 Z" fill="url(#bGrad)" stroke="#2D2D2D" stroke-width="1.8" filter="url(#shadow)"/>
+<path d="M 78,95 C 76,95 74,102 74,110 L 74,148 C 74,153 76,155 78,154 L 82,152 C 80,148 79,143 79,138 L 79,110 C 79,102 81,97 84,97 Z" fill="white" opacity="0.28"/>
+<!-- cap -->
+<rect x="88" y="44" width="24" height="16" rx="4" fill="url(#capGrad)" stroke="#2D2D2D" stroke-width="1.5"/>
+<rect x="90" y="47" width="20" height="3" rx="1" fill="white" opacity="0.25"/>
+<rect x="76" y="96" width="48" height="46" rx="5" fill="#E3F2FD" stroke="#BBDEFB" stroke-width="1"/>
+<text x="100" y="118" font-family="Arial" font-size="9" fill="#1565C0" text-anchor="middle" font-weight="bold">FULL</text><text x="100" y="130" font-family="Arial" font-size="9" fill="#1565C0" text-anchor="middle" font-weight="bold">CREAM</text><text x="100" y="141" font-family="Arial" font-size="7" fill="#1565C0" text-anchor="middle">MILK</text>
+
+
+  </svg>

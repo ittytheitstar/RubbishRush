@@ -1,10 +1,24 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
-  <defs>
-    <filter id="sh"><feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.18"/></filter>
-    <filter id="bl"><feGaussianBlur stdDeviation="3"/></filter>
-    
-  </defs>
-  <!-- background -->
-  <rect width="200" height="200" rx="20" fill="#FAFAFA"/>
-  <path d="M83,65 L80,155 Q80,163 100,163 Q120,163 120,155 L117,65 Z" fill="#E3F2FD" fill-opacity="0.65" stroke="#333333" stroke-width="2.5"/><rect x="87" y="53" width="26" height="16" rx="5" fill="#90CAF9" stroke="#333333" stroke-width="1.5"/><rect x="90" y="46" width="20" height="10" rx="4" fill="#64B5F6" stroke="#333333" stroke-width="1.5"/><ellipse cx="100" cy="110" rx="15" ry="5" fill="#90CAF9" fill-opacity="0.4"/><circle cx="148" cy="65" r="14" fill="#BBDEFB" stroke="#333333" stroke-width="1.5"/><line x1="138" y1="55" x2="158" y2="75" stroke="#E53935" stroke-width="2.5" stroke-linecap="round"/><rect x="10" y="168" width="180" height="22" rx="6" fill="#fff" fill-opacity="0.85"/><text x="100" y="179" font-family="Arial,sans-serif" font-size="11" font-weight="normal" fill="#444" text-anchor="middle" dominant-baseline="middle" >Water Bottle (remove lid)</text>
-</svg>
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+    <defs>
+      <filter id="shadow" x="-15%" y="-15%" width="130%" height="140%">
+        <feGaussianBlur in="SourceAlpha" stdDeviation="3.5"/>
+        <feOffset dx="0" dy="3" result="offsetblur"/>
+        <feFlood flood-color="#00000030"/>
+        <feComposite in2="offsetblur" operator="in"/>
+        <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+      </filter>
+      <filter id="blur"><feGaussianBlur stdDeviation="2.8"/></filter>
+      <linearGradient id="bGrad" x1="0%" y1="0%" x2="100%" y2="0"><stop offset="0%" stop-color="#A8D8F0"/><stop offset="15%" stop-color="#A8D8F0"/><stop offset="40%" stop-color="#E8F7FF"/><stop offset="60%" stop-color="#E8F7FF"/><stop offset="85%" stop-color="#A8D8F0"/><stop offset="100%" stop-color="#A8D8F0"/></linearGradient><linearGradient id="capGrad" x1="0%" y1="0%" x2="0%" y2="100"><stop offset="0%" stop-color="#4A90C8"/><stop offset="100%" stop-color="#A8D8F0"/></linearGradient>
+    </defs>
+    <rect width="200" height="200" rx="20" fill="#FFFFFF" stroke="#E0E0E0" stroke-width="1"/>
+
+<path d="M 66,168 C 66,168 66,128 66,118 C 66,98 87,94 87,82 L 87,50 L 113,50 L 113,82 C 113,94 134,98 134,118 C 134,128 134,168 134,168 Z" fill="url(#bGrad)" stroke="#2D2D2D" stroke-width="1.8" filter="url(#shadow)"/>
+<path d="M 78,95 C 76,95 74,102 74,110 L 74,148 C 74,153 76,155 78,154 L 82,152 C 80,148 79,143 79,138 L 79,110 C 79,102 81,97 84,97 Z" fill="white" opacity="0.28"/>
+<!-- cap -->
+<rect x="88" y="44" width="24" height="16" rx="4" fill="url(#capGrad)" stroke="#2D2D2D" stroke-width="1.5"/>
+<rect x="90" y="47" width="20" height="3" rx="1" fill="white" opacity="0.25"/>
+<rect x="76" y="100" width="48" height="40" rx="5" fill="#DDEFFA" stroke="#A8D8F0" stroke-width="1"/><text x="100" y="120" font-family="Arial" font-size="8" fill="#1565C0" text-anchor="middle" font-weight="bold">PURE</text><text x="100" y="132" font-family="Arial" font-size="7" fill="#1565C0" text-anchor="middle">WATER</text>
+
+<ellipse cx="100" cy="144" rx="20" ry="4" fill="#A8D8F0" opacity="0.4"/>
+
+  </svg>

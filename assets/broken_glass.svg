@@ -1,10 +1,30 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
-  <defs>
-    <filter id="sh"><feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.18"/></filter>
-    <filter id="bl"><feGaussianBlur stdDeviation="3"/></filter>
-    
-  </defs>
-  <!-- background -->
-  <rect width="200" height="200" rx="20" fill="#FAFAFA"/>
-  <polygon points="100,40 65,100 80,160 120,160 135,100" fill="#B3E5FC" fill-opacity="0.6" stroke="#333333" stroke-width="2.5"/><line x1="100" y1="40" x2="75" y2="95" stroke="#0288D1" stroke-width="2" stroke-dasharray="4,3"/><line x1="100" y1="40" x2="120" y2="90" stroke="#0288D1" stroke-width="2" stroke-dasharray="4,3"/><polygon points="60,105 40,130 65,120" fill="#B3E5FC" fill-opacity="0.7" stroke="#333333" stroke-width="1.5"/><polygon points="140,98 155,135 130,125" fill="#B3E5FC" fill-opacity="0.7" stroke="#333333" stroke-width="1.5"/><polygon points="85,165 70,150 95,155" fill="#B3E5FC" fill-opacity="0.7" stroke="#333333" stroke-width="1.5"/><rect x="10" y="168" width="180" height="22" rx="6" fill="#fff" fill-opacity="0.85"/><text x="100" y="179" font-family="Arial,sans-serif" font-size="11" font-weight="normal" fill="#444" text-anchor="middle" dominant-baseline="middle" >Broken Glass</text>
-</svg>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+        <defs>
+          <filter id="shadow" x="-15%" y="-15%" width="130%" height="140%">
+            <feGaussianBlur in="SourceAlpha" stdDeviation="3.5"/>
+            <feOffset dx="0" dy="3" result="offsetblur"/>
+            <feFlood flood-color="#00000030"/>
+            <feComposite in2="offsetblur" operator="in"/>
+            <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+          <filter id="blur"><feGaussianBlur stdDeviation="2.8"/></filter>
+          <linearGradient id="glassGrad" x1="0%" y1="0%" x2="100%" y2="100"><stop offset="0%" stop-color="#E3F2FD"/><stop offset="50%" stop-color="#BBDEFB"/><stop offset="100%" stop-color="#90CAF9"/></linearGradient>
+        </defs>
+        <rect width="200" height="200" rx="20" fill="#FFFFFF" stroke="#E0E0E0" stroke-width="1"/>
+
+<!-- main shard -->
+<polygon points="100,32 62,88 72,155 128,155 138,88" fill="url(#glassGrad)" stroke="#1565C0" stroke-width="1.8" filter="url(#shadow)"/>
+<!-- crack lines across main shard -->
+<line x1="100" y1="32" x2="86" y2="88" stroke="white" stroke-width="2" opacity="0.6"/>
+<line x1="86" y1="88" x2="105" y2="108" stroke="white" stroke-width="2" opacity="0.6"/>
+<line x1="105" y1="108" x2="96" y2="155" stroke="white" stroke-width="2" opacity="0.6"/>
+<!-- flying shards -->
+<polygon points="42,98 22,128 52,118" fill="url(#glassGrad)" stroke="#1565C0" stroke-width="1.5" opacity="0.9"/>
+<polygon points="148,95 168,132 140,120" fill="url(#glassGrad)" stroke="#1565C0" stroke-width="1.5" opacity="0.9"/>
+<polygon points="80,160 60,148 72,170" fill="url(#glassGrad)" stroke="#1565C0" stroke-width="1.5" opacity="0.9"/>
+<polygon points="120,158 138,148 128,170" fill="url(#glassGrad)" stroke="#1565C0" stroke-width="1.5" opacity="0.8"/>
+<!-- specular -->
+<line x1="72" y1="48" x2="68" y2="120" stroke="white" stroke-width="3" stroke-linecap="round" opacity="0.35"/>
+<text x="100" y="185" font-family="Arial" font-size="9" fill="#1565C0" text-anchor="middle">BROKEN GLASS</text>
+
+      </svg>

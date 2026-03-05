@@ -1,10 +1,35 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
-  <defs>
-    <filter id="sh"><feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.18"/></filter>
-    <filter id="bl"><feGaussianBlur stdDeviation="3"/></filter>
-    
-  </defs>
-  <!-- background -->
-  <rect width="200" height="200" rx="20" fill="#FAFAFA"/>
-  <rect x="38" y="60" width="124" height="100" rx="6" fill="#FAFAFA" stroke="#333333" stroke-width="2.5" /><rect x="38" y="60" width="124" height="18" rx="6" fill="#F5F5F5" stroke="#333333" stroke-width="2.5" /><line x1="38" y1="78" x2="162" y2="78" stroke="#ddd" stroke-width="1.5"/><rect x="42" y="83" width="116" height="72" rx="4" fill="#F0F0F0" stroke="#CCC" stroke-width="1"/><line x1="55" y1="90" x2="55" y2="152" stroke="#DDD" stroke-width="1"/><line x1="100" y1="90" x2="100" y2="152" stroke="#DDD" stroke-width="1"/><line x1="145" y1="90" x2="145" y2="152" stroke="#DDD" stroke-width="1"/><rect x="10" y="168" width="180" height="22" rx="6" fill="#fff" fill-opacity="0.85"/><text x="100" y="179" font-family="Arial,sans-serif" font-size="11" font-weight="normal" fill="#444" text-anchor="middle" dominant-baseline="middle" >Polystyrene Container</text>
-</svg>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+        <defs>
+          <filter id="shadow" x="-15%" y="-15%" width="130%" height="140%">
+            <feGaussianBlur in="SourceAlpha" stdDeviation="3.5"/>
+            <feOffset dx="0" dy="3" result="offsetblur"/>
+            <feFlood flood-color="#00000030"/>
+            <feComposite in2="offsetblur" operator="in"/>
+            <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+          <filter id="blur"><feGaussianBlur stdDeviation="2.8"/></filter>
+          <linearGradient id="psGrad" x1="0%" y1="0%" x2="0%" y2="100"><stop offset="0%" stop-color="#F5F5F5"/><stop offset="100%" stop-color="#E0E0E0"/></linearGradient><linearGradient id="psLid" x1="0%" y1="0%" x2="0%" y2="100"><stop offset="0%" stop-color="#FFFFFF"/><stop offset="100%" stop-color="#EEEEEE"/></linearGradient>
+        </defs>
+        <rect width="200" height="200" rx="20" fill="#FFFFFF" stroke="#E0E0E0" stroke-width="1"/>
+
+<!-- base container -->
+<rect x="32" y="90" width="136" height="80" rx="6" fill="url(#psGrad)" stroke="#BDBDBD" stroke-width="1.8" filter="url(#shadow)"/>
+<!-- lid -->
+<rect x="28" y="52" width="144" height="42" rx="6" fill="url(#psLid)" stroke="#BDBDBD" stroke-width="1.8"/>
+<!-- lid hinge line -->
+<line x1="28" y1="92" x2="172" y2="92" stroke="#BDBDBD" stroke-width="1"/>
+<!-- foam texture – small dimples -->
+<circle cx="50" cy="116" r="3" fill="#E0E0E0"/><circle cx="65" cy="112" r="2.5" fill="#E0E0E0"/>
+<circle cx="80" cy="118" r="3" fill="#E0E0E0"/><circle cx="100" cy="112" r="2.5" fill="#E0E0E0"/>
+<circle cx="120" cy="116" r="3" fill="#E0E0E0"/><circle cx="140" cy="112" r="2.5" fill="#E0E0E0"/>
+<circle cx="155" cy="118" r="3" fill="#E0E0E0"/>
+<circle cx="50" cy="132" r="2.5" fill="#E0E0E0"/><circle cx="70" cy="136" r="3" fill="#E0E0E0"/>
+<circle cx="90" cy="130" r="3" fill="#E0E0E0"/><circle cx="112" cy="134" r="2.5" fill="#E0E0E0"/>
+<circle cx="132" cy="130" r="3" fill="#E0E0E0"/><circle cx="152" cy="134" r="2.5" fill="#E0E0E0"/>
+<!-- lid texture -->
+<circle cx="60" cy="66" r="2.5" fill="#E8E8E8"/><circle cx="80" cy="62" r="2" fill="#E8E8E8"/>
+<circle cx="100" cy="67" r="2.5" fill="#E8E8E8"/><circle cx="120" cy="62" r="2" fill="#E8E8E8"/>
+<circle cx="140" cy="66" r="2.5" fill="#E8E8E8"/>
+<text x="100" y="182" font-family="Arial" font-size="9" fill="#9E9E9E" text-anchor="middle">POLYSTYRENE CONTAINER</text>
+
+      </svg>

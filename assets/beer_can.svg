@@ -1,10 +1,32 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
-  <defs>
-    <filter id="sh"><feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.18"/></filter>
-    <filter id="bl"><feGaussianBlur stdDeviation="3"/></filter>
-    
-  </defs>
-  <!-- background -->
-  <rect width="200" height="200" rx="20" fill="#FAFAFA"/>
-  <rect x="68" y="55" width="64" height="110" rx="8" fill="#FDD835" stroke="#333333" stroke-width="2.5" /><rect x="68" y="55" width="64" height="14" rx="8" fill="#F9A825" stroke="#333333" stroke-width="2.5" /><rect x="68" y="145" width="64" height="20" rx="8" fill="#F9A825" stroke="#333333" stroke-width="2.5" /><rect x="72" y="59" width="56" height="105" rx="0" fill="none" stroke="#F57F17" stroke-width="0.8"/><rect x="74" y="80" width="52" height="45" rx="4" fill="#FFF176" stroke="none" stroke-width="0" /><text x="100" y="98" font-family="Arial,sans-serif" font-size="10" font-weight="bold" fill="#6D4C41" text-anchor="middle">BEER</text><text x="100" y="111" font-family="Arial,sans-serif" font-size="8" fill="#6D4C41" text-anchor="middle">330ml</text><rect x="82" y="48" width="36" height="10" rx="5" fill="#E0E0E0" stroke="#333333" stroke-width="1.5"/><circle cx="100" cy="51" r="5" fill="#BDBDBD" stroke="#333333" stroke-width="1.5"/><rect x="10" y="168" width="180" height="22" rx="6" fill="#fff" fill-opacity="0.85"/><text x="100" y="179" font-family="Arial,sans-serif" font-size="11" font-weight="normal" fill="#444" text-anchor="middle" dominant-baseline="middle" >Beer Can</text>
-</svg>
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+    <defs>
+      <filter id="shadow" x="-15%" y="-15%" width="130%" height="140%">
+        <feGaussianBlur in="SourceAlpha" stdDeviation="3.5"/>
+        <feOffset dx="0" dy="3" result="offsetblur"/>
+        <feFlood flood-color="#00000030"/>
+        <feComposite in2="offsetblur" operator="in"/>
+        <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+      </filter>
+      <filter id="blur"><feGaussianBlur stdDeviation="2.8"/></filter>
+      <radialGradient id="topGrad" cx="40%" cy="35%" r="80%"><stop offset="0%" stop-color="#DAA520"/><stop offset="100%" stop-color="#B8860B"/></radialGradient><linearGradient id="canGrad" x1="0%" y1="0%" x2="100%" y2="0"><stop offset="0%" stop-color="#8B6914"/><stop offset="18%" stop-color="#8B6914"/><stop offset="45%" stop-color="#F5D060"/><stop offset="55%" stop-color="#F5D060"/><stop offset="82%" stop-color="#8B6914"/><stop offset="100%" stop-color="#8B6914"/></linearGradient>
+    </defs>
+    <rect width="200" height="200" rx="20" fill="#FFFFFF" stroke="#E0E0E0" stroke-width="1"/>
+
+<!-- body -->
+<rect x="62" y="72" width="76" height="90" fill="url(#canGrad)" stroke="#1A1A1A" stroke-width="1.5"/>
+<!-- top ellipse -->
+<ellipse cx="100" cy="72" rx="38" ry="10" fill="url(#topGrad)" stroke="#1A1A1A" stroke-width="1.5"/>
+<!-- bottom ellipse -->
+<ellipse cx="100" cy="162" rx="38" ry="10" fill="#B8860B" stroke="#1A1A1A" stroke-width="1.5"/>
+<!-- rim detail -->
+<rect x="62" y="75" width="76" height="6" fill="#DAA520" opacity="0.5"/>
+<rect x="62" y="156" width="76" height="6" fill="#DAA520" opacity="0.5"/>
+<!-- pull tab -->
+<ellipse cx="100" cy="63" rx="10" ry="3" fill="#DAA520" stroke="#777" stroke-width="1"/>
+<path d="M96,60 L100,55 L104,60" fill="none" stroke="#888" stroke-width="2" stroke-linecap="round"/>
+<!-- specular highlight -->
+<rect x="66" y="80" width="8" height="68" rx="4" fill="white" opacity="0.2"/>
+<rect x="65" y="90" width="70" height="58" fill="#B8860B" opacity="0.4"/>
+<text x="100" y="116" font-family="Arial" font-size="11" font-weight="bold" fill="#FFF9C4" text-anchor="middle">BEER</text><text x="100" y="130" font-family="Arial" font-size="8" fill="#FFF9C4" text-anchor="middle">330ml</text>
+
+  </svg>

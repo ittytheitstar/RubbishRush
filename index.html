@@ -122,6 +122,10 @@
       font-weight: 700;
     }
     .hud-score span { color: #f1c40f; font-size: 1.3em; }
+    .combo-bonus-hud {
+      font-size: 0.68em; color: #a855f7; font-weight: 700;
+      margin-top: 2px; line-height: 1.2;
+    }
     #timerWrap {
       display: flex; flex-direction: column; align-items: center; gap: 3px;
     }
@@ -166,8 +170,8 @@
       border: 3px solid transparent;
       position: absolute; overflow: hidden;
       /* Size must match CFG.binSizeMin/binSizeVw/binSizeMax in JS */
-      width: clamp(88px, 20vw, 128px);
-      height: clamp(88px, 20vw, 128px);
+      width: clamp(100px, 23vw, 148px);
+      height: clamp(100px, 23vw, 148px);
     }
     .bin::before {
       content: ''; position: absolute; inset: 0;
@@ -322,6 +326,7 @@
       width: auto;
       height: auto;
       object-fit: contain;
+      transition: opacity 0.18s ease-in;
     }
     #itemName {
       font-size: clamp(0.65rem,2.5vw,0.9rem);
@@ -428,6 +433,15 @@
     .action-btn.used {
       background: rgba(46,204,113,0.15);
       border-color: rgba(46,204,113,0.4);
+    }
+    .action-btn.dim {
+      opacity: 0.32;
+    }
+    .action-btn.drag-over {
+      background: rgba(255,255,255,0.28);
+      border-color: rgba(255,255,255,0.6);
+      transform: scale(1.08) translateY(-3px);
+      box-shadow: 0 0 16px 4px rgba(255,255,255,0.2);
     }
     @keyframes actionGood {
       0% { transform: scale(1); }
@@ -720,7 +734,7 @@
 <div id="gameScreen" class="screen hidden">
   <!-- HUD -->
   <div id="hud">
-    <div class="hud-score">Score<br><span id="scoreDisplay">0</span></div>
+    <div class="hud-score">Score<br><span id="scoreDisplay">0</span><div id="comboBonusHud" class="combo-bonus-hud hidden">⭐+<span id="comboBonusVal">0</span>pts</div></div>
     <div id="timerWrap">
       <div id="timerDisplay">60</div>
       <div id="timerBar"><div id="timerFill"></div></div>
@@ -914,7 +928,7 @@ const CFG = {
   trainingStartTime:    45,   // training mode starts with less time
   correctSortBonus:      4,   // seconds (reduced from 5)
   wrongSortPenalty:      7,
-  missingActionPenalty:  4,   // per missing required action
+  missingActionPenalty:  5,   // per missing required action (normal mode); halved in training
   bonusActionReward:     2,
   wrongActionPenalty:    3,
   correctPoints:        10,
@@ -924,16 +938,16 @@ const CFG = {
   urgency1:             25,   // orange warning threshold
   urgency2:             12,   // red danger threshold
   urgency3:              5,   // panic threshold
-  // Timer acceleration: real-time for first 20s, then +5% every 5s up to 2× speed
+  // Timer acceleration: real-time for first 20s, then +5% every 5s – no cap
   speedupStartTime:     20,   // seconds of real elapsed time before acceleration begins
   speedupStepInterval:   5,   // seconds between each speed increase
-  speedupStepAmount:  0.05,   // 5% per step
-  speedupMaxMultiplier:  2.0, // cap at 2× (double time)
+  speedupStepAmount:  0.05,   // 5% per step (no maximum cap)
+  comboMilestoneInterval: 5, // combo streak interval that triggers a bonus (every Nth streak)
   trainingMultiplier:    0.5, // training mode: halve points & penalties
   // Bin layout (must match CSS clamp values in .bin { width/height })
-  binSizeMax:          128,   // px – max bin dimension (CSS clamp max)
-  binSizeMin:           88,   // px – min bin dimension (CSS clamp min)
-  binSizeVw:          0.20,   // fraction of viewport width for mid-range clamp
+  binSizeMax:          148,   // px – max bin dimension (CSS clamp max)
+  binSizeMin:          100,   // px – min bin dimension (CSS clamp min)
+  binSizeVw:          0.23,   // fraction of viewport width for mid-range clamp
 };
 
 /* ── ITEMS DATABASE ──────────────────────────────────────────────── */
@@ -964,11 +978,11 @@ const ITEMS = [
   { id:'water_bottle',    name:'Water Bottle',           emoji:'💧', bin:'yellow', required:['removeLid'], bonus:['rinse'],              hint:'Remove the lid first, then pop in the yellow bin!' },
   { id:'coke_bottle',     name:'Coke Bottle',            emoji:'🥤', bin:'yellow', required:['removeLid'], bonus:['rinse'],              hint:'Plastic PET bottles – lid off, rinse, yellow bin' },
   { id:'milk_bottle',     name:'Milk Bottle',            emoji:'🥛', bin:'yellow', required:['removeLid'], bonus:['rinse'],              hint:'HDPE milk bottles are recyclable – lid off, rinse, yellow bin' },
-  { id:'beer_can',        name:'Beer Can',               emoji:'🍺', bin:'yellow', required:[],            bonus:['rinse'],              hint:'Aluminium cans – rinse before recycling in the yellow bin' },
-  { id:'tin_can',         name:'Tin Can',                emoji:'🥫', bin:'yellow', required:[],            bonus:['rinse'],              hint:'Steel cans are recyclable – give them a rinse!' },
+  { id:'beer_can',        name:'Beer Can',               emoji:'🍺', bin:'yellow', required:[],            bonus:['rinse','removeLabel'],        hint:'Aluminium cans – rinse before recycling in the yellow bin' },
+  { id:'tin_can',         name:'Tin Can',                emoji:'🥫', bin:'yellow', required:[],            bonus:['rinse','removeLabel','clean'], hint:'Steel cans are recyclable – give them a rinse!' },
   { id:'shampoo_bottle',  name:'Shampoo Bottle',         emoji:'🧴', bin:'yellow', required:['removeLid'], bonus:['rinse'],              hint:'Plastic bottles (grade 2) – lid off, rinse, yellow recycling!' },
   { id:'lp_bottle',       name:'L&P Bottle',             emoji:'🍋', bin:'yellow', required:['removeLid'], bonus:['rinse'],              hint:'Kiwi classic – plastic bottle, lid off, yellow bin!' },
-  { id:'milo_tin',        name:'Milo Tin',               emoji:'🫙', bin:'yellow', required:[],            bonus:['rinse','removeLabel'], hint:'Steel tins are fully recyclable – Kiwi favourite!' },
+  { id:'milo_tin',        name:'Milo Tin',               emoji:'🫙', bin:'yellow', required:[],            bonus:['rinse','removeLabel','clean'], hint:'Steel tins are fully recyclable – Kiwi favourite!' },
   { id:'paint_tin_empty', name:'Empty Paint Tin',        emoji:'🪣', bin:'yellow', required:[],            bonus:['clean'],              hint:'Completely empty, dry metal tins can go in yellow bin' },
   { id:'newspaper',       name:'Newspaper',              emoji:'📰', bin:'yellow', required:[], bonus:[],           hint:'Paper & newspapers go in the yellow recycling bin' },
   { id:'cardboard_box',   name:'Large Cardboard Box',    emoji:'📦', bin:'yellow', required:['cut'], bonus:['flatten'],  hint:'Large cardboard must be cut down & flattened before recycling!' },
@@ -996,11 +1010,11 @@ const ITEMS = [
   { id:'meat_scraps',     name:'Meat Scraps',            emoji:'🥩', bin:'green',  required:[], bonus:[],           hint:'Meat, bones & leftover food go in the green organics bin' },
 
   /* ---- BLUE BIN — Glass Bottles & Jars ---- */
-  { id:'wine_bottle',      name:'Wine Bottle',           emoji:'🍷', bin:'blue',   required:[],            bonus:['rinse'], hint:'Glass wine bottles – rinse and recycle in the blue glass bin!' },
-  { id:'pasta_jar',        name:'Pasta Sauce Jar',       emoji:'🫙', bin:'blue',   required:['removeLid'], bonus:['rinse'], hint:'Glass jars – remove lid, rinse out, blue glass bin!' },
-  { id:'champagne_bottle', name:'Champagne Bottle',      emoji:'🍾', bin:'blue',   required:[],            bonus:['rinse'], hint:'Glass champagne bottles go in the blue glass recycling bin!' },
-  { id:'honey_jar',        name:'Honey Jar',             emoji:'🍯', bin:'blue',   required:['removeLid'], bonus:['rinse'], hint:'Glass honey jars – remove lid, rinse, blue glass bin!' },
-  { id:'glass_beer_bottle',name:'Glass Beer Bottle',     emoji:'🍶', bin:'blue',   required:[],            bonus:['rinse'], hint:'Glass bottles belong in the blue glass recycling bin – not cans!' },
+  { id:'wine_bottle',      name:'Wine Bottle',           emoji:'🍷', bin:'blue',   required:[],            bonus:['rinse','removeLabel'], hint:'Glass wine bottles – rinse and recycle in the blue glass bin!' },
+  { id:'pasta_jar',        name:'Pasta Sauce Jar',       emoji:'🫙', bin:'blue',   required:['removeLid'], bonus:['rinse','clean'],        hint:'Glass jars – remove lid, rinse out, blue glass bin!' },
+  { id:'champagne_bottle', name:'Champagne Bottle',      emoji:'🍾', bin:'blue',   required:[],            bonus:['rinse','removeLabel'],  hint:'Glass champagne bottles go in the blue glass recycling bin!' },
+  { id:'honey_jar',        name:'Honey Jar',             emoji:'🍯', bin:'blue',   required:['removeLid'], bonus:['rinse','clean'],        hint:'Glass honey jars – remove lid, rinse, blue glass bin!' },
+  { id:'glass_beer_bottle',name:'Glass Beer Bottle',     emoji:'🍶', bin:'blue',   required:[],            bonus:['rinse','removeLabel'],  hint:'Glass bottles belong in the blue glass recycling bin – not cans!' },
 
   /* ---- ORANGE BIN — Resource Recovery (Hazardous) ---- */
   { id:'cfl_bulb',        name:'CFL Light Bulb',         emoji:'💡', bin:'orange', required:[], bonus:[],           hint:'Fluorescent & CFL bulbs contain mercury – Resource Recovery only!' },
@@ -1071,6 +1085,10 @@ function sfxActionBad() {
 function sfxCombo() {
   [523,659,784,1047].forEach((f,i) => playTone(f, 0.12, 'triangle', 0.22, i*0.1));
 }
+function sfxComboMilestone() {
+  // Triumphant 5-note arpeggio, louder than regular combo
+  [523,659,784,1047,1319].forEach((f,i) => playTone(f, 0.15, 'triangle', 0.28, i*0.08));
+}
 function sfxGameOver() {
   [440,370,311,261].forEach((f,i) => playTone(f, 0.25, 'sawtooth', 0.18, i*0.22));
 }
@@ -1096,6 +1114,7 @@ let currentItem = null;
 let actionsApplied = new Set();
 let itemsSelected = false; // tap-to-select on mobile
 let combo = 0;
+let comboBonus = 0;   // extra pts per correct sort; +1 for every 5× combo milestone
 let totalSorted = 0;
 let correctSorted = 0;
 let gameElapsed = 0;     // real seconds elapsed since game started (for speed ramp)
@@ -1122,6 +1141,8 @@ const $edgeGlow       = document.getElementById('edgeGlow');
 const $dragGhost      = document.getElementById('dragGhost');
 const $dragGhostEmoji = document.getElementById('dragGhostEmoji');
 const $comboBanner    = document.getElementById('comboBanner');
+const $comboBonusHud  = document.getElementById('comboBonusHud');
+const $comboBonusVal  = document.getElementById('comboBonusVal');
 const $startHs        = document.getElementById('startHs');
 const $goScore        = document.getElementById('goScore');
 const $goBest         = document.getElementById('goBest');
@@ -1244,13 +1265,12 @@ function _onAllImagesSettled() {
   ITEMS.forEach(item => {
     const paths = [`assets/${item.id}.jpg`];
     for (let i = 1; i <= MAX_VARIANTS; i++) paths.push(`assets/${item.id}_${i}.jpg`);
-    const loaded = [];
-    // img objects are kept alive until settled so the browser caches them
+    const loadedImgs = [];   // store Image objects so decoded frames stay in memory
     const imgs = [];
     let pending = paths.length;
     function done() {
       if (!--pending) {
-        IMAGE_MANIFEST[item.id] = loaded;
+        IMAGE_MANIFEST[item.id] = loadedImgs;  // array of Image objects
         _imgTasksDone++;
         $loadingProgress.textContent = `${_imgTasksDone} / ${_imgTasksTotal} items checked`;
         if (_imgTasksDone >= _imgTasksTotal) _onAllImagesSettled();
@@ -1258,8 +1278,8 @@ function _onAllImagesSettled() {
     }
     paths.forEach(path => {
       const img = new Image();
-      imgs.push(img); // keep reference so GC doesn't collect before load settles
-      img.onload = () => { loaded.push(path); done(); };
+      imgs.push(img);
+      img.onload = () => { loadedImgs.push(img); done(); };
       img.onerror = done;
       img.src = path;
     });
@@ -1268,7 +1288,7 @@ function _onAllImagesSettled() {
 
 function randomItemImage(id) {
   const imgs = IMAGE_MANIFEST[id];
-  return imgs && imgs.length ? imgs[Math.floor(Math.random() * imgs.length)] : null;
+  return imgs && imgs.length ? imgs[Math.floor(Math.random() * imgs.length)].src : null;
 }
 
 /* ── TIMER ───────────────────────────────────────────────────────── */
@@ -1282,11 +1302,11 @@ function timerLoop(ts) {
   const delta = (ts - lastTimestamp) / 1000;
   lastTimestamp = ts;
 
-  // Gradually increase timer speed after the first 20 real seconds
+  // Gradually increase timer speed after the first 20 real seconds – no cap
   gameElapsed += delta;
   if (gameElapsed > CFG.speedupStartTime) {
     const steps = Math.floor((gameElapsed - CFG.speedupStartTime) / CFG.speedupStepInterval);
-    timerSpeed = Math.min(CFG.speedupMaxMultiplier, 1.0 + steps * CFG.speedupStepAmount);
+    timerSpeed = 1.0 + steps * CFG.speedupStepAmount;
   }
 
   timer = Math.max(0, timer - delta * timerSpeed);
@@ -1358,8 +1378,15 @@ function showNextItem() {
   // Show photo asset if available, otherwise fall back to emoji
   const imgSrc = randomItemImage(currentItem.id);
   if (imgSrc) {
+    $itemImage.style.opacity = '0';
+    $itemImage.onload = () => { $itemImage.style.opacity = '1'; };
     $itemImage.src = imgSrc;
     $itemImage.alt = currentItem.name;
+    // If already decoded from cache, show immediately without waiting for onload
+    if ($itemImage.complete && $itemImage.naturalWidth > 0) {
+      $itemImage.onload = null;
+      $itemImage.style.opacity = '1';
+    }
     $itemImgWrapper.style.display = 'inline-flex';
     $itemEmoji.style.display = 'none';
   } else {
@@ -1389,9 +1416,12 @@ function showNextItem() {
     });
   }
 
-  // Reset action buttons
+  // Reset action buttons; dim those not applicable to this item
   document.querySelectorAll('.action-btn').forEach(btn => {
     btn.classList.remove('flash-good','flash-bad','used');
+    const applicable = currentItem.required.includes(btn.dataset.action) ||
+                       currentItem.bonus.includes(btn.dataset.action);
+    btn.classList.toggle('dim', !applicable);
   });
 
   // Appear animation
@@ -1408,27 +1438,45 @@ function sortItem(binColor, binEl) {
   const correct = binColor === currentItem.bin;
   totalSorted++;
 
-  // Required-action penalties only apply in training mode (badges are hidden in normal mode)
-  const missing = trainingMode ? currentItem.required.filter(a => !actionsApplied.has(a)) : [];
+  // Required-action penalties: apply in both modes; training mode halves the penalty
+  const missing = currentItem.required.filter(a => !actionsApplied.has(a));
   const penaltyPerMissing = trainingMode ? CFG.missingActionPenalty * CFG.trainingMultiplier : CFG.missingActionPenalty;
   const timePenalty = missing.length * penaltyPerMissing;
 
   if (correct) {
     correctSorted++;
-    combo++;
+    // In normal mode missing a required action is harsh: lose combo; training mode keeps combo
+    if (!trainingMode && missing.length > 0) {
+      combo = 0;
+      comboBonus = 0;
+      $comboBonusHud.classList.add('hidden');
+    } else {
+      combo++;
+    }
     const timeBonus = CFG.correctSortBonus - timePenalty;
     adjustTimer(timeBonus, binEl);
-    const rawPts = CFG.correctPoints + combo * CFG.comboMultiplier;
+    const rawPts = CFG.correctPoints + combo * CFG.comboMultiplier + comboBonus;
     addScore(trainingMode ? Math.round(rawPts * CFG.trainingMultiplier) : rawPts);
     flashBin(binEl, 'flash-correct');
     sfxCorrect();
-    if (combo >= 3) showCombo(combo);
+    // Every Nth combo milestone: special bonus
+    if (combo > 0 && combo % CFG.comboMilestoneInterval === 0) {
+      comboBonus++;
+      $comboBonusHud.classList.remove('hidden');
+      $comboBonusVal.textContent = comboBonus;
+      sfxComboMilestone();
+      showComboMilestone(combo, comboBonus);
+    } else if (combo >= 3) {
+      showCombo(combo);
+    }
     if (missing.length > 0) {
       showTimePop(-timePenalty, binEl ? binEl.getBoundingClientRect().left + 20 : window.innerWidth/2,
                                 binEl ? binEl.getBoundingClientRect().top + 20 : 100);
     }
   } else {
     combo = 0;
+    comboBonus = 0;
+    $comboBonusHud.classList.add('hidden');
     const wrongPenalty = trainingMode ? CFG.wrongSortPenalty * CFG.trainingMultiplier : CFG.wrongSortPenalty;
     adjustTimer(-wrongPenalty, binEl);
     const wrongPts = trainingMode ? Math.round(CFG.wrongPoints * CFG.trainingMultiplier) : CFG.wrongPoints;
@@ -1500,6 +1548,14 @@ function showCombo(n) {
   setTimeout(() => $comboBanner.classList.remove('show'), 1400);
 }
 
+function showComboMilestone(n, bonus) {
+  $comboBanner.textContent = `🌟 ${n}× Streak! +${bonus} bonus pts/sort!`;
+  $comboBanner.classList.remove('show');
+  void $comboBanner.offsetWidth;
+  $comboBanner.classList.add('show');
+  setTimeout(() => $comboBanner.classList.remove('show'), 1800);
+}
+
 /* ── TIME FEEDBACK POPUP ─────────────────────────────────────────── */
 function showTimePop(delta, x, y) {
   const el = document.createElement('div');
@@ -1523,6 +1579,8 @@ function initDrag() {
   $itemCard.addEventListener('pointerdown', onPointerDown);
   document.addEventListener('pointermove', onPointerMove);
   document.addEventListener('pointerup',   onPointerUp);
+  // pointercancel fires on iOS when the system takes over (e.g. notification, scroll)
+  document.addEventListener('pointercancel', () => { if (isDragging) cancelDrag(); });
 }
 
 function onPointerDown(e) {
@@ -1556,11 +1614,14 @@ function onPointerMove(e) {
   e.preventDefault();
   $dragGhost.style.left = (e.clientX - 30) + 'px';
   $dragGhost.style.top  = (e.clientY - 40) + 'px';
-  // Highlight hovered bin
+  // Highlight hovered bin or action button
   document.querySelectorAll('.bin').forEach(b => b.classList.remove('drag-over'));
+  document.querySelectorAll('.action-btn').forEach(b => b.classList.remove('drag-over'));
   const target = document.elementFromPoint(e.clientX, e.clientY);
   const bin = target && target.closest('.bin');
+  const actionBtn = !bin && target && target.closest('.action-btn');
   if (bin) bin.classList.add('drag-over');
+  else if (actionBtn) actionBtn.classList.add('drag-over');
 }
 
 function onPointerUp(e) {
@@ -1569,15 +1630,21 @@ function onPointerUp(e) {
   $dragGhost.classList.remove('active');
   $itemCard.classList.remove('dragging');
   document.querySelectorAll('.bin').forEach(b => b.classList.remove('drag-over'));
+  document.querySelectorAll('.action-btn').forEach(b => b.classList.remove('drag-over'));
 
+  const dx = Math.abs(e.clientX - dragStartX);
+  const dy = Math.abs(e.clientY - dragStartY);
   const target = document.elementFromPoint(e.clientX, e.clientY);
   const bin = target && target.closest('.bin');
+  const actionBtn = !bin && target && target.closest('.action-btn');
+
   if (bin) {
     sortItem(bin.dataset.color, bin);
+  } else if (actionBtn) {
+    // Drag onto action button – apply that action (any drag distance works)
+    applyAction(actionBtn.dataset.action, actionBtn);
   } else {
     // Distinguish tap from drag using actual start/end distance
-    const dx = Math.abs(e.clientX - dragStartX);
-    const dy = Math.abs(e.clientY - dragStartY);
     const onCard = e.target && e.target.closest('#itemCard');
     if (onCard && dx < TAP_THRESHOLD && dy < TAP_THRESHOLD) {
       // Tap on card = toggle select for subsequent tap-to-sort
@@ -1616,8 +1683,8 @@ function positionBins() {
     const binW = Math.min(CFG.binSizeMax, Math.max(CFG.binSizeMin, window.innerWidth * CFG.binSizeVw));
     const binH = binW; // square
 
-    // Radius: 38% of the shorter dimension so bins fit comfortably
-    const r = Math.min(W, H) * 0.38;
+    // Radius: 43% of the shorter dimension – more spread out so bins don't overlap items
+    const r = Math.min(W, H) * 0.43;
 
     // Pentagon angles (degrees), clockwise from top
     const angles = [-90, -18, 54, 126, 198];
@@ -1645,6 +1712,7 @@ function startGame() {
   timer = startTime;
   timerMax = startTime;
   combo = 0;
+  comboBonus = 0;
   totalSorted = 0;
   correctSorted = 0;
   gameElapsed = 0;
@@ -1655,6 +1723,7 @@ function startGame() {
   $highScoreDisplay.textContent = highScore;
   $gameScreen.classList.remove('urgency1','urgency2','urgency3');
   $edgeGlow.className = '';
+  $comboBonusHud.classList.add('hidden');
 
   // Show/hide action buttons and hint bar based on mode
   $actionsBar.classList.remove('hidden');
@@ -1670,6 +1739,9 @@ function endGame() {
   state = 'gameover';
   stopPanicBeep();
   if (rafId) cancelAnimationFrame(rafId);
+  // Clear any urgency effects so they don't bleed into the end screen
+  $edgeGlow.className = '';
+  $gameScreen.classList.remove('urgency1','urgency2','urgency3');
   sfxGameOver();
 
   const isNew = score > highScore;
@@ -1709,6 +1781,8 @@ document.getElementById('btnAgain').addEventListener('click', () => {
 document.getElementById('btnHome').addEventListener('click', () => {
   // Sync start-screen toggle from end-screen toggle before going home
   $trainingToggle.checked = $goTrainingToggle.checked;
+  $edgeGlow.className = '';    // ensure no edge glow on start screen
+  stopPanicBeep();
   state = 'start';
   showScreen($startScreen);
 });

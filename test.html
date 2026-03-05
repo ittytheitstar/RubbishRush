@@ -130,7 +130,7 @@ const CFG_EXPECTED = {
   speedupStartTime: 20,
   speedupStepInterval: 5,
   speedupStepAmount: 0.05,
-  speedupMaxMultiplier: 2.0,
+  // No speedupMaxMultiplier – cap has been removed to force eventual loss
 };
 
 const BINS_EXPECTED = ['green', 'yellow', 'red', 'blue', 'orange'];
@@ -216,8 +216,8 @@ function runConfigTests(html) {
     html.includes('speedupStepAmount') && html.includes('0.05')
   );
   addTest('configTests',
-    `speedupMaxMultiplier: 2.0 (double time) defined`,
-    html.includes('speedupMaxMultiplier') && html.includes('2.0')
+    'Timer speed cap (speedupMaxMultiplier) removed – timer speeds up indefinitely',
+    !html.includes('speedupMaxMultiplier')
   );
   addTest('configTests',
     'Timer acceleration logic uses gameElapsed variable',
@@ -308,16 +308,15 @@ function runItemTests(html) {
 
 /* ── Speed ramp tests ─────────────────────────────────────────────── */
 function runSpeedTests(html) {
-  // Simulate the speed calculation at various elapsed times
+  // Simulate the speed calculation at various elapsed times (no cap)
   const speedupStartTime = 20;
   const speedupStepInterval = 5;
   const speedupStepAmount = 0.05;
-  const speedupMaxMultiplier = 2.0;
 
   function calcSpeed(elapsed) {
     if (elapsed <= speedupStartTime) return 1.0;
     const steps = Math.floor((elapsed - speedupStartTime) / speedupStepInterval);
-    return Math.min(speedupMaxMultiplier, 1.0 + steps * speedupStepAmount);
+    return 1.0 + steps * speedupStepAmount;
   }
 
   const cases = [
@@ -326,8 +325,8 @@ function runSpeedTests(html) {
     { elapsed: 20,  expected: 1.0,  label: '20s elapsed → 1.00× speed (boundary)' },
     { elapsed: 25,  expected: 1.05, label: '25s elapsed → 1.05× speed (+1 step)' },
     { elapsed: 30,  expected: 1.10, label: '30s elapsed → 1.10× speed (+2 steps)' },
-    { elapsed: 120, expected: 2.0,  label: '120s elapsed → 2.00× speed (capped)' },
-    { elapsed: 200, expected: 2.0,  label: '200s elapsed → 2.00× speed (still capped)' },
+    { elapsed: 120, expected: 2.0,  label: '120s elapsed → 2.00× speed (+20 steps)' },
+    { elapsed: 200, expected: 2.8,  label: '200s elapsed → 2.80× speed (no cap, +36 steps)' },
   ];
 
   cases.forEach(({ elapsed, expected, label }) => {

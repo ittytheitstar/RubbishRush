@@ -296,6 +296,29 @@
       to   { transform: scale(1);   opacity: 1; }
     }
     #itemEmoji { font-size: clamp(2.5rem,9vw,4rem); line-height: 1; }
+    /* ── Item Image (photo assets) ───────────────────────────────── */
+    #itemImgWrapper {
+      display: none;
+      padding: 3px;
+      border-radius: 14px;
+      background: linear-gradient(135deg,#2ecc71,#3498db,#9b59b6,#e74c3c,#e67e22,#f1c40f);
+    }
+    #itemImgInner {
+      background: #ffffff;
+      border-radius: 11px;
+      padding: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    #itemImage {
+      display: block;
+      max-width: clamp(80px,20vw,130px);
+      max-height: clamp(80px,20vw,130px);
+      width: auto;
+      height: auto;
+      object-fit: contain;
+    }
     #itemName {
       font-size: clamp(0.65rem,2.5vw,0.9rem);
       font-weight: 700; text-align: center; max-width: 120px;
@@ -332,6 +355,23 @@
     }
     #dragGhost.active { display: flex; }
     #dragGhostEmoji { font-size: 2.5rem; line-height: 1; }
+    #dragGhostImgWrapper { display: none; }
+    #dragGhostImgInner {
+      background: #ffffff;
+      border-radius: 8px;
+      padding: 5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    #dragGhostImage {
+      display: block;
+      max-width: 72px;
+      max-height: 72px;
+      width: auto;
+      height: auto;
+      object-fit: contain;
+    }
 
     /* ── Hint / Hint Bar ──────────────────────────────────────────── */
     #hintBar {
@@ -668,6 +708,11 @@
     <div id="itemZone">
       <div id="itemCard">
         <div id="itemEmoji">🗑️</div>
+        <div id="itemImgWrapper">
+          <div id="itemImgInner">
+            <img id="itemImage" src="" alt="">
+          </div>
+        </div>
         <div id="itemName">Loading…</div>
         <div id="requiredBadges"></div>
       </div>
@@ -750,6 +795,11 @@
 <!-- Drag ghost -->
 <div id="dragGhost">
   <div id="dragGhostEmoji">❓</div>
+  <div id="dragGhostImgWrapper">
+    <div id="dragGhostImgInner">
+      <img id="dragGhostImage" src="" alt="">
+    </div>
+  </div>
 </div>
 
 <!-- Urgency edge glow overlay -->
@@ -968,6 +1018,10 @@ const $highScoreDisplay = document.getElementById('highScoreDisplay');
 const $hintBar        = document.getElementById('hintBar');
 const $itemCard       = document.getElementById('itemCard');
 const $itemEmoji      = document.getElementById('itemEmoji');
+const $itemImgWrapper = document.getElementById('itemImgWrapper');
+const $itemImage      = document.getElementById('itemImage');
+const $dragGhostImgWrapper = document.getElementById('dragGhostImgWrapper');
+const $dragGhostImage = document.getElementById('dragGhostImage');
 const $itemName       = document.getElementById('itemName');
 const $reqBadges      = document.getElementById('requiredBadges');
 const $edgeGlow       = document.getElementById('edgeGlow');
@@ -996,6 +1050,33 @@ let itemQueue = [];
 function nextItemFromQueue() {
   if (itemQueue.length === 0) itemQueue = shuffle(ITEMS);
   return itemQueue.pop();
+}
+
+/* ── IMAGE MANIFEST ──────────────────────────────────────────────── */
+// Dynamically discovers available photo assets for each item.
+// Tries assets/{id}.jpg, assets/{id}_1.jpg … assets/{id}_5.jpg.
+// Call randomItemImage(id) to get a random path, or null if none loaded.
+const IMAGE_MANIFEST = {};
+(function probeImages() {
+  const MAX_VARIANTS = 5;
+  ITEMS.forEach(item => {
+    const paths = [`assets/${item.id}.jpg`];
+    for (let i = 1; i <= MAX_VARIANTS; i++) paths.push(`assets/${item.id}_${i}.jpg`);
+    const loaded = [];
+    let pending = paths.length;
+    function done() { if (!--pending) IMAGE_MANIFEST[item.id] = loaded; }
+    paths.forEach(path => {
+      const img = new Image();
+      img.onload = () => { loaded.push(path); done(); };
+      img.onerror = done;
+      img.src = path;
+    });
+  });
+})();
+
+function randomItemImage(id) {
+  const imgs = IMAGE_MANIFEST[id];
+  return imgs && imgs.length ? imgs[Math.floor(Math.random() * imgs.length)] : null;
 }
 
 /* ── TIMER ───────────────────────────────────────────────────────── */
@@ -1081,6 +1162,18 @@ function showNextItem() {
 
   $itemEmoji.textContent = currentItem.emoji;
   $itemName.textContent  = currentItem.name;
+
+  // Show photo asset if available, otherwise fall back to emoji
+  const imgSrc = randomItemImage(currentItem.id);
+  if (imgSrc) {
+    $itemImage.src = imgSrc;
+    $itemImage.alt = currentItem.name;
+    $itemImgWrapper.style.display = 'inline-flex';
+    $itemEmoji.style.display = 'none';
+  } else {
+    $itemImgWrapper.style.display = 'none';
+    $itemEmoji.style.display = '';
+  }
 
   // Hint bar – only in training mode
   if (trainingMode) {
@@ -1250,7 +1343,17 @@ function onPointerDown(e) {
   dragOffX = e.clientX - (rect.left + rect.width / 2);
   dragOffY = e.clientY - (rect.top  + rect.height / 2);
   $itemCard.classList.add('dragging');
-  $dragGhostEmoji.textContent = currentItem.emoji;
+  // Show matching image or emoji in the drag ghost
+  if ($itemImgWrapper.style.display !== 'none' && $itemImage.src) {
+    $dragGhostImage.src = $itemImage.src;
+    $dragGhostImage.alt = currentItem.name;
+    $dragGhostImgWrapper.style.display = 'block';
+    $dragGhostEmoji.style.display = 'none';
+  } else {
+    $dragGhostEmoji.textContent = currentItem.emoji;
+    $dragGhostEmoji.style.display = '';
+    $dragGhostImgWrapper.style.display = 'none';
+  }
   $dragGhost.style.left = (e.clientX - 30) + 'px';
   $dragGhost.style.top  = (e.clientY - 40) + 'px';
   $dragGhost.classList.add('active');

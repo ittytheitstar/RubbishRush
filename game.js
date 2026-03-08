@@ -1070,8 +1070,14 @@ let enrichedItems = null; // items enriched for current region, set at game star
 async function loadGameData() {
   try {
     const r = await fetch('data.json');
-    GAME_DATA = await r.json();
-    populateRegionSelect();
+    const parsed = await r.json();
+    // Defensive: validate the expected structure exists before assigning
+    if (parsed && parsed.regions && parsed.rule_sets && parsed.defaults) {
+      GAME_DATA = parsed;
+      populateRegionSelect();
+    } else {
+      console.warn('data.json has unexpected structure – using built-in defaults');
+    }
   } catch(e) {
     console.warn('Could not load data.json:', e);
     if ($regionSelect) $regionSelect.disabled = true;
@@ -1100,7 +1106,7 @@ function getEffectiveRuleSet(regionName) {
   };
   if (!GAME_DATA) return fallback;
   if (!regionName) return GAME_DATA.rule_sets['NZ_STANDARD_DEFAULT'] || fallback;
-  const region = GAME_DATA.regions.find(reg => reg.region === regionName);
+  const region = GAME_DATA.regions.find(r => r.region === regionName);
   if (!region) return GAME_DATA.rule_sets['NZ_STANDARD_DEFAULT'] || fallback;
   const ruleSetName = region.metadata.inheritsFromRuleSet;
   return GAME_DATA.rule_sets[ruleSetName] || GAME_DATA.rule_sets['NZ_STANDARD_DEFAULT'] || fallback;

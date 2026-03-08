@@ -170,16 +170,18 @@ function addTest(sectionId, label, passed) {
   if (passed) passCount++; else failCount++;
 }
 
-/* ── Fetch and parse index.html ───────────────────────────────────── */
-fetch('index.html')
-  .then(r => r.text())
-  .then(html => {
-    runTests(html);
-  })
-  .catch(err => {
-    addTest('configTests', 'Could not load index.html: ' + err, false);
-    updateSummary();
-  });
+/* ── Fetch index.html, game.js and game.css for tests ─────────────── */
+Promise.all([
+  fetch('index.html').then(r => r.text()).catch(() => ''),
+  fetch('game.js').then(r => r.text()).catch(() => ''),
+  fetch('game.css').then(r => r.text()).catch(() => ''),
+]).then(([htmlSrc, jsSrc, cssSrc]) => {
+  // Combine all sources so patterns from any file are found
+  runTests(htmlSrc + '\n' + jsSrc + '\n' + cssSrc);
+}).catch(err => {
+  addTest('configTests', 'Could not load game files: ' + err, false);
+  updateSummary();
+});
 
 function runTests(html) {
   runConfigTests(html);

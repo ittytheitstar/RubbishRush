@@ -1,0 +1,355 @@
+{
+  "standard_bins": {
+    "glass": "blue",
+    "rubbish": "red",
+    "recycling": "yellow",
+    "organics": "green",
+    "resource_recovery": "orange"
+  },
+
+  "scoring_rules": {
+    "global_alternatives": {
+      "anything_in_rubbish_is_allowed": true,
+      "anything_in_rubbish_multiplier": 0.0,
+      "anything_in_rubbish_multiplier_exception_if_default_is_rubbish": 1.0
+    },
+    "regional_alternatives_defaults": {
+      "glass_in_recycling_when_glass_stream_exists_multiplier": 0.5
+    }
+  },
+
+  "defaults": {
+    "items": [
+      { "id":"greasy_pizza", "name":"Greasy Pizza Box", "emoji":"🍕", "bin":"red", "material":"rubbish", "required":[], "bonus":[], "hint":"Greasy cardboard cannot be recycled – red bin!" },
+      { "id":"nappy", "name":"Used Nappy", "emoji":"🧷", "bin":"red", "material":"sanitary_waste", "required":[], "bonus":[], "hint":"Nappies always go in the red general waste bin" },
+      { "id":"plastic_bag", "name":"Plastic Bag", "emoji":"🛍️", "bin":"red", "material":"soft_plastic", "required":[], "bonus":[], "hint":"Soft plastics go in the red bin – not yellow!" },
+      { "id":"coffee_cup", "name":"Takeaway Coffee Cup", "emoji":"☕", "bin":"red", "material":"composite", "required":[], "bonus":[], "hint":"Takeaway cups have a plastic lining – not recyclable, red bin!" },
+      { "id":"polystyrene", "name":"Polystyrene Container", "emoji":"🥡", "bin":"red", "material":"polystyrene", "required":[], "bonus":[], "hint":"Polystyrene foam is not accepted in NZ kerbside recycling" },
+      { "id":"broken_glass", "name":"Broken Glass", "emoji":"🪟", "bin":"red", "material":"glass_non_container", "required":[], "bonus":[], "hint":"Broken glass is dangerous – wrap & red bin it! (Not the blue glass bin)" },
+      { "id":"dog_poo", "name":"Dog Poo Bag", "emoji":"💩", "bin":"red", "material":"sanitary_waste", "required":[], "bonus":[], "hint":"Bag it, bin it – general waste only" },
+      { "id":"battery", "name":"Dead Battery", "emoji":"🔋", "bin":"orange", "material":"hazardous", "required":[], "bonus":[], "hint":"Batteries are hazardous – take to a Resource Recovery centre!" },
+      { "id":"chip_packet", "name":"Chip Packet", "emoji":"🍟", "bin":"red", "material":"composite", "required":[], "bonus":[], "hint":"Foil & plastic wrappers go in the red bin" },
+      { "id":"noodles_dirty", "name":"Dirty Noodle Container", "emoji":"🍜", "bin":"red", "material":"rubbish", "required":[], "bonus":[], "hint":"Dirty food containers cannot be recycled" },
+      { "id":"cling_wrap", "name":"Cling Wrap", "emoji":"🥗", "bin":"red", "material":"soft_plastic", "required":[], "bonus":[], "hint":"Cling wrap is a soft plastic – red bin" },
+      { "id":"disposable_cup", "name":"Disposable Cutlery", "emoji":"🥄", "bin":"red", "material":"mixed_plastic", "required":[], "bonus":[], "hint":"Disposable cutlery is generally not recyclable" },
+      { "id":"bubble_wrap", "name":"Bubble Wrap", "emoji":"🫧", "bin":"red", "material":"soft_plastic", "required":[], "bonus":[], "hint":"Bubble wrap is a soft plastic – cannot be recycled kerbside" },
+      { "id":"juice_bottle", "name":"Juice Carton", "emoji":"🧃", "bin":"red", "material":"composite", "required":[], "bonus":[], "hint":"Juice cartons (tetra pak) cannot be recycled kerbside – red rubbish bin!" },
+      { "id":"aerosol_can", "name":"Aerosol Can", "emoji":"💨", "bin":"red", "material":"aerosol", "required":[], "bonus":[], "hint":"Aerosol cans are NOT accepted in the yellow recycling bin – red bin!" },
+      { "id":"broken_crockery", "name":"Broken Crockery", "emoji":"🍽️", "bin":"red", "material":"ceramic", "required":[], "bonus":[], "hint":"Broken ceramics & crockery cannot be recycled – wrap safely & red bin" },
+      { "id":"drinking_glass", "name":"Broken Drinking Glass", "emoji":"🥃", "bin":"red", "material":"glass_non_container", "required":[], "bonus":[], "hint":"Drinking glasses go in the red bin – NOT the blue glass recycling bin!" },
+
+      { "id":"water_bottle", "name":"Water Bottle", "emoji":"💧", "bin":"yellow", "material":"plastic_1_2_5", "required":["removeLid"], "bonus":["rinse"], "hint":"Remove the lid first, then pop in the yellow bin!" },
+      { "id":"coke_bottle", "name":"Coke Bottle", "emoji":"🥤", "bin":"yellow", "material":"plastic_1_2_5", "required":["removeLid"], "bonus":["rinse"], "hint":"Plastic PET bottles – lid off, rinse, yellow bin" },
+      { "id":"milk_bottle", "name":"Milk Bottle", "emoji":"🥛", "bin":"yellow", "material":"plastic_1_2_5", "required":["removeLid"], "bonus":["rinse"], "hint":"HDPE milk bottles are recyclable – lid off, rinse, yellow bin" },
+      { "id":"beer_can", "name":"Beer Can", "emoji":"🍺", "bin":"yellow", "material":"metal", "required":[], "bonus":["rinse","removeLabel"], "hint":"Aluminium cans – rinse before recycling in the yellow bin" },
+      { "id":"tin_can", "name":"Tin Can", "emoji":"🥫", "bin":"yellow", "material":"metal", "required":[], "bonus":["rinse","removeLabel","clean"], "hint":"Steel cans are recyclable – give them a rinse!" },
+      { "id":"shampoo_bottle", "name":"Shampoo Bottle", "emoji":"🧴", "bin":"yellow", "material":"plastic_1_2_5", "required":["removeLid"], "bonus":["rinse"], "hint":"Plastic bottles (grade 2) – lid off, rinse, yellow recycling!" },
+      { "id":"lp_bottle", "name":"L&P Bottle", "emoji":"🍋", "bin":"yellow", "material":"plastic_1_2_5", "required":["removeLid"], "bonus":["rinse"], "hint":"Kiwi classic – plastic bottle, lid off, yellow bin!" },
+      { "id":"milo_tin", "name":"Milo Tin", "emoji":"🫙", "bin":"yellow", "material":"metal", "required":[], "bonus":["rinse","removeLabel","clean"], "hint":"Steel tins are fully recyclable – Kiwi favourite!" },
+      { "id":"paint_tin_empty", "name":"Empty Paint Tin", "emoji":"🪣", "bin":"yellow", "material":"metal", "required":[], "bonus":["clean"], "hint":"Completely empty, dry metal tins can go in yellow bin" },
+      { "id":"newspaper", "name":"Newspaper", "emoji":"📰", "bin":"yellow", "material":"paper", "required":[], "bonus":[], "hint":"Paper & newspapers go in the yellow recycling bin" },
+      { "id":"cardboard_box", "name":"Large Cardboard Box", "emoji":"📦", "bin":"yellow", "material":"cardboard", "required":["cut"], "bonus":["flatten"], "hint":"Large cardboard must be cut down & flattened before recycling!" },
+      { "id":"printer_paper", "name":"Printer Paper", "emoji":"📄", "bin":"yellow", "material":"paper", "required":[], "bonus":[], "hint":"Clean paper is recyclable – yellow bin!" },
+      { "id":"magazine", "name":"Old Magazine", "emoji":"📚", "bin":"yellow", "material":"paper", "required":[], "bonus":[], "hint":"Magazines & glossy paper go in the yellow recycling bin" },
+      { "id":"cereal_box", "name":"Weetbix Box", "emoji":"🥣", "bin":"yellow", "material":"cardboard", "required":[], "bonus":["flatten"], "hint":"Flatten the cardboard box and put in the yellow recycling!" },
+      { "id":"toilet_roll", "name":"Toilet Roll Tube", "emoji":"🧻", "bin":"yellow", "material":"cardboard", "required":[], "bonus":[], "hint":"Cardboard tubes are recyclable – yellow bin!" },
+      { "id":"junk_mail", "name":"Junk Mail", "emoji":"📬", "bin":"yellow", "material":"paper", "required":[], "bonus":[], "hint":"Paper junk mail goes in the yellow recycling bin" },
+      { "id":"gift_wrap", "name":"Clean Gift Wrap", "emoji":"🎁", "bin":"yellow", "material":"paper", "required":[], "bonus":[], "hint":"Non-foil gift wrap is paper – yellow recycling bin!" },
+      { "id":"egg_carton", "name":"Egg Carton", "emoji":"🥚", "bin":"yellow", "material":"cardboard", "required":[], "bonus":["flatten"], "hint":"Clean & dry egg cartons are cardboard – flatten & yellow bin!" },
+      { "id":"book", "name":"Old Paperback Book", "emoji":"📖", "bin":"yellow", "material":"paper", "required":[], "bonus":[], "hint":"Books & paper go in the yellow recycling bin" },
+
+      { "id":"apple_core", "name":"Apple Core", "emoji":"🍎", "bin":"green", "material":"food_scraps", "required":[], "bonus":[], "hint":"All food scraps go in the green organics bin" },
+      { "id":"banana_peel", "name":"Banana Peel", "emoji":"🍌", "bin":"green", "material":"food_scraps", "required":[], "bonus":[], "hint":"Fruit peels are great for the green organics bin" },
+      { "id":"veg_peels", "name":"Vegetable Peels", "emoji":"🥕", "bin":"green", "material":"food_scraps", "required":[], "bonus":[], "hint":"Veggie scraps are composted from the green bin" },
+      { "id":"egg_shells", "name":"Egg Shells", "emoji":"🪺", "bin":"green", "material":"food_scraps", "required":[], "bonus":[], "hint":"Egg shells are 100% compostable – green bin!" },
+      { "id":"fish_bones", "name":"Fish Bones", "emoji":"🐟", "bin":"green", "material":"food_scraps", "required":[], "bonus":[], "hint":"Meat, fish & bones all go in the green bin" },
+      { "id":"tea_bag", "name":"Used Tea Bag", "emoji":"🍵", "bin":"green", "material":"food_scraps", "required":[], "bonus":[], "hint":"Tea bags & coffee grounds are compostable" },
+      { "id":"garden_clip", "name":"Garden Clippings", "emoji":"🌿", "bin":"green", "material":"garden_waste", "required":[], "bonus":["cut"], "hint":"Chop clippings smaller for easier composting" },
+      { "id":"bread", "name":"Stale Bread", "emoji":"🍞", "bin":"green", "material":"food_scraps", "required":[], "bonus":[], "hint":"Old food goes in the green organics bin" },
+      { "id":"coffee_grounds", "name":"Coffee Grounds", "emoji":"🫘", "bin":"green", "material":"food_scraps", "required":[], "bonus":[], "hint":"Coffee grounds are excellent in the compost!" },
+      { "id":"weet_bix", "name":"Half-eaten Weetbix", "emoji":"🌾", "bin":"green", "material":"food_scraps", "required":[], "bonus":[], "hint":"Soggy cereal – food waste to the green bin" },
+      { "id":"avocado", "name":"Avocado", "emoji":"🥑", "bin":"green", "material":"food_scraps", "required":[], "bonus":[], "hint":"Avocado skin and pit are organic – green bin!" },
+      { "id":"meat_scraps", "name":"Meat Scraps", "emoji":"🥩", "bin":"green", "material":"food_scraps", "required":[], "bonus":[], "hint":"Meat, bones & leftover food go in the green organics bin" },
+
+      { "id":"wine_bottle", "name":"Wine Bottle", "emoji":"🍷", "bin":"blue", "material":"glass_container", "required":[], "bonus":["rinse","removeLabel"], "hint":"Glass wine bottles – rinse and recycle in the blue glass bin!" },
+      { "id":"pasta_jar", "name":"Pasta Sauce Jar", "emoji":"🫙", "bin":"blue", "material":"glass_container", "required":["removeLid"], "bonus":["rinse","clean"], "hint":"Glass jars – remove lid, rinse out, blue glass bin!" },
+      { "id":"champagne_bottle", "name":"Champagne Bottle", "emoji":"🍾", "bin":"blue", "material":"glass_container", "required":[], "bonus":["rinse","removeLabel"], "hint":"Glass champagne bottles go in the blue glass recycling bin!" },
+      { "id":"honey_jar", "name":"Honey Jar", "emoji":"🍯", "bin":"blue", "material":"glass_container", "required":["removeLid"], "bonus":["rinse","clean"], "hint":"Glass honey jars – remove lid, rinse, blue glass bin!" },
+      { "id":"glass_beer_bottle", "name":"Glass Beer Bottle", "emoji":"🍶", "bin":"blue", "material":"glass_container", "required":[], "bonus":["rinse","removeLabel"], "hint":"Glass bottles belong in the blue glass recycling bin – not cans!" },
+
+      { "id":"cfl_bulb", "name":"CFL Light Bulb", "emoji":"💡", "bin":"orange", "material":"hazardous", "required":[], "bonus":[], "hint":"Fluorescent & CFL bulbs contain mercury – Resource Recovery only!" },
+      { "id":"paint_leftover", "name":"Leftover Paint", "emoji":"🎨", "bin":"orange", "material":"hazardous", "required":[], "bonus":[], "hint":"Partially-used paint is hazardous – take to Resource Recovery!" },
+      { "id":"medication", "name":"Old Medication", "emoji":"💊", "bin":"orange", "material":"hazardous", "required":[], "bonus":[], "hint":"Old pills & medication go to a pharmacy or Resource Recovery centre" },
+      { "id":"motor_oil", "name":"Used Motor Oil", "emoji":"🛢️", "bin":"orange", "material":"hazardous", "required":[], "bonus":[], "hint":"Used oil is hazardous – Resource Recovery centre only!" },
+      { "id":"ewaste", "name":"Old Electronics", "emoji":"📱", "bin":"orange", "material":"hazardous", "required":[], "bonus":[], "hint":"E-waste contains hazardous materials – Resource Recovery!" },
+      { "id":"spray_chemical", "name":"Chemical Spray Bottle", "emoji":"🧪", "bin":"orange", "material":"hazardous", "required":[], "bonus":[], "hint":"Household chemicals are hazardous – Resource Recovery centre!" },
+      { "id":"smoke_detector", "name":"Old Smoke Detector", "emoji":"🔔", "bin":"orange", "material":"hazardous", "required":[], "bonus":[], "hint":"Smoke detectors contain radioactive material – Resource Recovery!" },
+      { "id":"car_battery", "name":"Car Battery", "emoji":"🚗", "bin":"orange", "material":"hazardous", "required":[], "bonus":[], "hint":"Car batteries are highly hazardous – Resource Recovery centre only!" },
+
+      { "id":"flax_bush", "name":"Flax (Harakeke) Leaves", "emoji":"🌾", "bin":"red", "material":"plant_fibre", "required":[], "bonus":[], "hint":"Flax fibres tangle compost machinery – NOT organics. Red bin (or specialist drop-off if your game adds it)." },
+      { "id":"kiwi_grass", "name":"Kiwi Grass (Cabbage Tree / Tī Kōuka)", "emoji":"🌴", "bin":"red", "material":"plant_fibre", "required":[], "bonus":[], "hint":"Cabbage tree fibres don’t break down well and can tangle machinery – NOT organics. Red bin (or specialist drop-off if enabled)." },
+
+      { "id":"vacuum_dust", "name":"Vacuum Cleaner Dust", "emoji":"🧹", "bin":"red", "material":"mixed_waste", "required":[], "bonus":[], "hint":"Vacuum dust is mixed fibres and grit – red rubbish bin." },
+      { "id":"cat_litter", "name":"Used Cat Litter", "emoji":"🐱", "bin":"red", "material":"sanitary_waste", "required":[], "bonus":[], "hint":"Pet litter is not compostable in kerbside systems – red bin." },
+      { "id":"cigarette_butts", "name":"Cigarette Butts", "emoji":"🚬", "bin":"red", "material":"toxic_waste", "required":[], "bonus":[], "hint":"Cigarette filters contain plastic and toxins – red bin." },
+      { "id":"chewing_gum", "name":"Chewing Gum", "emoji":"🍬", "bin":"red", "material":"synthetic_rubber", "required":[], "bonus":[], "hint":"Gum is synthetic – red bin only." },
+      { "id":"wet_wipes", "name":"Wet Wipes", "emoji":"🧻", "bin":"red", "material":"plastic_fibre", "required":[], "bonus":[], "hint":"Wet wipes contain plastic fibres – red bin." },
+      { "id":"paper_towel", "name":"Paper Towel", "emoji":"🧻", "bin":"red", "material":"paper_contaminated", "required":[], "bonus":[], "hint":"Paper towels are not accepted in organics collections – red bin." },
+      { "id":"tissue", "name":"Used Tissue", "emoji":"🤧", "bin":"red", "material":"paper_contaminated", "required":[], "bonus":[], "hint":"Used tissues are contaminated – red bin." },
+      { "id":"shredded_paper", "name":"Shredded Paper", "emoji":"🧾", "bin":"red", "material":"paper_small", "required":[], "bonus":[], "hint":"Shredded paper is too small for sorting and often becomes litter – red bin." },
+      { "id":"plastic_straw", "name":"Plastic Straw", "emoji":"🥤", "bin":"red", "material":"plastic_small", "required":[], "bonus":[], "hint":"Small plastics fall through sorting lines – red bin." },
+      { "id":"toothbrush", "name":"Toothbrush", "emoji":"🪥", "bin":"red", "material":"mixed_plastic", "required":[], "bonus":[], "hint":"Mixed plastics aren’t accepted kerbside – red bin." },
+      { "id":"razor", "name":"Disposable Razor", "emoji":"🪒", "bin":"red", "material":"mixed_plastic_metal", "required":[], "bonus":[], "hint":"Razor heads are mixed materials – red bin." },
+      { "id":"sponge", "name":"Kitchen Sponge", "emoji":"🧽", "bin":"red", "material":"mixed_waste", "required":[], "bonus":[], "hint":"Sponges aren’t recyclable kerbside – red bin." },
+      { "id":"blister_pack", "name":"Medicine Blister Pack", "emoji":"💊", "bin":"red", "material":"composite", "required":[], "bonus":[], "hint":"Plastic/foil blister packs are composite – red bin." },
+      { "id":"bandage", "name":"Used Bandage", "emoji":"🩹", "bin":"red", "material":"sanitary_waste", "required":[], "bonus":[], "hint":"Medical/sanitary waste goes to red bin." },
+      { "id":"broken_mirror", "name":"Broken Mirror", "emoji":"🪞", "bin":"red", "material":"glass_non_container", "required":[], "bonus":[], "hint":"Mirrors and window glass are not container glass – red bin." },
+      { "id":"pyrex", "name":"Pyrex / Oven Glass", "emoji":"🥧", "bin":"red", "material":"glass_non_container", "required":[], "bonus":[], "hint":"Heat-treated glass doesn’t recycle with bottles/jars – red bin." },
+      { "id":"window_glass", "name":"Window Glass Piece", "emoji":"🪟", "bin":"red", "material":"glass_non_container", "required":[], "bonus":[], "hint":"Window glass is not collected as container glass – red bin." },
+      { "id":"plastic_lid", "name":"Plastic Lid", "emoji":"🧢", "bin":"red", "material":"plastic_small", "required":[], "bonus":[], "hint":"Small lids fall through sorting machinery – red bin." },
+      { "id":"metal_jar_lid", "name":"Metal Jar Lid", "emoji":"🫙", "bin":"red", "material":"metal_small", "required":[], "bonus":[], "hint":"Small metal lids are often excluded – red bin." },
+      { "id":"foam_tray", "name":"Foam Meat Tray", "emoji":"🍖", "bin":"red", "material":"polystyrene", "required":[], "bonus":[], "hint":"Foam trays are polystyrene – red bin." },
+      { "id":"diary_receipt", "name":"Thermal Receipt", "emoji":"🧾", "bin":"red", "material":"paper_special", "required":[], "bonus":[], "hint":"Thermal paper contaminates paper recycling – red bin." },
+
+      { "id":"yoghurt_pottle", "name":"Yoghurt Pottle", "emoji":"🥣", "bin":"yellow", "material":"plastic_1_2_5", "required":["rinse"], "bonus":["removeLid"], "hint":"Rigid plastic pottles – rinse and yellow bin." },
+      { "id":"takeaway_container_clean", "name":"Clean Takeaway Container", "emoji":"🍱", "bin":"yellow", "material":"plastic_1_2_5", "required":["rinse"], "bonus":[], "hint":"If it’s clean rigid plastic (1,2,5), it can go in yellow." },
+      { "id":"icecream_tub", "name":"Ice Cream Tub", "emoji":"🍨", "bin":"yellow", "material":"plastic_1_2_5", "required":["rinse"], "bonus":[], "hint":"Clean rigid plastic tubs (1,2,5) go in yellow." },
+      { "id":"detergent_bottle", "name":"Laundry Detergent Bottle", "emoji":"🧼", "bin":"yellow", "material":"plastic_1_2_5", "required":["removeLid"], "bonus":["rinse"], "hint":"Rigid plastic bottles (1,2,5) – lid off, rinse, yellow bin." },
+      { "id":"spray_cleaner_empty", "name":"Empty Cleaning Spray Bottle", "emoji":"🧴", "bin":"yellow", "material":"plastic_1_2_5", "required":["removeLid"], "bonus":["rinse"], "hint":"Empty, rinsed spray bottles (1,2,5) go in yellow." },
+      { "id":"aluminium_tray_clean", "name":"Clean Aluminium Tray", "emoji":"🥘", "bin":"yellow", "material":"metal", "required":["clean"], "bonus":[], "hint":"Clean metal trays can go in yellow as metal recycling." },
+      { "id":"envelope", "name":"Envelope (No Plastic Window)", "emoji":"✉️", "bin":"yellow", "material":"paper", "required":[], "bonus":[], "hint":"Plain paper envelopes are recyclable – yellow bin." },
+      { "id":"phone_book", "name":"Old Phone Book", "emoji":"📒", "bin":"yellow", "material":"paper", "required":[], "bonus":[], "hint":"Books/paper are recyclable – yellow bin." },
+      { "id":"paper_bag", "name":"Paper Shopping Bag", "emoji":"🛍️", "bin":"yellow", "material":"paper", "required":[], "bonus":["flatten"], "hint":"Paper bags are recyclable – flatten first." },
+      { "id":"clean_pizza_box", "name":"Clean Pizza Box", "emoji":"🍕", "bin":"yellow", "material":"cardboard", "required":[], "bonus":["flatten"], "hint":"If it’s clean with no food/grease, cardboard can go in yellow." },
+      { "id":"egg_carton_plastic", "name":"Plastic Egg Carton (Rigid)", "emoji":"🥚", "bin":"yellow", "material":"plastic_1_2_5", "required":["rinse"], "bonus":[], "hint":"Rigid plastic cartons (1,2,5) can go in yellow if clean." },
+
+      { "id":"orange_peel", "name":"Orange Peel", "emoji":"🍊", "bin":"green", "material":"food_scraps", "required":[], "bonus":[], "hint":"Citrus peels are fine in organics bins." },
+      { "id":"onion_skin", "name":"Onion Skin", "emoji":"🧅", "bin":"green", "material":"food_scraps", "required":[], "bonus":[], "hint":"Onion skins are food scraps – green bin." },
+      { "id":"tea_leaves", "name":"Loose Tea Leaves", "emoji":"🍵", "bin":"green", "material":"food_scraps", "required":[], "bonus":[], "hint":"Loose tea leaves are compostable – green bin." },
+      { "id":"leaves", "name":"Fallen Leaves", "emoji":"🍂", "bin":"green", "material":"garden_waste", "required":[], "bonus":[], "hint":"Leaves are garden waste – green bin." },
+      { "id":"small_twigs", "name":"Small Twigs", "emoji":"🪵", "bin":"green", "material":"garden_waste", "required":["cut"], "bonus":[], "hint":"Cut twigs smaller – garden waste to green bin." },
+      { "id":"dead_houseplant", "name":"Dead House Plant", "emoji":"🪴", "bin":"green", "material":"garden_waste", "required":["removePot"], "bonus":[], "hint":"Remove the pot – plant material goes in organics." },
+
+      { "id":"olive_jar", "name":"Olive Jar", "emoji":"🫒", "bin":"blue", "material":"glass_container", "required":["removeLid"], "bonus":["rinse"], "hint":"Glass jars – lid off, rinse, blue glass bin." },
+      { "id":"pickle_jar", "name":"Pickle Jar", "emoji":"🥒", "bin":"blue", "material":"glass_container", "required":["removeLid"], "bonus":["rinse"], "hint":"Glass jars – lid off, rinse, blue glass bin." },
+      { "id":"jam_jar", "name":"Jam Jar", "emoji":"🍓", "bin":"blue", "material":"glass_container", "required":["removeLid"], "bonus":["rinse"], "hint":"Glass jars – lid off, rinse, blue glass bin." },
+
+      { "id":"fire_extinguisher", "name":"Fire Extinguisher", "emoji":"🧯", "bin":"orange", "material":"hazardous", "required":[], "bonus":[], "hint":"Fire extinguishers are hazardous – Resource Recovery only." },
+      { "id":"paint_thinner", "name":"Paint Thinner", "emoji":"🧪", "bin":"orange", "material":"hazardous", "required":[], "bonus":[], "hint":"Solvents & thinners must go to Resource Recovery." },
+      { "id":"fluoro_tube", "name":"Fluorescent Tube", "emoji":"💡", "bin":"orange", "material":"hazardous", "required":[], "bonus":[], "hint":"Fluorescent tubes contain mercury – Resource Recovery only." },
+      { "id":"gas_cylinder", "name":"Small Gas Cylinder", "emoji":"⛽", "bin":"orange", "material":"hazardous", "required":[], "bonus":[], "hint":"Gas cylinders are hazardous – Resource Recovery only." }
+    ]
+  },
+  "standard_bins": {
+    "glass": "blue",
+    "rubbish": "red",
+    "recycling": "yellow",
+    "organics": "green",
+    "resource_recovery": "orange"
+  },
+
+  "scoring_rules": {
+    "global_alternatives": {
+      "anything_in_rubbish_is_allowed": true,
+      "anything_in_rubbish_multiplier": 0.0,
+      "anything_in_rubbish_multiplier_exception_if_default_is_rubbish": 1.0
+    },
+    "regional_alternatives_defaults": {
+      "glass_in_recycling_when_glass_stream_exists_multiplier": 0.5
+    }
+  },
+
+  "rule_sets": {
+    "NZ_STANDARD_DEFAULT": {
+      "has_glass_bin": true,
+      "bin_color_overrides": [],
+      "material_overrides": [],
+      "material_hint_overrides": [],
+      "alternative_bins": [
+        {
+          "material": "glass_container",
+          "alternatives": [
+            {
+              "bin": "yellow",
+              "multiplier": 0.5,
+              "note": "If a separate glass stream exists, putting glass in recycling is allowed with reduced score."
+            },
+            {
+              "bin": "red",
+              "multiplier": 0.0,
+              "note": "Rubbish is always allowed but scores 0 unless the item was rubbish by default."
+            }
+          ]
+        }
+      ]
+    },
+
+    "CO_MINGLED_GLASS_IN_YELLOW": {
+      "has_glass_bin": false,
+      "bin_color_overrides": [],
+      "material_overrides": [
+        { "material": "glass_container", "primary_bin": "yellow" }
+      ],
+      "material_hint_overrides": [
+        {
+          "material": "glass_container",
+          "hint": "Glass bottles and jars go in the yellow recycling bin (no separate glass bin in this district)."
+        }
+      ],
+      "alternative_bins": [
+        {
+          "material": "glass_container",
+          "alternatives": [
+            {
+              "bin": "red",
+              "multiplier": 0.0,
+              "note": "Rubbish is always allowed but scores 0 unless the item was rubbish by default."
+            }
+          ]
+        }
+      ]
+    },
+
+    "GLASS_STREAM_GREEN_CONTAINER": {
+      "has_glass_bin": true,
+      "bin_color_overrides": [
+        { "blue": "green" }
+      ],
+      "material_overrides": [],
+      "material_hint_overrides": [
+        {
+          "material": "glass_container",
+          "hint": "Glass is collected separately, but the container is GREEN here (instead of the standard blue glass bin)."
+        }
+      ],
+      "alternative_bins": [
+        {
+          "material": "glass_container",
+          "alternatives": [
+            { "bin": "yellow", "multiplier": 0.5, "note": "Allowed alternative with reduced score." },
+            { "bin": "red", "multiplier": 0.0, "note": "Always allowed, but scores 0 unless default was rubbish." }
+          ]
+        }
+      ]
+    },
+
+    "CLUTHA_GLASS_DROP_OFF_PRIMARY": {
+      "has_glass_bin": false,
+      "bin_color_overrides": [],
+      "material_overrides": [
+        { "material": "glass_container", "primary_bin": "orange" }
+      ],
+      "material_hint_overrides": [
+        {
+          "material": "glass_container",
+          "hint": "Glass is excluded from kerbside recycling; preferred path is resource collection/drop-off. Red bin is allowed but not ideal."
+        }
+      ],
+      "alternative_bins": [
+        {
+          "material": "glass_container",
+          "alternatives": [
+            { "bin": "red", "multiplier": 0.75, "note": "Allowed fallback path; reduced points vs drop-off/resource collection." }
+          ]
+        }
+      ]
+    }
+  },
+
+  "regions": [
+    { "region": "Far North District Council", "metadata": { "inheritsFromRuleSet": "NZ_STANDARD_DEFAULT", "inheritsFromRegion": "NZ Standard Default", "confidence": "assumed" } },
+    { "region": "Whangārei District Council", "metadata": { "inheritsFromRuleSet": "NZ_STANDARD_DEFAULT", "inheritsFromRegion": "NZ Standard Default", "confidence": "assumed" } },
+    { "region": "Kaipara District Council", "metadata": { "inheritsFromRuleSet": "NZ_STANDARD_DEFAULT", "inheritsFromRegion": "NZ Standard Default", "confidence": "assumed" } },
+
+    { "region": "Auckland Council", "metadata": { "inheritsFromRuleSet": "CO_MINGLED_GLASS_IN_YELLOW", "inheritsFromRegion": "Auckland Council", "confidence": "sourced" } },
+
+    { "region": "Thames-Coromandel District Council", "metadata": { "inheritsFromRuleSet": "NZ_STANDARD_DEFAULT", "inheritsFromRegion": "NZ Standard Default", "confidence": "assumed" } },
+    { "region": "Hauraki District Council", "metadata": { "inheritsFromRuleSet": "NZ_STANDARD_DEFAULT", "inheritsFromRegion": "NZ Standard Default", "confidence": "assumed" } },
+    { "region": "Waikato District Council", "metadata": { "inheritsFromRuleSet": "NZ_STANDARD_DEFAULT", "inheritsFromRegion": "NZ Standard Default", "confidence": "assumed" } },
+    { "region": "Hamilton City Council", "metadata": { "inheritsFromRuleSet": "GLASS_STREAM_GREEN_CONTAINER", "inheritsFromRegion": "Hamilton City Council", "confidence": "sourced" } },
+    { "region": "Waipā District Council", "metadata": { "inheritsFromRuleSet": "NZ_STANDARD_DEFAULT", "inheritsFromRegion": "NZ Standard Default", "confidence": "assumed" } },
+    { "region": "Matamata-Piako District Council", "metadata": { "inheritsFromRuleSet": "NZ_STANDARD_DEFAULT", "inheritsFromRegion": "NZ Standard Default", "confidence": "assumed" } },
+    { "region": "South Waikato District Council", "metadata": { "inheritsFromRuleSet": "NZ_STANDARD_DEFAULT", "inheritsFromRegion": "NZ Standard Default", "confidence": "assumed" } },
+    { "region": "Waitomo District Council", "metadata": { "inheritsFromRuleSet": "NZ_STANDARD_DEFAULT", "inheritsFromRegion": "NZ Standard Default", "confidence": "assumed" } },
+    { "region": "Ōtorohanga District Council", "metadata": { "inheritsFromRuleSet": "NZ_STANDARD_DEFAULT", "inheritsFromRegion": "NZ Standard Default", "confidence": "assumed" } },
+    { "region": "Taupō District Council", "metadata": { "inheritsFromRuleSet": "NZ_STANDARD_DEFAULT", "inheritsFromRegion": "NZ Standard Default", "confidence": "assumed" } },
+
+    { "region": "Tauranga City Council", "metadata": { "inheritsFromRuleSet": "NZ_STANDARD_DEFAULT", "inheritsFromRegion": "NZ Standard Default", "confidence": "assumed" } },
+    { "region": "Western Bay of Plenty District Council", "metadata": { "inheritsFromRuleSet": "NZ_STANDARD_DEFAULT", "inheritsFromRegion": "NZ Standard Default", "confidence": "assumed" } },
+    { "region": "Whakatāne District Council", "metadata": { "inheritsFromRuleSet": "NZ_STANDARD_DEFAULT", "inheritsFromRegion": "NZ Standard Default", "confidence": "assumed" } },
+    { "region": "Rotorua Lakes Council", "metadata": { "inheritsFromRuleSet": "NZ_STANDARD_DEFAULT", "inheritsFromRegion": "NZ Standard Default", "confidence": "assumed" } },
+    { "region": "Kawerau District Council", "metadata": { "inheritsFromRuleSet": "NZ_STANDARD_DEFAULT", "inheritsFromRegion": "NZ Standard Default", "confidence": "assumed" } },
+    { "region": "Ōpōtiki District Council", "metadata": { "inheritsFromRuleSet": "NZ_STANDARD_DEFAULT", "inheritsFromRegion": "NZ Standard Default", "confidence": "assumed" } },
+
+    { "region": "Gisborne District Council", "metadata": { "inheritsFromRuleSet": "NZ_STANDARD_DEFAULT", "inheritsFromRegion": "NZ Standard Default", "confidence": "assumed" } },
+
+    { "region": "Wairoa District Council", "metadata": { "inheritsFromRuleSet": "NZ_STANDARD_DEFAULT", "inheritsFromRegion": "NZ Standard Default", "confidence": "assumed" } },
+    { "region": "Hastings District Council", "metadata": { "inheritsFromRuleSet": "NZ_STANDARD_DEFAULT", "inheritsFromRegion": "NZ Standard Default", "confidence": "assumed" } },
+    { "region": "Napier City Council", "metadata": { "inheritsFromRuleSet": "NZ_STANDARD_DEFAULT", "inheritsFromRegion": "NZ Standard Default", "confidence": "assumed" } },
+    { "region": "Central Hawke's Bay District Council", "metadata": { "inheritsFromRuleSet": "NZ_STANDARD_DEFAULT", "inheritsFromRegion": "NZ Standard Default", "confidence": "assumed" } },
+
+    { "region": "New Plymouth District Council", "metadata": { "inheritsFromRuleSet": "NZ_STANDARD_DEFAULT", "inheritsFromRegion": "NZ Standard Default", "confidence": "assumed" } },
+    { "region": "Stratford District Council", "metadata": { "inheritsFromRuleSet": "NZ_STANDARD_DEFAULT", "inheritsFromRegion": "NZ Standard Default", "confidence": "assumed" } },
+    { "region": "South Taranaki District Council", "metadata": { "inheritsFromRuleSet": "NZ_STANDARD_DEFAULT", "inheritsFromRegion": "NZ Standard Default", "confidence": "assumed" } },
+
+    { "region": "Ruapehu District Council", "metadata": { "inheritsFromRuleSet": "NZ_STANDARD_DEFAULT", "inheritsFromRegion": "NZ Standard Default", "confidence": "assumed" } },
+    { "region": "Rangitīkei District Council", "metadata": { "inheritsFromRuleSet": "NZ_STANDARD_DEFAULT", "inheritsFromRegion": "NZ Standard Default", "confidence": "assumed" } },
+    { "region": "Whanganui District Council", "metadata": { "inheritsFromRuleSet": "NZ_STANDARD_DEFAULT", "inheritsFromRegion": "NZ Standard Default", "confidence": "assumed" } },
+    { "region": "Manawatū District Council", "metadata": { "inheritsFromRuleSet": "NZ_STANDARD_DEFAULT", "inheritsFromRegion": "NZ Standard Default", "confidence": "assumed" } },
+    { "region": "Palmerston North City Council", "metadata": { "inheritsFromRuleSet": "NZ_STANDARD_DEFAULT", "inheritsFromRegion": "NZ Standard Default", "confidence": "assumed" } },
+    { "region": "Horowhenua District Council", "metadata": { "inheritsFromRuleSet": "NZ_STANDARD_DEFAULT", "inheritsFromRegion": "NZ Standard Default", "confidence": "assumed" } },
+    { "region": "Tararua District Council", "metadata": { "inheritsFromRuleSet": "NZ_STANDARD_DEFAULT", "inheritsFromRegion": "NZ Standard Default", "confidence": "assumed" } },
+
+    { "region": "Kāpiti Coast District Council", "metadata": { "inheritsFromRuleSet": "GLASS_STREAM_GREEN_CONTAINER", "inheritsFromRegion": "Wellington City Council", "confidence": "assumed_shared_rules" } },
+    { "region": "Porirua City Council", "metadata": { "inheritsFromRuleSet": "GLASS_STREAM_GREEN_CONTAINER", "inheritsFromRegion": "Wellington City Council", "confidence": "assumed_shared_rules" } },
+    { "region": "Upper Hutt City Council", "metadata": { "inheritsFromRuleSet": "GLASS_STREAM_GREEN_CONTAINER", "inheritsFromRegion": "Wellington City Council", "confidence": "assumed_shared_rules" } },
+    { "region": "Hutt City Council", "metadata": { "inheritsFromRuleSet": "GLASS_STREAM_GREEN_CONTAINER", "inheritsFromRegion": "Wellington City Council", "confidence": "assumed_shared_rules" } },
+    { "region": "Wellington City Council", "metadata": { "inheritsFromRuleSet": "GLASS_STREAM_GREEN_CONTAINER", "inheritsFromRegion": "Wellington City Council", "confidence": "sourced" } },
+
+    { "region": "Masterton District Council", "metadata": { "inheritsFromRuleSet": "NZ_STANDARD_DEFAULT", "inheritsFromRegion": "NZ Standard Default", "confidence": "assumed" } },
+    { "region": "Carterton District Council", "metadata": { "inheritsFromRuleSet": "NZ_STANDARD_DEFAULT", "inheritsFromRegion": "NZ Standard Default", "confidence": "assumed" } },
+    { "region": "South Wairarapa District Council", "metadata": { "inheritsFromRuleSet": "NZ_STANDARD_DEFAULT", "inheritsFromRegion": "NZ Standard Default", "confidence": "assumed" } },
+
+    { "region": "Tasman District Council", "metadata": { "inheritsFromRuleSet": "NZ_STANDARD_DEFAULT", "inheritsFromRegion": "NZ Standard Default", "confidence": "assumed" } },
+    { "region": "Nelson City Council", "metadata": { "inheritsFromRuleSet": "NZ_STANDARD_DEFAULT", "inheritsFromRegion": "NZ Standard Default", "confidence": "assumed" } },
+    { "region": "Marlborough District Council", "metadata": { "inheritsFromRuleSet": "NZ_STANDARD_DEFAULT", "inheritsFromRegion": "NZ Standard Default", "confidence": "assumed" } },
+
+    { "region": "Buller District Council", "metadata": { "inheritsFromRuleSet": "NZ_STANDARD_DEFAULT", "inheritsFromRegion": "NZ Standard Default", "confidence": "assumed" } },
+    { "region": "Grey District Council", "metadata": { "inheritsFromRuleSet": "NZ_STANDARD_DEFAULT", "inheritsFromRegion": "NZ Standard Default", "confidence": "assumed" } },
+    { "region": "Westland District Council", "metadata": { "inheritsFromRuleSet": "NZ_STANDARD_DEFAULT", "inheritsFromRegion": "NZ Standard Default", "confidence": "assumed" } },
+
+    { "region": "Kaikōura District Council", "metadata": { "inheritsFromRuleSet": "NZ_STANDARD_DEFAULT", "inheritsFromRegion": "NZ Standard Default", "confidence": "assumed" } },
+    { "region": "Hurunui District Council", "metadata": { "inheritsFromRuleSet": "NZ_STANDARD_DEFAULT", "inheritsFromRegion": "NZ Standard Default", "confidence": "assumed" } },
+    { "region": "Waimakariri District Council", "metadata": { "inheritsFromRuleSet": "NZ_STANDARD_DEFAULT", "inheritsFromRegion": "NZ Standard Default", "confidence": "assumed" } },
+
+    { "region": "Christchurch City Council", "metadata": { "inheritsFromRuleSet": "CO_MINGLED_GLASS_IN_YELLOW", "inheritsFromRegion": "Christchurch City Council", "confidence": "sourced" } },
+    { "region": "Selwyn District Council", "metadata": { "inheritsFromRuleSet": "NZ_STANDARD_DEFAULT", "inheritsFromRegion": "NZ Standard Default", "confidence": "assumed" } },
+    { "region": "Ashburton District Council", "metadata": { "inheritsFromRuleSet": "NZ_STANDARD_DEFAULT", "inheritsFromRegion": "NZ Standard Default", "confidence": "assumed" } },
+    { "region": "Timaru District Council", "metadata": { "inheritsFromRuleSet": "NZ_STANDARD_DEFAULT", "inheritsFromRegion": "NZ Standard Default", "confidence": "assumed" } },
+    { "region": "Mackenzie District Council", "metadata": { "inheritsFromRuleSet": "NZ_STANDARD_DEFAULT", "inheritsFromRegion": "NZ Standard Default", "confidence": "assumed" } },
+    { "region": "Waimate District Council", "metadata": { "inheritsFromRuleSet": "NZ_STANDARD_DEFAULT", "inheritsFromRegion": "NZ Standard Default", "confidence": "assumed" } },
+
+    { "region": "Waitaki District Council", "metadata": { "inheritsFromRuleSet": "NZ_STANDARD_DEFAULT", "inheritsFromRegion": "NZ Standard Default", "confidence": "assumed" } },
+    { "region": "Queenstown-Lakes District Council", "metadata": { "inheritsFromRuleSet": "NZ_STANDARD_DEFAULT", "inheritsFromRegion": "NZ Standard Default", "confidence": "assumed" } },
+    { "region": "Central Otago District Council", "metadata": { "inheritsFromRuleSet": "NZ_STANDARD_DEFAULT", "inheritsFromRegion": "NZ Standard Default", "confidence": "assumed" } },
+    { "region": "Dunedin City Council", "metadata": { "inheritsFromRuleSet": "NZ_STANDARD_DEFAULT", "inheritsFromRegion": "NZ Standard Default", "confidence": "assumed" } },
+
+    { "region": "Clutha District Council", "metadata": { "inheritsFromRuleSet": "CLUTHA_GLASS_DROP_OFF_PRIMARY", "inheritsFromRegion": "Clutha District Council", "confidence": "sourced" } },
+
+    { "region": "Southland District Council", "metadata": { "inheritsFromRuleSet": "NZ_STANDARD_DEFAULT", "inheritsFromRegion": "NZ Standard Default", "confidence": "assumed" } },
+    { "region": "Invercargill City Council", "metadata": { "inheritsFromRuleSet": "NZ_STANDARD_DEFAULT", "inheritsFromRegion": "NZ Standard Default", "confidence": "assumed" } },
+    { "region": "Gore District Council", "metadata": { "inheritsFromRuleSet": "NZ_STANDARD_DEFAULT", "inheritsFromRegion": "NZ Standard Default", "confidence": "assumed" } },
+
+    { "region": "Chatham Islands Council", "metadata": { "inheritsFromRuleSet": "NZ_STANDARD_DEFAULT", "inheritsFromRegion": "NZ Standard Default", "confidence": "assumed" } }
+  ],
+
+  "notes": {
+    "coverage": "This list targets all 67 NZ territorial authorities (city councils, district councils, Auckland Council, Chatham Islands Council).",
+    "about_inheritance": "Game engine should resolve effective rules by applying district overrides on top of rule_set referenced by metadata.inheritsFromRuleSet.",
+    "confidence_values": {
+      "sourced": "Ruleset selection is based on a council-specific source already discussed in this chat.",
+      "assumed_shared_rules": "Assigned to share a nearby/related ruleset for gameplay convenience (not independently verified here).",
+      "assumed": "Defaulted to NZ standard ruleset as a placeholder until you supply/crawl council-specific rules."
+    }
+  }
+}  
